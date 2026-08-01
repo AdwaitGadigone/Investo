@@ -17,6 +17,9 @@ import { AnalystConsensus, AnalystConsensusSkeleton } from "@/components/analyst
 import { IconChart, IconBarChart, IconWallet } from "@/components/icons";
 import Link from "next/link";
 
+// Forces a fresh fetch on every visit, no cached result can ever serve a stale 404.
+export const dynamic = "force-dynamic";
+
 // Turns something like 4897205003506 into $4.90T instead of a wall of digits.
 function formatLarge(n) {
   if (n == null) return "N/A";

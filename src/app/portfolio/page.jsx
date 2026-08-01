@@ -1,6 +1,7 @@
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getPortfolio } from "@/lib/data/db";
 import { getQuotes } from "@/lib/market/get-quotes";
+import { getHistory } from "@/lib/market/yahoo";
 import { getPortfolioHistory } from "@/lib/market/portfolio-history";
 import { GUILD_ID } from "@/lib/config";
 import { AppNav } from "@/components/app-nav";
@@ -20,11 +21,13 @@ export default async function PortfolioPage({ searchParams }) {
   const positions = await getPortfolio(GUILD_ID, discordId);
   const tickers = positions.map((p) => p.ticker);
 
-  const [quotes, history] = await Promise.all([
+  const [quotes, history, tickerHistories] = await Promise.all([
     getQuotes(tickers),
     getPortfolioHistory(positions, range),
+    Promise.all(tickers.map((ticker) => getHistory(ticker, "1mo"))),
   ]);
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
+  const historyByTicker = Object.fromEntries(tickers.map((ticker, i) => [ticker, tickerHistories[i]]));
 
   let totalValue = 0;
   let totalCost = 0;
@@ -109,7 +112,7 @@ export default async function PortfolioPage({ searchParams }) {
           </Reveal>
         )}
 
-        <PortfolioSection positions={positions} quotes={quotes} />
+        <PortfolioSection positions={positions} quotes={quotes} historyByTicker={historyByTicker} />
       </main>
       <Footer />
     </div>

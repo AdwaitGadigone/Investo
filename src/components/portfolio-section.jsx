@@ -4,8 +4,15 @@ import { IconX } from "@/components/icons";
 import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { TickerAutocomplete } from "@/components/ticker-autocomplete";
+import { Sparkline } from "@/components/sparkline";
 
-export function PortfolioSection({ positions, quotes, showViewAllLink = false, showBuyForm = true }) {
+export function PortfolioSection({
+  positions,
+  quotes,
+  historyByTicker = {},
+  showViewAllLink = false,
+  showBuyForm = true,
+}) {
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
 
   let totalValue = 0;
@@ -110,13 +117,16 @@ export function PortfolioSection({ positions, quotes, showViewAllLink = false, s
                 <div className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
                   <Link
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
+                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
                     <div className="min-w-0">
                       <p className="font-mono font-semibold">{row.ticker}</p>
                       <p className="text-xs text-text-muted truncate">
                         {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
                       </p>
+                    </div>
+                    <div className="hidden sm:block">
+                      <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
                     </div>
                     <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
                     <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>

@@ -37,13 +37,17 @@ export default async function DashboardPage() {
   const portfolioTickers = portfolio.map((p) => p.ticker);
   const allTickers = [...new Set([...watchlist, ...portfolioTickers])];
 
-  const [quotes, histories, periodChangesByTicker] = await Promise.all([
+  const [quotes, histories, portfolioHistories, periodChangesByTicker] = await Promise.all([
     getQuotes(allTickers),
     Promise.all(watchlist.map((ticker) => getHistory(ticker, "1mo"))),
+    Promise.all(portfolioTickers.map((ticker) => getHistory(ticker, "1mo"))),
     getPeriodChanges(watchlist),
   ]);
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
   const historyByTicker = Object.fromEntries(watchlist.map((ticker, i) => [ticker, histories[i]]));
+  const portfolioHistoryByTicker = Object.fromEntries(
+    portfolioTickers.map((ticker, i) => [ticker, portfolioHistories[i]])
+  );
 
   const watchlistChanges = watchlist
     .map((t) => quoteByTicker[t]?.changePct)
@@ -72,7 +76,13 @@ export default async function DashboardPage() {
 
         {watchlist.length === 0 && portfolio.length === 0 && <GettingStarted />}
 
-        <PortfolioSection positions={portfolio} quotes={quotes} showViewAllLink showBuyForm={false} />
+        <PortfolioSection
+          positions={portfolio}
+          quotes={quotes}
+          historyByTicker={portfolioHistoryByTicker}
+          showViewAllLink
+          showBuyForm={false}
+        />
 
         <MarketMovers data={marketMovers} />
 

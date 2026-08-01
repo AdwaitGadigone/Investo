@@ -24,7 +24,10 @@ export function DiscordSignInButton({ className = "" }) {
   return (
     <button onClick={handleSignIn} className={className}>
       <DiscordIcon />
-      Sign in<span className="hidden sm:inline">&nbsp;with Discord</span>
+      {/* One flex child, not two: flex gap was adding extra space between "Sign in" and this span. */}
+      <span>
+        Sign in<span className="hidden sm:inline"> with Discord</span>
+      </span>
     </button>
   );
 }

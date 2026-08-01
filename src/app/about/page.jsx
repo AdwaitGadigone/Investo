@@ -35,6 +35,7 @@ const SOURCES = [
 const STACK = [
   "Next.js and React for the site itself",
   "Tailwind CSS for styling",
+  "A custom \"liquid glass\" effect (blur + saturate), the frosted look on every card and nav bar",
   "Motion (Framer Motion) for the animations",
   "TradingView's Lightweight Charts for the price charts",
   "Python and discord.py for the bot side",
