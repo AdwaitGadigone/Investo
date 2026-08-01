@@ -23,7 +23,7 @@ export function Tooltip({ text }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}
             transition={{ duration: 0.12 }}
-            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap glass-overlay rounded-md px-2.5 py-1.5 text-xs text-text z-50"
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap solid-overlay rounded-md px-2.5 py-1.5 text-xs text-text z-50"
           >
             {text}
           </motion.span>

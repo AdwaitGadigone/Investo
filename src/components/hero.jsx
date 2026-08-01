@@ -82,7 +82,7 @@ export function Hero({ quotes, user }) {
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-10 -left-[55%] -right-[45%] -z-10 h-[130%] opacity-60"
+            className="absolute -top-14 -left-[90%] -right-[75%] -z-10 h-[140%] opacity-60"
           >
             <TrendArrow className="w-full h-full" />
           </motion.div>
@@ -108,7 +108,7 @@ export function Hero({ quotes, user }) {
               scale: { duration: 0.6, delay: 0.7 },
               y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.3 },
             }}
-            className="absolute -bottom-8 -left-8 z-20 glass-overlay rounded-lg px-4 py-3"
+            className="absolute -bottom-8 -left-8 z-20 solid-overlay rounded-lg px-4 py-3"
           >
             <p className="font-mono text-xs text-text-muted">Alerts checked</p>
             <p className="font-mono text-lg font-bold text-warm">every 15 min</p>

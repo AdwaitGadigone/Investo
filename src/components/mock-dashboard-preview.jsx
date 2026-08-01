@@ -14,7 +14,11 @@ export function MockDashboardPreview({ quotes }) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-      className="w-full max-w-sm glass-overlay rounded-lg p-5"
+      // solid-overlay, not glass-overlay: this card animates its own transform (the y
+      // slide-in, plus the hero wraps it in a rotate too), and backdrop-filter combined
+      // with an animated transform on the same element is what let the arrow behind it
+      // show through, a fully opaque background sidesteps that regardless of cause.
+      className="w-full max-w-sm solid-overlay rounded-lg p-5"
     >
       <div className="flex items-center justify-between mb-4">
         <span className="font-mono text-xs uppercase tracking-widest text-text-muted">

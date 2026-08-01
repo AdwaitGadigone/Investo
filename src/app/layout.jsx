@@ -1,4 +1,5 @@
 import { Bricolage_Grotesque, Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // A real display font with actual personality for headlines, deliberately not one of the
@@ -35,6 +36,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-bg text-text font-sans">
         {children}
+        <Analytics />
       </body>
     </html>
   );
