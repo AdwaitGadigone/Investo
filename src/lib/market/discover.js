@@ -93,7 +93,10 @@ async function getRankedUniverse() {
           };
         }
 
-        return { ticker, name, price, changes };
+        // A trimmed tail of the same weekly history already fetched for the period math,
+        // reused as sparkline points instead of pulling a second, separate history call
+        // per ticker just for the little chart next to the name.
+        return { ticker, name, price, changes, sparkline: completed.slice(-12) };
       } catch {
         return null;
       }
@@ -111,13 +114,21 @@ async function getRankedUniverse() {
 // directly, no history fetch needed for that one.
 export async function getTopPerformers() {
   const { universe, valid } = await getRankedUniverse();
+  const sparklineByTicker = Object.fromEntries(valid.map((r) => [r.ticker, r.sparkline]));
   const ranked = {};
 
   ranked.day = [...universe]
     .filter((u) => u.changePct != null)
     .sort((a, b) => b.changePct - a.changePct)
     .slice(0, 5)
-    .map((u) => ({ ticker: u.ticker, name: u.name, price: u.price, change: u.change, changePct: u.changePct }));
+    .map((u) => ({
+      ticker: u.ticker,
+      name: u.name,
+      price: u.price,
+      change: u.change,
+      changePct: u.changePct,
+      history: sparklineByTicker[u.ticker] ?? null,
+    }));
 
   for (const period of Object.keys(PERIOD_DAYS)) {
     ranked[period] = [...valid]
@@ -129,6 +140,7 @@ export async function getTopPerformers() {
         price: r.price,
         change: r.changes[period].amount,
         changePct: r.changes[period].pct,
+        history: r.sparkline,
       }));
   }
 

@@ -100,30 +100,30 @@ export function PortfolioSection({ positions, quotes, showViewAllLink = false, s
           </p>
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid gap-3 overflow-x-auto">
           {rows.map((row, i) => {
             const up = row.pl >= 0;
             return (
               <Reveal key={row.ticker} delay={Math.min(i * 0.05, 0.3)}>
-                <div className="flex items-center justify-between glass rounded-lg pr-4 hover:border-discord transition-colors">
+                <div className="flex items-center glass rounded-lg pr-4 min-w-[520px] hover:border-discord transition-colors">
                   <Link
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                    className="flex flex-1 items-center justify-between px-5 py-4"
+                    className="grid grid-cols-[1fr_100px_90px_100px] items-center gap-4 flex-1 px-5 py-4"
                   >
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-mono font-semibold">{row.ticker}</p>
-                      <p className="text-xs text-text-muted">
+                      <p className="text-xs text-text-muted truncate">
                         {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-mono">${row.value.toFixed(2)}</p>
-                      <p className={`font-mono text-xs ${up ? "text-gain" : "text-loss"}`}>
-                        {up ? "+" : ""}
-                        {row.pl.toFixed(2)} ({up ? "+" : ""}
-                        {row.plPct.toFixed(1)}% P/L)
-                      </p>
-                    </div>
+                    <span className="font-mono text-sm text-right">${row.value.toFixed(2)}</span>
+                    <span className={`font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
+                      {up ? "+" : ""}
+                      {row.plPct.toFixed(1)}%
+                    </span>
+                    <span className={`font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
+                      {up ? "+" : ""}${row.pl.toFixed(2)}
+                    </span>
                   </Link>
                   <form action={removePositionAction} className="ml-2">
                     <input type="hidden" name="ticker" value={row.ticker} />

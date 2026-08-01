@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
+import { Sparkline } from "@/components/sparkline";
 
 const PERIODS = [
   { key: "day", label: "Day" },
@@ -51,10 +52,11 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
               <Link
                 key={row.ticker}
                 href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                className="grid grid-cols-[24px_1fr_84px_84px] items-center gap-4 px-4 py-3.5 min-w-[380px] hover:bg-white/[0.03] transition-colors"
+                className="grid grid-cols-[24px_60px_1fr_84px_84px] items-center gap-4 px-4 py-3.5 min-w-[440px] hover:bg-white/[0.03] transition-colors"
               >
                 <span className="font-mono text-xs text-text-muted">{i + 1}</span>
                 <span className="font-mono font-semibold text-sm">{row.ticker}</span>
+                <Sparkline points={row.history} up={up} width={90} height={24} />
                 <span className={`font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
                   {up ? "+" : ""}
                   {row.changePct.toFixed(1)}%
@@ -81,6 +83,7 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
                 >
                   <span className="font-mono text-xs text-text-muted">#{i + 1}</span>
                   <p className="font-mono font-semibold mt-1">{row.ticker}</p>
+                  <Sparkline points={row.history} up={up} width={110} height={30} />
                   <p className={`font-mono text-sm mt-1 ${up ? "text-gain" : "text-loss"}`}>
                     {up ? "+" : ""}
                     {row.changePct.toFixed(1)}%

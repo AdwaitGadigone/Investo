@@ -75,18 +75,19 @@ export function Hero({ quotes, user }) {
         </motion.div>
 
         <div className="relative hidden lg:block">
-          {/* left+right together were silently over-constrained (they summed past 100%,
-              so the browser wasn't resizing the box the way the math implied) and the
-              result came out far shorter than intended. Explicit width + right only,
-              left follows automatically, is the version that actually behaves predictably:
-              right stays anchored near the card (where the arrowhead should land), width
-              does all the "as long as possible" work by pushing the tail far to the left,
-              clipped safely by the hero's own overflow-hidden if it runs past the page edge. */}
+          {/* Percentage width/height on an absolutely positioned box only resolve against a
+              container with a DEFINITE size, this wrapper's height is auto (sized by its
+              content), so h-[...]% was silently computed as auto the whole time, not the
+              value it looked like. Explicit pixel box instead, measured directly against a
+              real rendered screenshot (debug-outlined the container to get exact coordinates)
+              and solved so the arrowhead lands just past the card's right edge, with
+              preserveAspectRatio="none" on the SVG itself making that math linear/predictable
+              instead of fighting the default aspect-ratio letterboxing. */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-40 -right-[65%] w-[440%] h-[165%] -z-10 opacity-60"
+            className="absolute -top-36 right-28 w-[2000px] h-[460px] -z-10 opacity-60"
           >
             <TrendArrow className="w-full h-full" />
           </motion.div>

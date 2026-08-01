@@ -70,8 +70,6 @@ export default async function DashboardPage() {
 
         <SearchBar className="max-w-xl mb-12" />
 
-        <CommoditiesStrip commodities={commodities} />
-
         {watchlist.length === 0 && portfolio.length === 0 && <GettingStarted />}
 
         <PortfolioSection positions={portfolio} quotes={quotes} showViewAllLink showBuyForm={false} />
@@ -119,7 +117,7 @@ export default async function DashboardPage() {
 
         <SuggestedStocks exclude={watchlist} />
 
-        <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted border-t border-border pt-6">
+        <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted border-t border-border pt-6 mb-12">
           <span>
             <span className="font-mono text-gain font-semibold">{alerts.length}</span> active price{" "}
             {alerts.length === 1 ? "alert" : "alerts"}
@@ -133,6 +131,8 @@ export default async function DashboardPage() {
             <Tooltip text="Toggle with /digest in Discord, DMs a morning summary of your watchlist" />
           </span>
         </div>
+
+        <CommoditiesStrip commodities={commodities} />
       </main>
     </div>
   );

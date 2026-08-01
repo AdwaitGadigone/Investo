@@ -14,6 +14,7 @@ export function TrendArrow({ className = "" }) {
   return (
     <svg
       viewBox="0 0 720 380"
+      preserveAspectRatio="none"
       className={`pointer-events-none drop-shadow-[0_25px_35px_rgba(0,0,0,0.45)] ${className}`}
       fill="none"
     >
