@@ -1,8 +1,7 @@
 import { addWatchlistTicker, removeWatchlistTicker } from "@/lib/actions/watchlist";
 import { IconStar } from "@/components/icons";
 
-// A plain form + Server Action, works without any client JS, same pattern as the
-// watchlist page's add/remove buttons.
+// Plain form + Server Action, works without client JS, same pattern as the watchlist page.
 export function WatchlistToggle({ ticker, isWatchlisted }) {
   if (isWatchlisted) {
     return (

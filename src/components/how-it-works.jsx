@@ -26,9 +26,7 @@ const STEPS = [
 ];
 
 export function HowItWorks() {
-  // A gentle parallax on the section heading, drifts slightly slower than the page
-  // scrolls, this is what makes scrolling itself feel like part of the design instead of
-  // just a mechanism for revealing static blocks of text.
+  // Gentle parallax, drifts slower than the page scrolls, so scrolling feels like part of the design.
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [40, -40]);

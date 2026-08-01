@@ -1,7 +1,6 @@
 import "server-only";
 
-// Same Finnhub /quote endpoint as the landing page preview, but for an arbitrary list of
-// tickers (someone's actual watchlist) instead of 3 fixed ones.
+// Same Finnhub endpoint as the landing preview, but for any watchlist, not 3 fixed tickers.
 export async function getQuotes(tickers) {
   const key = process.env.FINNHUB_API_KEY;
   if (!key || tickers.length === 0) return [];

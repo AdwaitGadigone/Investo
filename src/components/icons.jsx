@@ -1,5 +1,4 @@
-// Small hand-rolled icons, not an icon library import, keeps the bundle light and the
-// line-weight consistent with everything else on the page.
+// Hand-rolled, not an icon library, keeps the bundle light and line-weight consistent.
 
 export function IconSync(props) {
   return (

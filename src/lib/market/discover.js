@@ -3,8 +3,7 @@ import YahooFinance from "yahoo-finance2";
 
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
-// Real, live "most actively traded" stocks, not a fixed hand-picked list, so "Popular
-// right now" is always fresh and never runs out no matter how many someone adds.
+// Real, live "most actively traded" list, so "Popular right now" never runs out.
 export async function getMostActive(count = 25) {
   try {
     const result = await yf.screener({ scrIds: "most_actives", count });
@@ -22,9 +21,7 @@ export async function getMostActive(count = 25) {
   }
 }
 
-// Gainers/losers straight from Yahoo, but filtered down to companies with a real market
-// cap and sorted by size, the raw screener result skews toward tiny, unrecognizable
-// microcaps moving on thin volume, this surfaces the big names people actually know.
+// Filters to real market-cap companies, the raw screener is mostly thin-volume microcaps.
 async function getScreenerByMarketCap(scrId, count = 40, limit = 5) {
   try {
     const result = await yf.screener({ scrIds: scrId, count });
@@ -44,10 +41,7 @@ async function getScreenerByMarketCap(scrId, count = 40, limit = 5) {
   }
 }
 
-// A simple in-memory cache, this is expensive to compute (5 years of weekly history for
-// 25 tickers) and doesn't need to be any fresher than once an hour. Shared by Top
-// Performers and Market Movers' non-"day" tabs, one history pull per ticker covers every
-// longer period for both.
+// Shared cache: 5 years of history for 25 tickers is expensive, an hour stale is fine.
 let cache = null;
 let cacheTime = 0;
 const CACHE_TTL = 60 * 60 * 1000;
@@ -77,10 +71,7 @@ async function getRankedUniverse() {
           .filter((q) => q.close != null)
           .map((q) => ({ time: q.date.getTime(), value: q.close }));
 
-        // Yahoo's most recent weekly bar represents the still-in-progress current week,
-        // its "close" is really just today's live price, not a real completed week, so
-        // anything less than 6 days old can't be used as a genuine historical reference,
-        // that mistake was making "this week" always show as a flat 0% for every ticker.
+        // Drop bars under 6 days old, Yahoo's newest weekly bar is just today's live price.
         const completed = points.filter((p) => nowTime - p.time > 6 * 24 * 60 * 60 * 1000);
         if (completed.length < 2) return null;
 
@@ -93,9 +84,7 @@ async function getRankedUniverse() {
           };
         }
 
-        // A trimmed tail of the same weekly history already fetched for the period math,
-        // reused as sparkline points instead of pulling a second, separate history call
-        // per ticker just for the little chart next to the name.
+        // Reuses the same weekly history as a sparkline, no second fetch needed.
         return { ticker, name, price, changes, sparkline: completed.slice(-12) };
       } catch {
         return null;
@@ -109,9 +98,7 @@ async function getRankedUniverse() {
   return cache;
 }
 
-// Ranks the same "most active" universe by how much they've actually gained over each
-// period. "day" is the odd one out, the screener already hands back today's change
-// directly, no history fetch needed for that one.
+// "day" skips the history fetch, the screener already gives today's change directly.
 export async function getTopPerformers() {
   const { universe, valid } = await getRankedUniverse();
   const sparklineByTicker = Object.fromEntries(valid.map((r) => [r.ticker, r.sparkline]));
@@ -147,11 +134,7 @@ export async function getTopPerformers() {
   return ranked;
 }
 
-// Same "gainers / losers / most active" shape as the day tab, but for every period. Gainers
-// and losers for "day" come from Yahoo's real market-wide screeners (a much bigger universe
-// than the 25 most-active tickers), longer periods reuse the ranked universe above since
-// there's no "week_gainers"/"month_gainers" screener to pull from directly. "Most active" is
-// volume-based and only ever reflects today, that stays constant across every period tab.
+// Non-"day" periods reuse the ranked universe, there's no "week_gainers" screener to pull from.
 export async function getMarketMovers() {
   const [dayGainers, dayLosers, active, { valid }] = await Promise.all([
     getScreenerByMarketCap("day_gainers"),

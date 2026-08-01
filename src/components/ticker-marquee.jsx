@@ -9,8 +9,7 @@ const TICKERS = [
   { t: "AMD", up: true }, { t: "NFLX", up: false }, { t: "GOLD", up: true },
 ];
 
-// A literal edge-to-edge ticker tape, the one visual every stock site on earth uses, and
-// the fastest way to make the top of the page feel wide and alive instead of boxed in.
+// Edge-to-edge ticker tape, makes the top of the page feel wide and alive, not boxed in.
 export function TickerMarquee() {
   const row = [...TICKERS, ...TICKERS];
 

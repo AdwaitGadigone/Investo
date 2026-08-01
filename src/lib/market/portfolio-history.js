@@ -1,11 +1,7 @@
 import "server-only";
 import { getHistory } from "@/lib/market/yahoo";
 
-// Approximates portfolio value over time by combining each position's own price history
-// with its CURRENT share count. This can't know exactly when shares were bought (the
-// schema has no transaction log, positions blend into one running average), so it's really
-// "what today's holdings would have been worth on each past date," not a perfect ledger,
-// but it's an honest, real chart, not a fabricated one.
+// Approximate: current share count applied to past prices, there's no transaction log to know exact buy dates.
 export async function getPortfolioHistory(positions, range = "3mo") {
   if (positions.length === 0) return [];
 

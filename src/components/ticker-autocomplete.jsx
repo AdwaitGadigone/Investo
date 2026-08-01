@@ -3,9 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
-// A ticker text input with the same suggestions dropdown as the main search bar, except
-// selecting a result just fills the field instead of navigating away, this is meant to
-// sit inside a form (like /portfolio buy) where the rest of the fields still need filling.
+// Same dropdown as the search bar, but picking a result fills the field instead of navigating.
 export function TickerAutocomplete({ name = "ticker", placeholder = "Ticker", className = "" }) {
   const [value, setValue] = useState("");
   const [results, setResults] = useState([]);

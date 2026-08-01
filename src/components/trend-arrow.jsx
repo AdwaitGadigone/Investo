@@ -2,12 +2,9 @@
 
 import { motion } from "motion/react";
 
-// A bold, solid "up and to the right" arrow, zigzag line plus a real filled triangular
-// arrowhead (not a hint of one), matching how an actual trend chart draws itself, floating
-// with a soft drop shadow the way a physical object would.
+// Zigzag line plus a real filled triangular arrowhead, not just a hint of one.
 const LINE = "10,320 150,255 250,285 390,140 490,180 660,55";
-// The final segment (490,180) -> (660,55) points at roughly this angle, the arrowhead
-// triangle gets rotated to match it exactly.
+// Angle of the final segment (490,180) -> (660,55), the arrowhead rotates to match it.
 const HEAD_ANGLE = -35.5;
 
 export function TrendArrow({ className = "" }) {

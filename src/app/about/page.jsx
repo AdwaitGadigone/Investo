@@ -45,9 +45,7 @@ export default async function AboutPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Logged-in visitors keep the exact same header (with the full nav) they'd see
-          anywhere else on the site, only logged-out visitors from the public landing page
-          get the stripped-down version, since Dashboard/Watchlist/etc. wouldn't work for them. */}
+      {/* Logged-in visitors get the same full nav header as every other page. */}
       {user ? (
         <AppNav />
       ) : (

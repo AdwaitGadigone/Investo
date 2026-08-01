@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 
-// Gold and friends barely surface through the search bar (Yahoo's text search matches
-// "gold" to an unrelated small-cap company before the actual metal), so this puts them
-// one click away instead of relying on search working out.
+// Yahoo's text search buries gold behind an unrelated company, so this is a direct shortcut.
 export function CommoditiesStrip({ commodities }) {
   if (commodities.length === 0) return null;
 

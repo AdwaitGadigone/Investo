@@ -24,8 +24,7 @@ const STEPS = [
   },
 ];
 
-// Only shows up for a genuinely empty account, guides the first few actions instead of
-// just presenting a blank dashboard and hoping it's obvious what to do.
+// Only for a genuinely empty account, guides the first actions instead of a blank dashboard.
 export function GettingStarted() {
   return (
     <motion.div

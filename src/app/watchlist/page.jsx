@@ -16,8 +16,7 @@ export default async function WatchlistPage() {
 
   const [quotes, histories, marketMovers] = await Promise.all([
     getQuotes(tickers),
-    // A longer 3-month window here (vs. the dashboard's quick 1-month glance), this is
-    // the dedicated page, more detail is the whole point of coming here specifically.
+    // 3 months here, vs. the dashboard's 1-month glance, more detail is the point of this page.
     Promise.all(tickers.map((ticker) => getHistory(ticker, "3mo"))),
     getMarketMovers(),
   ]);

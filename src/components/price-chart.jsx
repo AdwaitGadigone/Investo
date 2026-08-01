@@ -3,8 +3,7 @@
 import { useEffect, useRef } from "react";
 import { createChart, AreaSeries } from "lightweight-charts";
 
-// lightweight-charts is a vanilla JS library (not a React component), so it has to be
-// mounted imperatively into a plain div via a ref, this is the standard pattern for that.
+// Vanilla JS library, not a React component, so it mounts imperatively into a ref'd div.
 export function PriceChart({ data, up }) {
   const containerRef = useRef(null);
 
@@ -14,15 +13,11 @@ export function PriceChart({ data, up }) {
     const chart = createChart(containerRef.current, {
       layout: {
         background: { color: "transparent" },
-        // lightweight-charts has no separate font-weight option, canvas text only takes
-        // size + family, so "bold" here means high contrast and a bigger size instead,
-        // that's what actually reads as bold given the API's limits.
+        // No font-weight option exists, high contrast + bigger size is the closest to "bold".
         textColor: "#f2f2f0",
         fontSize: 13,
         fontFamily: "'IBM Plex Mono', monospace",
-        // The library's license requires attribution somewhere: either this built-in
-        // logo on the chart itself, or an equivalent text link elsewhere on the site.
-        // Keeping the logo here instead means the footer doesn't need a TradingView line.
+        // License requires attribution: this built-in logo covers it, so the footer doesn't need one.
       },
       grid: {
         vertLines: { visible: false },

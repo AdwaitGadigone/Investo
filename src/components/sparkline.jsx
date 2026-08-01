@@ -1,6 +1,4 @@
-// A tiny inline chart, plain SVG (not lightweight-charts, that's overkill for something
-// this small), just enough to show shape/direction over the period, like Wealthsimple's
-// watchlist mini-charts.
+// Plain SVG, not lightweight-charts, that's overkill for something this small.
 export function Sparkline({ points, up, width = 110, height = 32 }) {
   if (!points || points.length < 2) {
     return <div style={{ width, height }} className="text-xs text-text-muted flex items-center">No data</div>;

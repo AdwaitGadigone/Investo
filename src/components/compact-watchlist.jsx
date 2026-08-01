@@ -3,11 +3,7 @@ import { Sparkline } from "@/components/sparkline";
 import { IconX } from "@/components/icons";
 import { removeWatchlistTicker } from "@/lib/actions/watchlist";
 
-// The dashboard glance version, one row per ticker, versus the big card-per-ticker
-// treatment the dedicated /watchlist page uses, same data, denser layout. Price, % change,
-// and $ change each get their own grid column instead of being stacked and crammed
-// against the right edge, spreads the numbers across the row's actual width so they're
-// bigger targets to read at a glance instead of squinting at a cluster in one corner.
+// Dense dashboard row version of the big /watchlist cards, same data, denser layout.
 export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker }) {
   return (
     <div className="glass rounded-lg divide-y divide-border overflow-x-auto">

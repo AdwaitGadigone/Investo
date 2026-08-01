@@ -1,6 +1,4 @@
-// Soft, blurred color shapes anchored toward the edges of a section, not a centered glow
-// behind text (that's the generic-AI-app move). Different variants so each section down
-// the page has its own quiet bit of color instead of the whole site reusing one spot.
+// Blurred shapes anchored to section edges, not a centered glow, that reads as generic-AI-app.
 const VARIANTS = {
   hero: [
     "absolute -top-32 -right-40 h-[420px] w-[420px] rounded-full bg-discord/25 blur-[110px]",

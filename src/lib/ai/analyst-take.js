@@ -1,9 +1,7 @@
 import "server-only";
 import { GoogleGenAI } from "@google/genai";
 
-// Same key, same model, same prompt as Investobot's services/analyst_take.py, this is a
-// direct port so the "why" behind a rating reads the same whether you ask the bot or the
-// website.
+// Direct port of Investobot's services/analyst_take.py, same prompt on both bot and site.
 const client = process.env.GEMINI_API_KEY
   ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
   : null;
@@ -49,15 +47,11 @@ function buildPrompt(ticker, name, quote, trends, news) {
   return lines.join("\n");
 }
 
-// A take for the same ticker doesn't need to be regenerated on every single page view,
-// the facts driving it don't change minute to minute, caching it also means the common
-// case (a friend re-visiting a ticker you already looked at) costs zero Gemini calls.
+// Caches the take per ticker so a re-visited page costs zero extra Gemini calls.
 const takeCache = new Map(); // ticker -> { text, expires }
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
-// A hard backstop against the free tier's quota getting burned through, either by
-// accident (everyone browsing different tickers at once) or on purpose. If the limit's
-// hit, this section just quietly doesn't appear, the rest of the page still works fine.
+// Backstop against burning through the free tier's quota, whether by accident or abuse.
 const RATE_LIMIT = 10;
 const RATE_WINDOW = 60 * 1000; // 10 calls per minute, across everyone using the site
 let callTimestamps = [];
@@ -84,8 +78,7 @@ export async function generateAnalystTake(ticker, name, quote, trends, news) {
       contents: buildPrompt(ticker, name, quote, trends, news),
       config: {
         systemInstruction: SYSTEM_PROMPT,
-        // Gemini's internal "thinking" step counts against this same token budget, and
-        // this model alias can't turn thinking off, so this needs headroom for both.
+        // Covers both the answer and Gemini's internal "thinking" tokens, which share this budget.
         maxOutputTokens: 2048,
       },
     });

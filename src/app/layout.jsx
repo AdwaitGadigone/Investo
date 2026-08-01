@@ -2,8 +2,7 @@ import { Bricolage_Grotesque, Instrument_Sans, IBM_Plex_Mono } from "next/font/g
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-// A real display font with actual personality for headlines, deliberately not one of the
-// "distinctive alternative to Inter" fonts every AI tool has converged on lately.
+// A display font with real personality, not another "Inter alternative" every AI tool uses.
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
@@ -15,8 +14,7 @@ const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
 });
 
-// A dedicated monospace for prices and tickers, so digits line up in tables instead of
-// jittering as they update, the same trick real trading products use.
+// Monospace for prices/tickers so digits line up instead of jittering as they update.
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   weight: ["400", "500", "600"],

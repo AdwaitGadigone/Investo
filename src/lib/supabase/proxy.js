@@ -1,10 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-// Runs on every request (see proxy.js at the project root). Keeps the login session's
-// cookies fresh and bounces anyone without a session back to the login page, this is a
-// cheap "are they logged in at all" gate, not the actual authorization check, the guild
-// membership check happens once at login time in the OAuth callback instead.
+// Just an "are they logged in" gate, the real guild membership check runs once at OAuth callback.
 export async function updateSession(request) {
   let supabaseResponse = NextResponse.next({ request });
 

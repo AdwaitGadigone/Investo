@@ -9,13 +9,13 @@ const RANGES = [
   { key: "1mo", label: "1M" },
   { key: "3mo", label: "3M" },
   { key: "6mo", label: "6M" },
+  { key: "ytd", label: "YTD" },
   { key: "1y", label: "1Y" },
   { key: "5y", label: "5Y" },
   { key: "10y", label: "10Y" },
 ];
 
-// A segmented pill control, the sliding background is a single element that moves between
-// buttons (Framer Motion's layoutId), not a separate highlight per button.
+// One sliding pill (Framer Motion layoutId) moves between buttons, not a highlight per button.
 export function RangeSelector({ ticker, active }) {
   return (
     <div className="inline-flex items-center gap-1 glass rounded-full p-1">

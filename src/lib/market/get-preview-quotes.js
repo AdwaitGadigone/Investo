@@ -2,9 +2,7 @@ import "server-only";
 
 const PREVIEW_TICKERS = ["AAPL", "TSLA", "NVDA"];
 
-// Real quotes for the landing page's watchlist preview, not made-up numbers, since a
-// "live" panel showing fake data isn't actually convincing. Finnhub's free /quote
-// endpoint is a single lightweight call per ticker, no chart/history data needed here.
+// Real quotes for the landing page preview, a "live" panel with fake data isn't convincing.
 export async function getPreviewQuotes() {
   const key = process.env.FINNHUB_API_KEY;
   if (!key) return [];

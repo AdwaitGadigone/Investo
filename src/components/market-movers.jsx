@@ -62,9 +62,7 @@ function MoverList({ title, rows }) {
   );
 }
 
-// The same "gainers / losers / most active" layout real market sites use, real large-cap
-// movers (filtered by market cap, not whatever obscure microcap spiked 200% on no volume),
-// now with the same period tabs Top Performers uses so "today" isn't the only option.
+// Real large-cap movers only, filtered by market cap, not a microcap that spiked on no volume.
 export function MarketMovers({ data }) {
   const [period, setPeriod] = useState("day");
   const rows = data[period] ?? { gainers: [], losers: [], active: [] };

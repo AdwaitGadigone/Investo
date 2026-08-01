@@ -1,9 +1,7 @@
 import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-// Mirrors Investobot's src/services/db.py 1:1 on purpose, same tables, same shape, so the
-// bot and site are obviously reading and writing the exact same data, not two databases
-// that happen to look similar. Every function is scoped by guildId + userId like the bot.
+// Mirrors Investobot's src/services/db.py 1:1, same tables, bot and site share one database.
 
 export async function getWatchlist(guildId, userId) {
   const { data, error } = await supabaseAdmin
@@ -72,9 +70,7 @@ export async function getActiveAlerts(guildId, userId) {
   return data;
 }
 
-// Buy/sell mirror the bot's weighted-average cost basis logic exactly (services/db.py's
-// buy_position/sell_position), buying more at a different price blends into one average
-// instead of tracking every purchase as a separate lot.
+// Mirrors the bot's weighted-average cost basis logic, buys blend into one average, not separate lots.
 
 export async function buyPosition(guildId, userId, ticker, shares, price) {
   const { data: existing, error: fetchErr } = await supabaseAdmin

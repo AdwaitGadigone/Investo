@@ -2,9 +2,7 @@ import { addWatchlistTicker } from "@/lib/actions/watchlist";
 import { getMostActive } from "@/lib/market/discover";
 import { IconPlus } from "@/components/icons";
 
-// Real, live "most actively traded" data instead of a fixed list, so this genuinely never
-// runs dry, and it stays honest since it's actually what's popular right now, not a
-// hand-picked guess.
+// Real "most actively traded" data, not a hand-picked list, so this never runs dry.
 export async function SuggestedStocks({ exclude }) {
   const active = await getMostActive(25);
   const suggestions = active.filter((s) => !exclude.includes(s.ticker)).slice(0, 12);

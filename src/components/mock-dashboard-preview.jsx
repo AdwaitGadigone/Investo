@@ -2,9 +2,7 @@
 
 import { motion } from "motion/react";
 
-// A stylized little trend line, not a real historical chart (that would need a second API
-// call), just enough visual motion to sell "this card is alive," the price and percent
-// change next to it are the real, live numbers.
+// Stylized, not a real chart, just motion to sell "this card is alive" next to real numbers.
 const UP_PATH = "0,20 10,17 20,18 30,12 40,13 50,6 60,8 70,2";
 const DOWN_PATH = "0,4 10,6 20,5 30,9 40,8 50,13 60,12 70,18";
 
@@ -14,10 +12,7 @@ export function MockDashboardPreview({ quotes }) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-      // solid-overlay, not glass-overlay: this card animates its own transform (the y
-      // slide-in, plus the hero wraps it in a rotate too), and backdrop-filter combined
-      // with an animated transform on the same element is what let the arrow behind it
-      // show through, a fully opaque background sidesteps that regardless of cause.
+      // solid-overlay, not glass: an animated transform + backdrop-filter let the arrow show through.
       className="w-full max-w-sm solid-overlay rounded-lg p-5"
     >
       <div className="flex items-center justify-between mb-4">

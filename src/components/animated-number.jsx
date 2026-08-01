@@ -3,10 +3,7 @@
 import { useEffect, useRef } from "react";
 import { animate } from "motion/react";
 
-// Counts up from 0 to the real value on mount instead of just appearing, this is the
-// "more than hover" motion for the big numbers that actually deserve some weight (total
-// portfolio value, today's return), writes directly to the DOM node instead of triggering
-// a React re-render every animation frame, which is the standard pattern for this.
+// Counts up on mount, writes the DOM node directly instead of re-rendering every frame.
 export function AnimatedNumber({ value, prefix = "", suffix = "", decimals = 2 }) {
   const ref = useRef(null);
 

@@ -9,8 +9,7 @@ import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { DigestToggle } from "@/components/digest-toggle";
 
-// The digest DM's content, viewable here any time, not just delivered once a morning,
-// plus a news feed aggregated across your whole watchlist instead of one ticker at a time.
+// The digest DM's content viewable any time, plus news aggregated across the whole watchlist.
 export default async function NewsPage() {
   const { discordId } = await getDiscordUser();
 

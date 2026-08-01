@@ -75,14 +75,7 @@ export function Hero({ quotes, user }) {
         </motion.div>
 
         <div className="relative hidden lg:block">
-          {/* Percentage width/height on an absolutely positioned box only resolve against a
-              container with a DEFINITE size, this wrapper's height is auto (sized by its
-              content), so h-[...]% was silently computed as auto the whole time, not the
-              value it looked like. Explicit pixel box instead, measured directly against a
-              real rendered screenshot (debug-outlined the container to get exact coordinates)
-              and solved so the arrowhead lands just past the card's right edge, with
-              preserveAspectRatio="none" on the SVG itself making that math linear/predictable
-              instead of fighting the default aspect-ratio letterboxing. */}
+          {/* Pixel values, not %: the parent has no fixed height, so % height silently becomes auto. */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -101,12 +94,7 @@ export function Hero({ quotes, user }) {
             <MockDashboardPreview quotes={quotes} />
           </motion.div>
 
-          {/* Tilts the opposite way from the card on purpose (clockwise here vs. the card's
-              counterclockwise), that's what reads as "tucked under, tossed at an angle"
-              instead of just a smaller copy of the card sitting on top of it. This only
-              looks right now that the badge is solid-overlay (fully opaque): the two never
-              matching rotation was never really the bug, a translucent badge letting the
-              card's corner show through it was, and that's fixed at the source now. */}
+          {/* Tilts opposite the card on purpose, reads as "tossed at an angle" not stacked. */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8, rotate: 8 }}
             animate={{ opacity: 1, scale: 1, rotate: 6, y: [0, -8, 0] }}

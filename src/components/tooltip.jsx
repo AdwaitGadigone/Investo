@@ -4,8 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { IconInfo } from "@/components/icons";
 
-// A hover tooltip for the small "what does this number mean" moments, e.g. clarifying
-// that a watchlist card's percentage is today's change, not the week's or the month's.
+// Hover tooltip for "what does this number mean" moments, e.g. clarifying a % is today's change.
 export function Tooltip({ text }) {
   const [show, setShow] = useState(false);
 

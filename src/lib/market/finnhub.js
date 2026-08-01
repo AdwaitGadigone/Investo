@@ -21,8 +21,7 @@ export async function getCompanyNews(ticker, daysBack = 5) {
   }
 }
 
-// Aggregates recent headlines across an entire watchlist into one feed, sorted newest
-// first, this is the "/news" page's whole reason to exist over just the per-ticker view.
+// Aggregates headlines across a whole watchlist into one feed, this is what /news is for.
 export async function getAggregatedNews(tickers, perTicker = 4) {
   const results = await Promise.all(
     tickers.map(async (ticker) => {
@@ -34,8 +33,7 @@ export async function getAggregatedNews(tickers, perTicker = 4) {
   return results.flat().sort((a, b) => (b.datetime ?? 0) - (a.datetime ?? 0));
 }
 
-// Finnhub's free tier doesn't include the price target, but recommendation trends (the
-// buy/hold/sell breakdown) are free, same source the bot uses for its analyst consensus.
+// Free tier has no price target, but recommendation trends (buy/hold/sell) are free.
 export async function getRecommendationTrends(ticker) {
   if (!KEY) return null;
 

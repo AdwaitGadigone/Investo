@@ -2,9 +2,7 @@ import { generateAnalystTake } from "@/lib/ai/analyst-take";
 import { Tooltip } from "@/components/tooltip";
 import { IconSparkle } from "@/components/icons";
 
-// An async Server Component on purpose, not called inline in the page, this is what lets
-// it be wrapped in <Suspense> so the Gemini call (the slowest thing on this whole page,
-// several seconds) streams in after everything else instead of blocking the entire page.
+// Async Server Component so <Suspense> can stream in the slow Gemini call separately.
 export async function AnalystConsensus({ ticker, quote, trends, news }) {
   if (!trends) return null;
 

@@ -18,8 +18,7 @@ import { GradientBlobs } from "@/components/gradient-blobs";
 import { Tooltip } from "@/components/tooltip";
 import { GettingStarted } from "@/components/getting-started";
 
-// Real data, straight from the same Supabase tables the bot writes to, this is what
-// actually proves the "same account, everywhere" claim, not just a working login.
+// Same Supabase tables the bot writes to, this is what proves "same account, everywhere."
 export default async function DashboardPage() {
   const { discordId, username } = await getDiscordUser();
 
@@ -76,8 +75,7 @@ export default async function DashboardPage() {
 
         <MarketMovers data={marketMovers} />
 
-        {/* Side by side, both are dense vertical lists now, stacking them full-width just
-            wastes horizontal space, this is the whole reason the compact variants exist. */}
+        {/* Side by side so neither dense list wastes horizontal space. */}
         <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
           <div>
             <div className="flex flex-wrap items-baseline justify-between gap-3 mb-5">

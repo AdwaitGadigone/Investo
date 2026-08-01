@@ -2,10 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-// Pulls the real Discord snowflake ID out of the session, this is the ID every table in
-// the bot's database is keyed on. Uses getUser() (not getClaims()) because this confirms
-// the session against Supabase itself rather than just trusting an unverified JWT, worth
-// the extra round trip anywhere the result decides what data someone can see.
+// getUser(), not getClaims(): confirms the session against Supabase, not just an unverified JWT.
 export async function getDiscordUser() {
   const supabase = await createClient();
   const {
@@ -26,8 +23,7 @@ export async function getDiscordUser() {
   };
 }
 
-// Same lookup, but for pages that stay public either way (the landing page), so it never
-// redirects, just returns null if nobody's signed in instead of bouncing to /login.
+// Same lookup for public pages, returns null instead of redirecting when logged out.
 export async function getOptionalDiscordUser() {
   const supabase = await createClient();
   const {

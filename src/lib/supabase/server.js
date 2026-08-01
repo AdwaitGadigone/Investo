@@ -1,8 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-// Used in Server Components/Route Handlers that need to know WHO is logged in (reading
-// the session). Still uses the public key, still respects RLS, this is not the admin client.
+// Public key, respects RLS, this is not the admin client, just knows who's logged in.
 export async function createClient() {
   const cookieStore = await cookies();
 

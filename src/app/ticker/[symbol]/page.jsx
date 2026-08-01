@@ -43,8 +43,7 @@ export default async function TickerPage({ params, searchParams }) {
 
   if (!quote) notFound();
 
-  // Only worth the extra call once we know the ticker's real, no point looking up
-  // related tickers for a 404.
+  // Only fetch related tickers once we know this one's real, no point for a 404.
   const related = await getRelatedTickers(ticker);
 
   const up = quote.changePct >= 0;
@@ -152,9 +151,7 @@ export default async function TickerPage({ params, searchParams }) {
             </div>
           </Reveal>
 
-          {/* The Gemini call inside here is the slowest thing on this page (several
-              seconds), Suspense lets everything else render immediately and streams
-              this section in once it's actually ready instead of blocking the page. */}
+          {/* Suspense streams this in separately since the Gemini call is slow. */}
           <Suspense fallback={<AnalystConsensusSkeleton />}>
             <AnalystConsensus ticker={ticker} quote={quote} trends={trends} news={news} />
           </Suspense>

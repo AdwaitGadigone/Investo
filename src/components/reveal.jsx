@@ -2,9 +2,7 @@
 
 import { motion } from "motion/react";
 
-// A small reusable scroll-in wrapper, keeps pages that are mostly Server Components from
-// needing to become client components just to get the same entrance motion as everywhere
-// else on the site.
+// Reusable scroll-in wrapper, keeps Server Component pages from needing to become client-side.
 export function Reveal({ children, delay = 0, className = "" }) {
   return (
     <motion.div
