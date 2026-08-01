@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Investo
 
-## Getting Started
+**Live site: [investo-web-tau.vercel.app](https://investo-web-tau.vercel.app)**
 
-First, run the development server:
+Investo is a stock and crypto tracker that lives in two places at once: a Discord bot and this
+website, both reading and writing the same data. Add a ticker to your watchlist on the site and
+it's there in Discord a second later, and the other way around. There's no separate account to
+create, signing in here is just Discord OAuth, gated to members of the server the bot runs in.
+
+## What it does
+
+- **Watchlist** — track tickers, live prices, and daily % / $ change
+- **Portfolio** — log buys and sells, weighted-average cost basis, live profit/loss
+- **Price alerts & daily digest** — set alerts and get a DM'd morning summary from the bot; the
+  digest is viewable on the site too, not DM-only
+- **Market Movers** — today's (or this week's/month's/3 months'/year's/5 years') top gainers,
+  top losers, and most active stocks
+- **Top Performers** — the same time-span ranking, applied to a broader "most active" universe
+- **News & analyst ratings** — recent headlines and the Wall Street buy/hold/sell consensus for
+  any ticker, plus an AI-written take explaining *why* the rating looks the way it does
+- **Search** — autocomplete across stocks, crypto, and commodities, with exchange and currency
+  shown so a Toronto-listed stock in CAD doesn't get mistaken for a USD price
+- **Commodities** — gold, silver, oil, and natural gas, surfaced directly since they barely show
+  up in normal ticker search
+
+## The Discord bot
+
+The bot (`/Investobot`) is where all of this started. It runs the same underlying data (Supabase
+Postgres) as the website and supports:
+
+- `/stock <ticker>` — quote, chart, and analyst consensus in one embed
+- `/movers` — today's (or any other time span's) top gainers, losers, and most active, with
+  buttons to switch categories and a dropdown to change the time span
+- `/watchlist` / `/track` / `/portfolio` / `/alert` / `/digest` — the same features as the site,
+  usable straight from Discord
+- `/rating`, `/news` — analyst ratings and headlines for any ticker
+- @ mention the bot with a question and it'll answer using an AI that pulls in live prices for
+  whatever ticker you mention
+
+Invite it to your own server from the [About page](https://investo-web-tau.vercel.app/about) on
+the site.
+
+## Stack
+
+- **Site**: Next.js (App Router) + React, plain JavaScript (no TypeScript), Tailwind CSS,
+  Framer Motion, TradingView's Lightweight Charts
+- **Bot**: Python, discord.py
+- **Shared data**: Supabase (Postgres), same database both the site and bot read/write directly
+- **Market data**: Yahoo Finance, Finnhub (news & analyst trends)
+- **AI**: Google Gemini, for the analyst "take" and the bot's chat feature
+- **Auth**: Discord OAuth via Supabase Auth, gated to actual members of the server
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Needs a `.env.local` with Supabase, Discord, Finnhub, and Gemini credentials (see
+`src/lib/config.js` for what's read where). Not committed, ask for a copy if you're setting this
+up fresh.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploying
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Hosted on Vercel, connected to this repo — pushes to `main` deploy automatically. Environment
+variables are set in the Vercel project settings, not committed anywhere.
