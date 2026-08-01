@@ -22,6 +22,7 @@ export default async function Home() {
         <div className="flex items-center gap-4">
           <MobileMenu
             links={[
+              { href: "/bot", label: "Bot commands" },
               { href: "/about", label: "About" },
               { href: BOT_INVITE_URL, label: "Add the bot to your server", external: true },
             ]}
@@ -29,6 +30,9 @@ export default async function Home() {
           <Wordmark className="text-xl" />
         </div>
         <div className="flex items-center gap-5">
+          <Link href="/bot" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
+            Bot commands
+          </Link>
           <Link href="/about" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
             About
           </Link>

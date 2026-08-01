@@ -53,7 +53,12 @@ export default async function AboutPage() {
           <Link href="/">
             <Wordmark className="text-xl" />
           </Link>
-          <DiscordSignInButton className="flex items-center gap-2 bg-discord text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-discord-hover transition-colors" />
+          <div className="flex items-center gap-4">
+            <Link href="/bot" className="text-sm text-text-muted hover:text-text transition-colors">
+              Bot
+            </Link>
+            <DiscordSignInButton className="flex items-center gap-2 bg-discord text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-discord-hover transition-colors" />
+          </div>
         </header>
       )}
 

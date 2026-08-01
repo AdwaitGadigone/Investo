@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/watchlist", label: "Watchlist" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/news", label: "News" },
+  { href: "/bot", label: "Bot" },
   { href: "/about", label: "About" },
 ];
 
