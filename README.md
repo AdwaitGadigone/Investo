@@ -1,6 +1,6 @@
 # Investo
 
-**Live site: [investo-web-tau.vercel.app](https://investo-web-tau.vercel.app)**
+**Live site: [investoweb.vercel.app](https://investoweb.vercel.app)**
 
 Investo is a stock and crypto tracker that lives in two places at once: a Discord bot and this
 website, both reading and writing the same data. Add a ticker to your watchlist on the site and
@@ -37,7 +37,7 @@ Postgres) as the website and supports:
 - @ mention the bot with a question and it'll answer using an AI that pulls in live prices for
   whatever ticker you mention
 
-Invite it to your own server from the [About page](https://investo-web-tau.vercel.app/about) on
+Invite it to your own server from the [About page](https://investoweb.vercel.app/about) on
 the site.
 
 ## Stack
