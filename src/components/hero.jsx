@@ -75,14 +75,18 @@ export function Hero({ quotes, user }) {
         </motion.div>
 
         <div className="relative hidden lg:block">
-          {/* left/right are both set (no fixed width) so the browser sizes it to span the
-              overshoot on each side, tail starting well left of the card, head landing well
-              past its right edge, instead of being boxed in to the card's own footprint. */}
+          {/* left+right together were silently over-constrained (they summed past 100%,
+              so the browser wasn't resizing the box the way the math implied) and the
+              result came out far shorter than intended. Explicit width + right only,
+              left follows automatically, is the version that actually behaves predictably:
+              right stays anchored near the card (where the arrowhead should land), width
+              does all the "as long as possible" work by pushing the tail far to the left,
+              clipped safely by the hero's own overflow-hidden if it runs past the page edge. */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-14 -left-[90%] -right-[75%] -z-10 h-[140%] opacity-60"
+            className="absolute -top-40 -right-[65%] w-[440%] h-[165%] -z-10 opacity-60"
           >
             <TrendArrow className="w-full h-full" />
           </motion.div>
@@ -96,13 +100,15 @@ export function Hero({ quotes, user }) {
             <MockDashboardPreview quotes={quotes} />
           </motion.div>
 
-          {/* Rotation matches the card above (-3deg) on purpose, two overlapping rectangles
-              at DIFFERENT angles never fully cover each other at the corners no matter how
-              opaque either one is, that mismatch (not transparency) was what let the card's
-              corner poke out past this badge. Same angle, edges stay parallel, nothing leaks. */}
+          {/* Tilts the opposite way from the card on purpose (clockwise here vs. the card's
+              counterclockwise), that's what reads as "tucked under, tossed at an angle"
+              instead of just a smaller copy of the card sitting on top of it. This only
+              looks right now that the badge is solid-overlay (fully opaque): the two never
+              matching rotation was never really the bug, a translucent badge letting the
+              card's corner show through it was, and that's fixed at the source now. */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, rotate: -3 }}
-            animate={{ opacity: 1, scale: 1, rotate: -3, y: [0, -8, 0] }}
+            initial={{ opacity: 0, scale: 0.8, rotate: 8 }}
+            animate={{ opacity: 1, scale: 1, rotate: 6, y: [0, -8, 0] }}
             transition={{
               opacity: { duration: 0.6, delay: 0.7 },
               scale: { duration: 0.6, delay: 0.7 },

@@ -98,38 +98,6 @@ export default async function TickerPage({ params, searchParams }) {
             <WatchlistToggle ticker={ticker} isWatchlisted={watchlist.includes(ticker)} />
           </div>
 
-          {related.length > 0 && (
-            <Reveal className="mb-8">
-              <p className="font-mono text-xs uppercase tracking-widest text-text-muted font-semibold mb-3">
-                People Also Watch
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {related.map((r) => {
-                  const relUp = r.changePct >= 0;
-                  return (
-                    <Link
-                      key={r.ticker}
-                      href={`/ticker/${encodeURIComponent(r.ticker)}`}
-                      className="glass rounded-lg px-4 py-3 hover:border-discord transition-colors min-w-32"
-                    >
-                      <p className="font-mono text-sm font-semibold">{r.ticker}</p>
-                      <p className="text-xs text-text-muted truncate max-w-32">{r.name}</p>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-mono text-sm">${r.price.toFixed(2)}</span>
-                        {r.changePct != null && (
-                          <span className={`font-mono text-xs ${relUp ? "text-gain" : "text-loss"}`}>
-                            {relUp ? "+" : ""}
-                            {r.changePct.toFixed(2)}%
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </Reveal>
-          )}
-
           <Reveal>
             <div className="flex justify-end mb-3">
               <RangeSelector ticker={ticker} active={range} />
@@ -209,6 +177,38 @@ export default async function TickerPage({ params, searchParams }) {
                     <p className="text-xs text-text-muted">{article.source}</p>
                   </a>
                 ))}
+              </div>
+            </Reveal>
+          )}
+
+          {related.length > 0 && (
+            <Reveal delay={0.2} className="mt-12">
+              <p className="font-mono text-xs uppercase tracking-widest text-text-muted font-semibold mb-3">
+                People Also Watch
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {related.map((r) => {
+                  const relUp = r.changePct >= 0;
+                  return (
+                    <Link
+                      key={r.ticker}
+                      href={`/ticker/${encodeURIComponent(r.ticker)}`}
+                      className="glass rounded-lg px-4 py-3 hover:border-discord transition-colors min-w-32"
+                    >
+                      <p className="font-mono text-sm font-semibold">{r.ticker}</p>
+                      <p className="text-xs text-text-muted truncate max-w-32">{r.name}</p>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="font-mono text-sm">${r.price.toFixed(2)}</span>
+                        {r.changePct != null && (
+                          <span className={`font-mono text-xs ${relUp ? "text-gain" : "text-loss"}`}>
+                            {relUp ? "+" : ""}
+                            {r.changePct.toFixed(2)}%
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </Reveal>
           )}
