@@ -14,7 +14,7 @@ export function CommoditiesStrip({ commodities }) {
           return (
             <Link
               key={c.ticker}
-              href={`/ticker/${encodeURIComponent(c.ticker)}`}
+              href={`/commodities/${c.slug}`}
               className="glass rounded-lg px-5 py-3 hover:border-warm transition-colors min-w-36"
             >
               <p className="text-sm font-semibold">{c.label}</p>

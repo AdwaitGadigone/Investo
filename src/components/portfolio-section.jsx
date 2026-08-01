@@ -24,7 +24,16 @@ export function PortfolioSection({
     const cost = p.shares * p.cost_basis;
     totalValue += value;
     totalCost += cost;
-    return { ...p, price, value, pl: value - cost, plPct: cost ? ((value - cost) / cost) * 100 : 0 };
+    return {
+      ...p,
+      price,
+      value,
+      pl: value - cost,
+      plPct: cost ? ((value - cost) / cost) * 100 : 0,
+      // Today's move on the position, separate from the all-time P/L versus cost basis.
+      todayChangePct: quote?.changePct ?? null,
+      todayChange: quote?.change != null ? quote.change * p.shares : null,
+    };
   });
   const totalPl = totalValue - totalCost;
   const totalPlUp = totalPl >= 0;
@@ -70,7 +79,7 @@ export function PortfolioSection({
         <div className="flex items-center gap-2">
           <p className="font-display text-2xl font-bold tracking-tight">Your portfolio</p>
           {positions.length > 0 && (
-            <Tooltip text="Right side of each row: current value on top, profit/loss versus your average cost below" />
+            <Tooltip text="Price is per share right now, Today is just today's move, P/L is the total gain or loss versus your average cost" />
           )}
         </div>
         <div className="flex items-center gap-4">
@@ -112,12 +121,19 @@ export function PortfolioSection({
             const up = row.pl >= 0;
             const pctText = `${up ? "+" : ""}${row.plPct.toFixed(1)}%`;
             const dollarText = `${up ? "+" : ""}$${row.pl.toFixed(2)}`;
+            const todayUp = row.todayChangePct != null && row.todayChangePct >= 0;
+            const todayText =
+              row.todayChangePct != null
+                ? `${todayUp ? "+" : ""}${row.todayChangePct.toFixed(2)}%`
+                : "—";
+            const todayDollarText =
+              row.todayChange != null ? `${todayUp ? "+" : ""}$${row.todayChange.toFixed(2)}` : "";
             return (
               <Reveal key={row.ticker} delay={Math.min(i * 0.05, 0.3)}>
                 <div className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
                   <Link
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
+                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_100px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
                     <div className="min-w-0">
                       <p className="font-mono font-semibold">{row.ticker}</p>
@@ -127,6 +143,14 @@ export function PortfolioSection({
                     </div>
                     <div className="hidden sm:block">
                       <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
+                    </div>
+                    <div className="hidden sm:block text-right">
+                      <p className="font-mono text-sm">${row.price.toFixed(2)}</p>
+                      <p className="text-[10px] text-text-muted">price</p>
+                    </div>
+                    <div className="hidden sm:block text-right">
+                      <p className={`font-mono text-sm ${todayUp ? "text-gain" : "text-loss"}`}>{todayText}</p>
+                      <p className={`font-mono text-xs ${todayUp ? "text-gain" : "text-loss"}`}>{todayDollarText}</p>
                     </div>
                     <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
                     <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>

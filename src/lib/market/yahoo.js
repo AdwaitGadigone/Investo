@@ -1,17 +1,11 @@
 import "server-only";
 import YahooFinance from "yahoo-finance2";
+import { COMMODITIES } from "@/lib/market/commodities-config";
 
 // Closest JS match to the bot's yfinance calls, same underlying data source.
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
-// Yahoo's text search buries these behind unrelated companies, so they're surfaced directly.
-const COMMODITIES = [
-  { symbol: "GC=F", label: "Gold", unit: "oz" },
-  { symbol: "SI=F", label: "Silver", unit: "oz" },
-  { symbol: "CL=F", label: "Oil", unit: "barrel" },
-  { symbol: "NG=F", label: "Natural Gas", unit: "MMBtu" },
-];
-const unitBySymbol = Object.fromEntries(COMMODITIES.map((c) => [c.symbol, c.unit]));
+const unitBySymbol = Object.fromEntries(COMMODITIES.map((c) => [c.ticker, c.unit]));
 
 export async function getQuote(ticker) {
   try {
@@ -59,9 +53,9 @@ export async function getMarketSnapshot() {
 
 export async function getCommodities() {
   const results = await Promise.all(
-    COMMODITIES.map(async ({ symbol, label, unit }) => {
-      const quote = await getQuote(symbol);
-      return quote ? { ...quote, label, unit } : null;
+    COMMODITIES.map(async ({ slug, ticker, label, unit }) => {
+      const quote = await getQuote(ticker);
+      return quote ? { ...quote, slug, label, unit } : null;
     })
   );
   return results.filter((r) => r !== null);
