@@ -134,6 +134,49 @@ export async function getTopPerformers() {
   return ranked;
 }
 
+// Per-ticker (not per-user), since the same ticker across different watchlists shares history.
+const periodChangeCache = new Map();
+
+// Arbitrary user-picked tickers, unlike the fixed universe above, so this fetches separately.
+export async function getPeriodChanges(tickers) {
+  const nowTime = Date.now();
+  const entries = await Promise.all(
+    tickers.map(async (ticker) => {
+      const cached = periodChangeCache.get(ticker);
+      if (cached && nowTime - cached.time < CACHE_TTL) return [ticker, cached.changes];
+
+      try {
+        const result = await yf.chart(ticker, {
+          period1: new Date(nowTime - 5 * 365 * 24 * 60 * 60 * 1000),
+          interval: "1wk",
+        });
+        const points = result.quotes
+          .filter((q) => q.close != null)
+          .map((q) => ({ time: q.date.getTime(), value: q.close }));
+        const completed = points.filter((p) => nowTime - p.time > 6 * 24 * 60 * 60 * 1000);
+        if (completed.length < 2) return [ticker, null];
+
+        const latest = points[points.length - 1].value;
+        const changes = {};
+        for (const [key, days] of Object.entries(PERIOD_DAYS)) {
+          const past = closestPoint(completed, nowTime - days * 24 * 60 * 60 * 1000);
+          changes[key] = {
+            amount: past.value ? latest - past.value : 0,
+            pct: past.value ? ((latest - past.value) / past.value) * 100 : 0,
+          };
+        }
+
+        periodChangeCache.set(ticker, { changes, time: nowTime });
+        return [ticker, changes];
+      } catch {
+        return [ticker, null];
+      }
+    })
+  );
+
+  return Object.fromEntries(entries);
+}
+
 // Non-"day" periods reuse the ranked universe, there's no "week_gainers" screener to pull from.
 export async function getMarketMovers() {
   const [dayGainers, dayLosers, active, { valid }] = await Promise.all([

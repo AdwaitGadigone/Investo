@@ -24,7 +24,7 @@ export function DiscordSignInButton({ className = "" }) {
   return (
     <button onClick={handleSignIn} className={className}>
       <DiscordIcon />
-      Sign in with Discord
+      Sign in<span className="hidden sm:inline">&nbsp;with Discord</span>
     </button>
   );
 }

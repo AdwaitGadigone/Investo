@@ -7,8 +7,10 @@ import { Tooltip } from "@/components/tooltip";
 import { IconX } from "@/components/icons";
 import { removeWatchlistTicker } from "@/lib/actions/watchlist";
 
-export function WatchlistCard({ ticker, quote, history, index, large = false }) {
-  const up = quote?.changePct != null && quote.changePct >= 0;
+export function WatchlistCard({ ticker, quote, history, index, large = false, periodChange, periodLabel = "today" }) {
+  const pct = periodChange ? periodChange.pct : quote?.changePct;
+  const amount = periodChange ? periodChange.amount : quote?.change;
+  const up = pct != null && pct >= 0;
 
   return (
     <motion.div
@@ -43,14 +45,14 @@ export function WatchlistCard({ ticker, quote, history, index, large = false }) 
             ) : (
               <p className="font-mono text-sm text-text-muted">Price unavailable</p>
             )}
-            {quote?.changePct != null && (
+            {pct != null && (
               <div className="flex items-center gap-1.5 mt-1">
                 <span className={`font-mono text-xs ${up ? "text-gain" : "text-loss"}`}>
                   {up ? "+" : ""}
-                  {quote.changePct.toFixed(2)}%
-                  {quote.change != null && <> ({up ? "+" : ""}${quote.change.toFixed(2)})</>} today
+                  {pct.toFixed(2)}%
+                  {amount != null && <> ({up ? "+" : ""}${amount.toFixed(2)})</>} {periodLabel}
                 </span>
-                <Tooltip text="Change since yesterday's close, not the week or month" />
+                <Tooltip text={`Change over the selected time span (${periodLabel}), pick a different one above`} />
               </div>
             )}
           </div>

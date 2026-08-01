@@ -32,26 +32,31 @@ function MoverList({ title, rows }) {
       {rows.length === 0 ? (
         <p className="text-sm text-text-muted pt-3">Not enough data right now.</p>
       ) : (
-        <div className="flex flex-col divide-y divide-border overflow-x-auto">
+        <div className="flex flex-col divide-y divide-border">
           {rows.map((row) => {
             const up = row.changePct >= 0;
+            const pctText = `${up ? "+" : ""}${row.changePct.toFixed(2)}%`;
+            const dollarText = row.change != null ? `${up ? "+" : ""}$${row.change.toFixed(2)}` : "";
             return (
               <Link
                 key={row.ticker}
                 href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                className="grid grid-cols-[1fr_68px_60px_64px] items-center gap-2 py-2.5 min-w-[300px] hover:opacity-80 transition-opacity"
+                className="grid grid-cols-[1fr_58px_64px] sm:grid-cols-[1fr_68px_60px_64px] items-center gap-2 py-2.5 hover:opacity-80 transition-opacity"
               >
                 <div className="min-w-0">
                   <p className="font-mono font-semibold text-sm">{row.ticker}</p>
                   <p className="text-xs text-text-muted truncate">{row.name}</p>
                 </div>
-                <span className="font-mono text-sm text-right">${row.price.toFixed(2)}</span>
-                <span className={`font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
-                  {up ? "+" : ""}
-                  {row.changePct.toFixed(2)}%
+                <span className="font-mono text-xs sm:text-sm text-right">${row.price.toFixed(2)}</span>
+                <span className={`hidden sm:inline font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
+                  {pctText}
                 </span>
-                <span className={`font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
-                  {row.change != null ? `${up ? "+" : ""}$${row.change.toFixed(2)}` : ""}
+                <span className={`hidden sm:inline font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
+                  {dollarText}
+                </span>
+                <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
+                  {pctText}
+                  {dollarText && <><br />{dollarText}</>}
                 </span>
               </Link>
             );
@@ -71,12 +76,12 @@ export function MarketMovers({ data }) {
     <div className="mb-12">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         <p className="font-display text-2xl font-bold tracking-tight">Market movers</p>
-        <div className="inline-flex items-center gap-1 glass rounded-full p-1">
+        <div className="flex items-center gap-1 glass rounded-full p-1 max-w-full overflow-x-auto">
           {PERIODS.map((p) => (
             <button
               key={p.key}
               onClick={() => setPeriod(p.key)}
-              className="relative px-3.5 py-1.5 text-sm font-mono rounded-full"
+              className="relative shrink-0 px-2.5 sm:px-3.5 py-1.5 text-sm font-mono rounded-full"
             >
               {period === p.key && (
                 <motion.span

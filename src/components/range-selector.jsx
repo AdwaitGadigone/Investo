@@ -18,13 +18,13 @@ const RANGES = [
 // One sliding pill (Framer Motion layoutId) moves between buttons, not a highlight per button.
 export function RangeSelector({ ticker, active }) {
   return (
-    <div className="inline-flex items-center gap-1 glass rounded-full p-1">
+    <div className="flex items-center gap-1 glass rounded-full p-1 max-w-full overflow-x-auto">
       {RANGES.map((r) => (
         <Link
           key={r.key}
           href={`/ticker/${encodeURIComponent(ticker)}?range=${r.key}`}
           scroll={false}
-          className="relative px-3.5 py-1.5 text-sm font-mono rounded-full"
+          className="relative shrink-0 px-2.5 sm:px-3.5 py-1.5 text-sm font-mono rounded-full"
         >
           {active === r.key && (
             <motion.span

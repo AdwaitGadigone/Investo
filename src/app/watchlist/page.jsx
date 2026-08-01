@@ -2,11 +2,11 @@ import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getWatchlist } from "@/lib/data/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory } from "@/lib/market/yahoo";
-import { getMarketMovers } from "@/lib/market/discover";
+import { getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
 import { GUILD_ID } from "@/lib/config";
 import { AppNav } from "@/components/app-nav";
 import { GradientBlobs } from "@/components/gradient-blobs";
-import { WatchlistCard } from "@/components/watchlist-card";
+import { WatchlistGrid } from "@/components/watchlist-grid";
 import { MarketMovers } from "@/components/market-movers";
 import { addWatchlistTicker } from "@/lib/actions/watchlist";
 
@@ -14,11 +14,12 @@ export default async function WatchlistPage() {
   const { discordId } = await getDiscordUser();
   const tickers = await getWatchlist(GUILD_ID, discordId);
 
-  const [quotes, histories, marketMovers] = await Promise.all([
+  const [quotes, histories, marketMovers, periodChangesByTicker] = await Promise.all([
     getQuotes(tickers),
     // 3 months here, vs. the dashboard's 1-month glance, more detail is the point of this page.
     Promise.all(tickers.map((ticker) => getHistory(ticker, "3mo"))),
     getMarketMovers(),
+    getPeriodChanges(tickers),
   ]);
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
   const historyByTicker = Object.fromEntries(tickers.map((ticker, i) => [ticker, histories[i]]));
@@ -65,18 +66,12 @@ export default async function WatchlistPage() {
             <code className="font-mono text-warm">/watchlist add</code> in Discord.
           </p>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 mb-12">
-            {tickers.map((ticker, i) => (
-              <WatchlistCard
-                key={ticker}
-                ticker={ticker}
-                quote={quoteByTicker[ticker]}
-                history={historyByTicker[ticker]}
-                index={i}
-                large
-              />
-            ))}
-          </div>
+          <WatchlistGrid
+            tickers={tickers}
+            quoteByTicker={quoteByTicker}
+            historyByTicker={historyByTicker}
+            periodChangesByTicker={periodChangesByTicker}
+          />
         )}
 
         <MarketMovers data={marketMovers} />

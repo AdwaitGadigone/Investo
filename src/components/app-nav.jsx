@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/wordmark";
 import { SignOutButton } from "@/components/sign-out-button";
+import { MobileMenu } from "@/components/mobile-menu";
 import { BOT_INVITE_URL } from "@/lib/config";
 
 const LINKS = [
@@ -11,10 +12,13 @@ const LINKS = [
   { href: "/about", label: "About" },
 ];
 
+const MOBILE_LINKS = [...LINKS, { href: BOT_INVITE_URL, label: "Invite bot", external: true }];
+
 export function AppNav() {
   return (
-    <header className="glass-overlay sticky top-0 z-40 px-6 py-5 flex items-center justify-between">
-      <div className="flex items-center gap-10">
+    <header className="glass-overlay sticky top-0 z-40 px-6 py-5 flex items-center justify-between relative">
+      <div className="flex items-center gap-4 sm:gap-10">
+        <MobileMenu links={MOBILE_LINKS} />
         <Link href="/">
           <Wordmark className="text-xl" />
         </Link>

@@ -100,15 +100,17 @@ export function PortfolioSection({ positions, quotes, showViewAllLink = false, s
           </p>
         </div>
       ) : (
-        <div className="grid gap-3 overflow-x-auto">
+        <div className="grid gap-3">
           {rows.map((row, i) => {
             const up = row.pl >= 0;
+            const pctText = `${up ? "+" : ""}${row.plPct.toFixed(1)}%`;
+            const dollarText = `${up ? "+" : ""}$${row.pl.toFixed(2)}`;
             return (
               <Reveal key={row.ticker} delay={Math.min(i * 0.05, 0.3)}>
-                <div className="flex items-center glass rounded-lg pr-4 min-w-[520px] hover:border-discord transition-colors">
+                <div className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
                   <Link
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                    className="grid grid-cols-[1fr_100px_90px_100px] items-center gap-4 flex-1 px-5 py-4"
+                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
                     <div className="min-w-0">
                       <p className="font-mono font-semibold">{row.ticker}</p>
@@ -116,16 +118,20 @@ export function PortfolioSection({ positions, quotes, showViewAllLink = false, s
                         {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
                       </p>
                     </div>
-                    <span className="font-mono text-sm text-right">${row.value.toFixed(2)}</span>
-                    <span className={`font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
-                      {up ? "+" : ""}
-                      {row.plPct.toFixed(1)}%
+                    <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
+                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
+                      {pctText}
                     </span>
-                    <span className={`font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
-                      {up ? "+" : ""}${row.pl.toFixed(2)}
+                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
+                      {dollarText}
+                    </span>
+                    <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
+                      ${row.value.toFixed(2)}
+                      <br />
+                      {pctText}
                     </span>
                   </Link>
-                  <form action={removePositionAction} className="ml-2">
+                  <form action={removePositionAction} className="ml-1 sm:ml-2">
                     <input type="hidden" name="ticker" value={row.ticker} />
                     <button
                       type="submit"

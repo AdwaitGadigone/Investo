@@ -3,7 +3,7 @@ import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getWatchlist, getPortfolio, getActiveAlerts, isDigestEnabled } from "@/lib/data/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory, getMarketSnapshot, getCommodities } from "@/lib/market/yahoo";
-import { getTopPerformers, getMarketMovers } from "@/lib/market/discover";
+import { getTopPerformers, getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
 import { GUILD_ID } from "@/lib/config";
 import { AppNav } from "@/components/app-nav";
 import { SearchBar } from "@/components/search-bar";
@@ -37,9 +37,10 @@ export default async function DashboardPage() {
   const portfolioTickers = portfolio.map((p) => p.ticker);
   const allTickers = [...new Set([...watchlist, ...portfolioTickers])];
 
-  const [quotes, histories] = await Promise.all([
+  const [quotes, histories, periodChangesByTicker] = await Promise.all([
     getQuotes(allTickers),
     Promise.all(watchlist.map((ticker) => getHistory(ticker, "1mo"))),
+    getPeriodChanges(watchlist),
   ]);
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
   const historyByTicker = Object.fromEntries(watchlist.map((ticker, i) => [ticker, histories[i]]));
@@ -106,6 +107,7 @@ export default async function DashboardPage() {
                 tickers={watchlist}
                 quoteByTicker={quoteByTicker}
                 historyByTicker={historyByTicker}
+                periodChangesByTicker={periodChangesByTicker}
               />
             )}
           </div>
