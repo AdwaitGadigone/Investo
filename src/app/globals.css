@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/*
+  Design tokens. A generous warm gray instead of true black, with real color used
+  deliberately (Discord blurple for the sign-in CTA, since that's exactly what it is,
+  plus a small warm/cool pairing for variety elsewhere), not a single monotone accent.
+*/
+:root {
+  --bg: #18191c;
+  --surface: #212226;
+  --surface-2: #26272c;
+  --border: #33343a;
+  --text: #f2f2f0;
+  --text-muted: #9c9da3;
+
+  /* Discord's own brand blue, used for the sign-in button specifically, so it reads as
+     an instantly recognizable "connect to Discord" action rather than a generic CTA. */
+  --discord: #5865f2;
+  --discord-hover: #4752c4;
+
+  /* A warm coral used sparingly as a second accent, for tags/highlights, so the page
+     isn't a single-note palette. */
+  --warm: #ff8a5b;
+
+  /* A soft mint used just as sparingly as a third accent, paired with warm above for
+     variety across feature icons and small badges. */
+  --cool: #4ade9e;
+
+  /* Same green/red already validated for the Discord bot's charts, kept identical here so
+     "up" and "down" read the same across both products. */
+  --gain: #0ca30c;
+  --loss: #d03b3b;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface-2: #f0efec;
+    --border: #e2e0da;
+    --text: #1c1d20;
+    --text-muted: #6b6c72;
+    --discord-hover: #4752c4;
+  }
+}
+
+/* Tailwind v4 turns every --color-* token below into real utility classes, e.g.
+   --color-bg becomes usable as bg-bg, text-bg, border-bg, and so on. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-discord: var(--discord);
+  --color-discord-hover: var(--discord-hover);
+  --color-warm: var(--warm);
+  --color-cool: var(--cool);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
+
+  --font-sans: var(--font-instrument);
+  --font-display: var(--font-bricolage);
+  --font-mono: var(--font-ibm-plex-mono);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+}
+
+/* Raises the DEFAULT text weight for the entire site (labels, captions, body copy), not
+   just headings. Both loaded fonts are variable, so every weight is available, this was
+   never rendering at 400 (regular) on purpose, it just never got told to be anything else,
+   which read as thin/skinny especially for small muted labels. font-bold/semibold/medium
+   utilities still override this wherever they're already used. */
+body {
+  position: relative;
+  font-weight: 500;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+  The "liquid glass" surface used across cards, nav bars, and pills. True Apple Liquid
+  Glass relies on an SVG feDisplacementMap layered under backdrop-filter for actual light
+  refraction, that combination currently only renders in Chromium (Safari and Firefox
+  ignore it entirely), which would make the whole site look broken for a big chunk of
+  visitors. This is the blur+saturate+highlight approximation real production sites ship
+  instead, it works identically everywhere and reads as "frosted glass" just as well
+  without a compositor-breaking dependency. Needs real color behind it (the gradient
+  blobs) to actually look like glass, over a flat background it's just a blur.
+*/
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-color-scheme: light) {
+  .glass {
+    background: rgba(255, 255, 255, 0.55);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      0 8px 30px rgba(0, 0, 0, 0.07);
+  }
+}
+
+/*
+  A second, much more opaque glass for anything that FLOATS OVER other text: the sticky
+  nav bar, the search dropdown, tooltips. The lighter .glass above is fine for cards sitting
+  in the normal page flow, but a translucent dropdown sitting directly on top of a page full
+  of text let that text bleed through as blurry-but-still-legible ghosting, especially while
+  scrolling or typing, it read as the page visually breaking, not a design choice. This uses
+  the real page background color at high opacity instead of a white tint, so it actually
+  hides what's underneath while still looking frosted rather than like a flat solid card.
+*/
+.glass-overlay {
+  /* Plain rgba, not color-mix(), that function wasn't actually rendering the intended
+     opacity through this build pipeline, silently leaving the element nearly see-through,
+     which was the real cause of the "text bleeding through while scrolling/typing" bug.
+     rgb(24,25,28) is this theme's --bg (#18191c) written out literally since a var()
+     can't be used inside a plain rgba() the way it could inside color-mix(). */
+  background: rgba(24, 25, 28, 0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  .glass-overlay {
+    /* rgb(247,246,243) is this theme's --bg (#f7f6f3). */
+    background: rgba(247, 246, 243, 0.9);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      0 8px 30px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/*
+  Same idea as .glass-overlay but with alpha 1 and no backdrop-filter at all, used only
+  for the search/ticker typeahead dropdowns. Those get retyped into on every keystroke,
+  and repeated reports of text visibly showing through them specifically (never the
+  equally-.glass-overlay static header, which sits still) point at something about
+  backdrop-filter compositing under rapid re-render, not the background alpha itself,
+  which was independently verified correct. Dropping the blur removes that variable
+  entirely: a flat, fully opaque panel can't let anything show through, full stop.
+*/
+.solid-overlay {
+  background: rgb(24, 25, 28);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  .solid-overlay {
+    background: rgb(247, 246, 243);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      0 8px 30px rgba(0, 0, 0, 0.1);
+  }
+}
