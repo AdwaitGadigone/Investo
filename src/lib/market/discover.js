@@ -52,7 +52,13 @@ function closestPoint(points, targetTime) {
   );
 }
 
-const PERIOD_DAYS = { week: 7, month: 30, threeMonth: 90, year: 365, fiveYear: 365 * 5 };
+// ytd varies by call date (days since Jan 1), so this is a function, not a static object.
+function getPeriodDays() {
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  const ytd = Math.max(1, Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000)));
+  return { week: 7, month: 30, threeMonth: 90, ytd, year: 365, fiveYear: 365 * 5 };
+}
 
 async function getRankedUniverse() {
   if (cache && Date.now() - cacheTime < CACHE_TTL) return cache;
@@ -76,7 +82,7 @@ async function getRankedUniverse() {
         if (completed.length < 2) return null;
 
         const changes = {};
-        for (const [key, days] of Object.entries(PERIOD_DAYS)) {
+        for (const [key, days] of Object.entries(getPeriodDays())) {
           const past = closestPoint(completed, nowTime - days * 24 * 60 * 60 * 1000);
           changes[key] = {
             amount: past.value ? price - past.value : 0,
@@ -117,7 +123,7 @@ export async function getTopPerformers() {
       history: sparklineByTicker[u.ticker] ?? null,
     }));
 
-  for (const period of Object.keys(PERIOD_DAYS)) {
+  for (const period of Object.keys(getPeriodDays())) {
     ranked[period] = [...valid]
       .sort((a, b) => b.changes[period].pct - a.changes[period].pct)
       .slice(0, 5)
@@ -158,7 +164,7 @@ export async function getPeriodChanges(tickers) {
 
         const latest = points[points.length - 1].value;
         const changes = {};
-        for (const [key, days] of Object.entries(PERIOD_DAYS)) {
+        for (const [key, days] of Object.entries(getPeriodDays())) {
           const past = closestPoint(completed, nowTime - days * 24 * 60 * 60 * 1000);
           changes[key] = {
             amount: past.value ? latest - past.value : 0,
@@ -188,7 +194,7 @@ export async function getMarketMovers() {
 
   const movers = { day: { gainers: dayGainers, losers: dayLosers, active } };
 
-  for (const period of Object.keys(PERIOD_DAYS)) {
+  for (const period of Object.keys(getPeriodDays())) {
     const sorted = [...valid].sort((a, b) => b.changes[period].pct - a.changes[period].pct);
     const toRow = (r) => ({
       ticker: r.ticker,

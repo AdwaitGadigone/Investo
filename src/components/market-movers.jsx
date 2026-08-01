@@ -11,6 +11,7 @@ const PERIODS = [
   { key: "week", label: "Week" },
   { key: "month", label: "Month" },
   { key: "threeMonth", label: "3M" },
+  { key: "ytd", label: "YTD" },
   { key: "year", label: "Year" },
   { key: "fiveYear", label: "5Y" },
 ];

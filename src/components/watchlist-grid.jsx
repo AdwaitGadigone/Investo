@@ -9,6 +9,7 @@ const PERIODS = [
   { key: "week", label: "Week" },
   { key: "month", label: "Month" },
   { key: "threeMonth", label: "3M" },
+  { key: "ytd", label: "YTD" },
   { key: "year", label: "Year" },
   { key: "fiveYear", label: "5Y" },
 ];
@@ -18,6 +19,7 @@ const PERIOD_TEXT = {
   week: "this week",
   month: "this month",
   threeMonth: "over 3 months",
+  ytd: "year to date",
   year: "this year",
   fiveYear: "over 5 years",
 };

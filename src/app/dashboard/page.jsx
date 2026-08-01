@@ -36,12 +36,14 @@ export default async function DashboardPage() {
 
   const portfolioTickers = portfolio.map((p) => p.ticker);
   const allTickers = [...new Set([...watchlist, ...portfolioTickers])];
+  const commodityTickers = commodities.map((c) => c.ticker);
 
-  const [quotes, histories, portfolioHistories, periodChangesByTicker] = await Promise.all([
+  const [quotes, histories, portfolioHistories, periodChangesByTicker, commodityPeriodChanges] = await Promise.all([
     getQuotes(allTickers),
     Promise.all(watchlist.map((ticker) => getHistory(ticker, "1mo"))),
     Promise.all(portfolioTickers.map((ticker) => getHistory(ticker, "1mo"))),
     getPeriodChanges(watchlist),
+    getPeriodChanges(commodityTickers),
   ]);
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
   const historyByTicker = Object.fromEntries(watchlist.map((ticker, i) => [ticker, histories[i]]));
@@ -127,7 +129,7 @@ export default async function DashboardPage() {
 
         <SuggestedStocks exclude={watchlist} />
 
-        <CommoditiesStrip commodities={commodities} />
+        <CommoditiesStrip commodities={commodities} periodChangesByTicker={commodityPeriodChanges} />
 
         <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted border-t border-border pt-6">
           <span>
