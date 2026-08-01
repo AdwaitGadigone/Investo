@@ -87,7 +87,7 @@ export function Hero({ quotes, user }) {
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-36 right-[135px] w-[1190px] h-[311px] -z-10 opacity-60"
+            className="absolute -top-36 right-[135px] w-[1000px] h-[511px] -z-10 opacity-60"
           >
             <TrendArrow className="w-full h-full" />
           </motion.div>
