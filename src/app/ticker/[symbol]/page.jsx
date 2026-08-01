@@ -77,6 +77,7 @@ export default async function TickerPage({ params, searchParams }) {
                 <span className="font-mono text-3xl">
                   {quote.currency && quote.currency !== "USD" ? `${quote.currency} ` : "$"}
                   {quote.price.toFixed(2)}
+                  {quote.unit && <span className="text-lg text-text-muted"> /{quote.unit}</span>}
                 </span>
               </div>
               {quote.currency && quote.currency !== "USD" && (

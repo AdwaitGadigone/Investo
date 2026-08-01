@@ -4,6 +4,15 @@ import YahooFinance from "yahoo-finance2";
 // Closest JS match to the bot's yfinance calls, same underlying data source.
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
+// Yahoo's text search buries these behind unrelated companies, so they're surfaced directly.
+const COMMODITIES = [
+  { symbol: "GC=F", label: "Gold", unit: "oz" },
+  { symbol: "SI=F", label: "Silver", unit: "oz" },
+  { symbol: "CL=F", label: "Oil", unit: "barrel" },
+  { symbol: "NG=F", label: "Natural Gas", unit: "MMBtu" },
+];
+const unitBySymbol = Object.fromEntries(COMMODITIES.map((c) => [c.symbol, c.unit]));
+
 export async function getQuote(ticker) {
   try {
     const q = await yf.quote(ticker);
@@ -24,6 +33,8 @@ export async function getQuote(ticker) {
       // Lets the ticker page show "Toronto . CAD" instead of assuming USD.
       currency: q.currency,
       exchange: q.fullExchangeName || q.exchange || null,
+      // "per ounce"/"per barrel", only set for the 4 commodity futures above.
+      unit: unitBySymbol[q.symbol] ?? null,
     };
   } catch {
     return null;
@@ -45,14 +56,6 @@ export async function getMarketSnapshot() {
   );
   return results.filter((r) => r !== null);
 }
-
-// Yahoo's text search buries these behind unrelated companies, so they're surfaced directly.
-const COMMODITIES = [
-  { symbol: "GC=F", label: "Gold", unit: "oz" },
-  { symbol: "SI=F", label: "Silver", unit: "oz" },
-  { symbol: "CL=F", label: "Oil", unit: "barrel" },
-  { symbol: "NG=F", label: "Natural Gas", unit: "MMBtu" },
-];
 
 export async function getCommodities() {
   const results = await Promise.all(

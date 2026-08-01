@@ -25,6 +25,7 @@ export function CommoditiesStrip({ commodities }) {
                   {c.changePct.toFixed(2)}%
                 </span>
               </div>
+              {c.unit && <p className="text-xs text-text-muted mt-0.5">per {c.unit}</p>}
             </Link>
           );
         })}
