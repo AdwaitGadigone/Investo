@@ -32,31 +32,27 @@ function MoverList({ title, rows }) {
       {rows.length === 0 ? (
         <p className="text-sm text-text-muted pt-3">Not enough data right now.</p>
       ) : (
-        <div className="flex flex-col divide-y divide-border">
+        <div className="flex flex-col divide-y divide-border overflow-x-auto">
           {rows.map((row) => {
             const up = row.changePct >= 0;
             return (
               <Link
                 key={row.ticker}
                 href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                className="flex items-center justify-between py-2.5 hover:opacity-80 transition-opacity"
+                className="grid grid-cols-[1fr_68px_60px_64px] items-center gap-2 py-2.5 min-w-[300px] hover:opacity-80 transition-opacity"
               >
                 <div className="min-w-0">
                   <p className="font-mono font-semibold text-sm">{row.ticker}</p>
                   <p className="text-xs text-text-muted truncate">{row.name}</p>
                 </div>
-                <div className="text-right flex-shrink-0 ml-3">
-                  <p className="font-mono text-sm">${row.price.toFixed(2)}</p>
-                  <p className={`font-mono text-xs ${up ? "text-gain" : "text-loss"}`}>
-                    {up ? "+" : ""}
-                    {row.changePct.toFixed(2)}%
-                  </p>
-                  {row.change != null && (
-                    <p className={`font-mono text-xs ${up ? "text-gain" : "text-loss"}`}>
-                      {up ? "+" : ""}${row.change.toFixed(2)}
-                    </p>
-                  )}
-                </div>
+                <span className="font-mono text-sm text-right">${row.price.toFixed(2)}</span>
+                <span className={`font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
+                  {up ? "+" : ""}
+                  {row.changePct.toFixed(2)}%
+                </span>
+                <span className={`font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
+                  {row.change != null ? `${up ? "+" : ""}$${row.change.toFixed(2)}` : ""}
+                </span>
               </Link>
             );
           })}
