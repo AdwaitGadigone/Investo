@@ -15,6 +15,7 @@ const fadeUp = {
 export function Hero({ quotes, user }) {
   return (
     <main className="relative flex-1 overflow-hidden px-6 md:px-12 lg:px-16 py-16 lg:py-24">
+      <div aria-hidden className="hero-photo absolute inset-0 -z-20" />
       <GradientBlobs />
 
       <div className="grid lg:grid-cols-[1.3fr_1fr] gap-16 items-center">

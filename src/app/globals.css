@@ -149,3 +149,20 @@ body::before {
       0 8px 30px rgba(0, 0, 0, 0.1);
   }
 }
+
+/* Feathered mask, not a hard rectangle: reads as an ambient photo, not a pasted-in image. */
+.hero-photo {
+  background-image: url("/hero-bg.jpg");
+  background-size: cover;
+  background-position: center 65%;
+  opacity: 0.22;
+  mask-image: radial-gradient(ellipse 75% 65% at 60% 35%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 60% 35%, black 0%, transparent 100%);
+}
+
+@media (prefers-color-scheme: light) {
+  /* Light --bg is near-white, so the same photo needs less opacity to stay faint, not muddy. */
+  .hero-photo {
+    opacity: 0.14;
+  }
+}
