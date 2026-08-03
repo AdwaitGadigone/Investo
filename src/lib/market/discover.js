@@ -1,5 +1,6 @@
 import "server-only";
 import YahooFinance from "yahoo-finance2";
+import { getHistory } from "@/lib/market/yahoo";
 
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
@@ -44,7 +45,13 @@ async function getScreenerByMarketCap(scrId, count = 40, limit = 5) {
 // Shared cache: 5 years of history for 25 tickers is expensive, an hour stale is fine.
 let cache = null;
 let cacheTime = 0;
+// Tracks the fetch itself, not just the result, so two callers in the same request don't both trigger it.
+let inFlight = null;
 const CACHE_TTL = 60 * 60 * 1000;
+// Day-specific screener data refreshes more often than the 5-year history above, but still shouldn't refetch on every page view.
+const DAY_CACHE_TTL = 5 * 60 * 1000;
+let dayCache = null;
+let dayCacheTime = 0;
 
 function closestPoint(points, targetTime) {
   return points.reduce((best, p) =>
@@ -62,46 +69,58 @@ function getPeriodDays() {
 
 async function getRankedUniverse() {
   if (cache && Date.now() - cacheTime < CACHE_TTL) return cache;
+  if (inFlight) return inFlight;
 
-  const universe = await getMostActive(25);
-  const nowTime = Date.now();
+  inFlight = (async () => {
+    const universe = await getMostActive(25);
+    const nowTime = Date.now();
 
-  const results = await Promise.all(
-    universe.map(async ({ ticker, name, price }) => {
-      try {
-        const result = await yf.chart(ticker, {
-          period1: new Date(nowTime - 5 * 365 * 24 * 60 * 60 * 1000),
-          interval: "1wk",
-        });
-        const points = result.quotes
-          .filter((q) => q.close != null)
-          .map((q) => ({ time: q.date.getTime(), value: q.close }));
+    const results = await Promise.all(
+      universe.map(async ({ ticker, name, price }) => {
+        try {
+          const result = await yf.chart(ticker, {
+            period1: new Date(nowTime - 5 * 365 * 24 * 60 * 60 * 1000),
+            interval: "1wk",
+          });
+          const points = result.quotes
+            .filter((q) => q.close != null)
+            .map((q) => ({ time: q.date.getTime(), value: q.close }));
 
-        // Drop bars under 6 days old, Yahoo's newest weekly bar is just today's live price.
-        const completed = points.filter((p) => nowTime - p.time > 6 * 24 * 60 * 60 * 1000);
-        if (completed.length < 2) return null;
+          // Drop bars under 6 days old, Yahoo's newest weekly bar is just today's live price.
+          const completed = points.filter((p) => nowTime - p.time > 6 * 24 * 60 * 60 * 1000);
+          if (completed.length < 2) return null;
 
-        const changes = {};
-        for (const [key, days] of Object.entries(getPeriodDays())) {
-          const past = closestPoint(completed, nowTime - days * 24 * 60 * 60 * 1000);
-          changes[key] = {
-            amount: past.value ? price - past.value : 0,
-            pct: past.value ? ((price - past.value) / past.value) * 100 : 0,
-          };
+          const changes = {};
+          for (const [key, days] of Object.entries(getPeriodDays())) {
+            const past = closestPoint(completed, nowTime - days * 24 * 60 * 60 * 1000);
+            changes[key] = {
+              amount: past.value ? price - past.value : 0,
+              pct: past.value ? ((price - past.value) / past.value) * 100 : 0,
+            };
+          }
+
+          // Reuses the same weekly history as a sparkline, no second fetch needed.
+          return { ticker, name, price, changes, sparkline: completed.slice(-12) };
+        } catch {
+          return null;
         }
+      })
+    );
 
-        // Reuses the same weekly history as a sparkline, no second fetch needed.
-        return { ticker, name, price, changes, sparkline: completed.slice(-12) };
-      } catch {
-        return null;
-      }
-    })
-  );
+    const valid = results.filter((r) => r !== null);
+    cache = { universe, valid };
+    cacheTime = Date.now();
+    inFlight = null;
+    return cache;
+  })();
 
-  const valid = results.filter((r) => r !== null);
-  cache = { universe, valid };
-  cacheTime = Date.now();
-  return cache;
+  return inFlight;
+}
+
+// Lets suggested-stocks.jsx reuse this same cached fetch instead of hitting the screener again on its own.
+export async function getPopularTickers() {
+  const { universe } = await getRankedUniverse();
+  return universe;
 }
 
 // "day" skips the history fetch, the screener already gives today's change directly.
@@ -172,6 +191,10 @@ export async function getPeriodChanges(tickers) {
           };
         }
 
+        // Prunes expired entries on write instead of a separate cleanup task, keeps this map from growing forever.
+        for (const [key, value] of periodChangeCache) {
+          if (nowTime - value.time >= CACHE_TTL) periodChangeCache.delete(key);
+        }
         periodChangeCache.set(ticker, { changes, time: nowTime });
         return [ticker, changes];
       } catch {
@@ -183,16 +206,36 @@ export async function getPeriodChanges(tickers) {
   return Object.fromEntries(entries);
 }
 
-// Non-"day" periods reuse the ranked universe, there's no "week_gainers" screener to pull from.
-export async function getMarketMovers() {
-  const [dayGainers, dayLosers, active, { valid }] = await Promise.all([
+async function getDayMovers(universe) {
+  if (dayCache && Date.now() - dayCacheTime < DAY_CACHE_TTL) return dayCache;
+
+  const [dayGainers, dayLosers] = await Promise.all([
     getScreenerByMarketCap("day_gainers"),
     getScreenerByMarketCap("day_losers"),
-    getMostActive(25).then((rows) => rows.slice(0, 5)),
-    getRankedUniverse(),
   ]);
+  // Already fetched as part of the ranked universe above, no separate "most active" call needed.
+  const active = universe.slice(0, 5);
 
-  const movers = { day: { gainers: dayGainers, losers: dayLosers, active } };
+  // These screener tickers aren't necessarily in the cached ranked universe, so their sparklines need a real fetch.
+  const dayTickers = [...dayGainers, ...dayLosers, ...active].map((r) => r.ticker);
+  const dayHistories = await Promise.all(dayTickers.map((ticker) => getHistory(ticker, "1mo")));
+  const dayHistoryByTicker = Object.fromEntries(dayTickers.map((t, i) => [t, dayHistories[i]]));
+  const withDayHistory = (r) => ({ ...r, history: dayHistoryByTicker[r.ticker] ?? null });
+
+  dayCache = {
+    gainers: dayGainers.map(withDayHistory),
+    losers: dayLosers.map(withDayHistory),
+    active: active.map(withDayHistory),
+  };
+  dayCacheTime = Date.now();
+  return dayCache;
+}
+
+// Non-"day" periods reuse the ranked universe, there's no "week_gainers" screener to pull from.
+export async function getMarketMovers() {
+  const { universe, valid } = await getRankedUniverse();
+  const movers = { day: await getDayMovers(universe) };
+  const active = movers.day.active;
 
   for (const period of Object.keys(getPeriodDays())) {
     const sorted = [...valid].sort((a, b) => b.changes[period].pct - a.changes[period].pct);
@@ -202,6 +245,7 @@ export async function getMarketMovers() {
       price: r.price,
       change: r.changes[period].amount,
       changePct: r.changes[period].pct,
+      history: r.sparkline,
     });
     movers[period] = {
       gainers: sorted.slice(0, 5).map(toRow),

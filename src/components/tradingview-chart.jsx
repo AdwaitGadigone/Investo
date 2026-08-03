@@ -44,5 +44,5 @@ export function TradingViewChart({ symbol }) {
     };
   }, [symbol, elementId]);
 
-  return <div ref={containerRef} className="w-full" style={{ height: 460 }} />;
+  return <div ref={containerRef} className="w-full h-[320px] sm:h-[460px]" />;
 }

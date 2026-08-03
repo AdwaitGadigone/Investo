@@ -1,15 +1,16 @@
 import { addWatchlistTicker } from "@/lib/actions/watchlist";
-import { getMostActive } from "@/lib/market/discover";
+import { getPopularTickers } from "@/lib/market/discover";
+import { Reveal } from "@/components/reveal";
 import { IconPlus } from "@/components/icons";
 
-// Real "most actively traded" data, not a hand-picked list, so this never runs dry.
+// Reuses the same cached "most actively traded" fetch the dashboard's other panels already made, not a separate one.
 export async function SuggestedStocks({ exclude }) {
-  const active = await getMostActive(25);
+  const active = await getPopularTickers();
   const suggestions = active.filter((s) => !exclude.includes(s.ticker)).slice(0, 12);
   if (suggestions.length === 0) return null;
 
   return (
-    <div className="mb-12">
+    <Reveal className="mb-12">
       <p className="font-display text-2xl font-bold tracking-tight mb-5">Popular right now</p>
       <div className="flex flex-wrap gap-3">
         {suggestions.map((s) => (
@@ -26,6 +27,6 @@ export async function SuggestedStocks({ exclude }) {
           </form>
         ))}
       </div>
-    </div>
+    </Reveal>
   );
 }

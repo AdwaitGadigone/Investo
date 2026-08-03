@@ -53,7 +53,7 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
           <span className="text-[10px] uppercase tracking-wide text-text-muted text-right col-span-2">Change</span>
           <span />
         </div>
-        {tickers.map((ticker) => {
+        {tickers.map((ticker, i) => {
           const quote = quoteByTicker[ticker];
           const periodChange = period === "day" ? null : periodChangesByTicker?.[ticker]?.[period];
           const pct = period === "day" ? quote?.changePct : periodChange?.pct;
@@ -65,7 +65,8 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
           return (
             <div
               key={ticker}
-              className="grid grid-cols-[1fr_66px_78px_20px] sm:grid-cols-[60px_1fr_80px_84px_84px_24px] items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-white/[0.03] transition-colors"
+              style={{ animationDelay: `${Math.min(i * 0.04, 0.3)}s` }}
+              className="row-fade-in grid grid-cols-[1fr_66px_78px_20px] sm:grid-cols-[60px_1fr_80px_84px_84px_24px] items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-white/[0.03] transition-colors"
             >
               <Link href={`/ticker/${encodeURIComponent(ticker)}`} className="contents">
                 <span className="font-mono font-semibold text-sm truncate">{ticker}</span>

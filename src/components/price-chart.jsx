@@ -11,13 +11,13 @@ export function PriceChart({ data, up }) {
     if (!containerRef.current || data.length === 0) return;
 
     const chart = createChart(containerRef.current, {
+      // attributionLogo is left at its default (visible) since the library's license requires it.
       layout: {
         background: { color: "transparent" },
         // No font-weight option exists, high contrast + bigger size is the closest to "bold".
         textColor: "#f2f2f0",
         fontSize: 13,
         fontFamily: "'IBM Plex Mono', monospace",
-        // License requires attribution: this built-in logo covers it, so the footer doesn't need one.
       },
       grid: {
         vertLines: { visible: false },

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
+import { Sparkline } from "@/components/sparkline";
 
 const PERIODS = [
   { key: "day", label: "Day" },
@@ -35,7 +36,8 @@ function MoverList({ title, rows }) {
       ) : (
         <div className="flex flex-col divide-y divide-border">
           {/* One header row, not a caption per number per row, so it reads as a table. */}
-          <div className="hidden sm:grid grid-cols-[1fr_68px_60px_64px] gap-2 pb-1.5">
+          <div className="hidden sm:grid grid-cols-[1fr_50px_64px_58px_62px] gap-2 pb-1.5">
+            <span />
             <span />
             <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
             <span className="text-[10px] uppercase tracking-wide text-text-muted text-right col-span-2">Change</span>
@@ -48,11 +50,14 @@ function MoverList({ title, rows }) {
               <Link
                 key={row.ticker}
                 href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                className="grid grid-cols-[1fr_58px_64px] sm:grid-cols-[1fr_68px_60px_64px] items-center gap-2 py-2.5 hover:opacity-80 transition-opacity"
+                className="grid grid-cols-[1fr_58px_64px] sm:grid-cols-[1fr_50px_64px_58px_62px] items-center gap-2 py-2.5 hover:opacity-80 transition-opacity"
               >
                 <div className="min-w-0">
                   <p className="font-mono font-semibold text-sm">{row.ticker}</p>
                   <p className="text-xs text-text-muted truncate">{row.name}</p>
+                </div>
+                <div className="hidden sm:block">
+                  <Sparkline points={row.history} up={up} width={50} height={22} />
                 </div>
                 <span className="font-mono text-xs sm:text-sm text-right">${row.price.toFixed(2)}</span>
                 <span className={`hidden sm:inline font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>

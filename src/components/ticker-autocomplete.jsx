@@ -62,7 +62,7 @@ export function TickerAutocomplete({ name = "ticker", placeholder = "Ticker", cl
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-30 mt-2 w-full min-w-64 solid-overlay rounded-lg overflow-hidden"
+            className="absolute z-30 mt-2 w-full min-w-64 max-w-[calc(100vw-2rem)] solid-overlay rounded-lg overflow-hidden"
           >
             {results.map((r) => (
               <button

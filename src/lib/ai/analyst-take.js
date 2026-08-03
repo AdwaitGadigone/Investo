@@ -47,13 +47,13 @@ function buildPrompt(ticker, name, quote, trends, news) {
   return lines.join("\n");
 }
 
-// Caches the take per ticker so a re-visited page costs zero extra Gemini calls.
-const takeCache = new Map(); // ticker -> { text, expires }
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+// Caches the take per ticker (text + expiry) so a re-visited page costs zero extra Gemini calls, expires hourly.
+const takeCache = new Map();
+const CACHE_TTL = 60 * 60 * 1000;
 
-// Backstop against burning through the free tier's quota, whether by accident or abuse.
+// Backstop against burning through the free tier's quota (10 calls/min across everyone), whether by accident or abuse.
 const RATE_LIMIT = 10;
-const RATE_WINDOW = 60 * 1000; // 10 calls per minute, across everyone using the site
+const RATE_WINDOW = 60 * 1000;
 let callTimestamps = [];
 
 function isRateLimited() {
@@ -83,7 +83,13 @@ export async function generateAnalystTake(ticker, name, quote, trends, news) {
       },
     });
     const text = response.text?.trim() || null;
-    if (text) takeCache.set(ticker, { text, expires: Date.now() + CACHE_TTL });
+    if (text) {
+      // Prunes expired entries on write instead of a separate cleanup task, keeps this map from growing forever.
+      for (const [key, value] of takeCache) {
+        if (Date.now() >= value.expires) takeCache.delete(key);
+      }
+      takeCache.set(ticker, { text, expires: Date.now() + CACHE_TTL });
+    }
     return text;
   } catch {
     // The rest of the ticker page should still work fine, just skip this one section.

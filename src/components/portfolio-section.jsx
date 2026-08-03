@@ -41,7 +41,7 @@ export function PortfolioSection({
   return (
     <div className="mb-12">
       {showBuyForm && (
-        <div className="mb-8">
+        <Reveal className="mb-8">
           <p className="font-display text-xl font-bold tracking-tight mb-3">Add to portfolio</p>
           <form action={buyPositionAction} className="flex flex-wrap gap-3 glass rounded-lg p-4">
             <TickerAutocomplete
@@ -72,10 +72,10 @@ export function PortfolioSection({
               Log buy
             </button>
           </form>
-        </div>
+        </Reveal>
       )}
 
-      <div className="flex items-center justify-between mb-5">
+      <Reveal className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
           <p className="font-display text-2xl font-bold tracking-tight">Your portfolio</p>
           {positions.length > 0 && (
@@ -99,7 +99,7 @@ export function PortfolioSection({
             </Link>
           )}
         </div>
-      </div>
+      </Reveal>
 
       {positions.length === 0 ? (
         <div className="border border-dashed border-border rounded-lg p-8 text-center">
@@ -120,15 +120,19 @@ export function PortfolioSection({
         </div>
       ) : (
         <div className="grid gap-3">
-          {/* One header row instead of a caption under every number in every row, so it reads as a table, not clutter. */}
-          <div className="hidden sm:grid grid-cols-[1fr_70px_90px_100px_100px_90px_100px] gap-4 px-5">
-            <span />
-            <span />
-            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
-            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today</span>
-            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Value</span>
-            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L %</span>
-            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L $</span>
+          {/* Mirrors the row's exact structure (same outer padding + trailing button-width spacer) so columns actually line up. */}
+          <div className="hidden sm:flex items-center pr-2 sm:pr-4">
+            <div className="grid grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5">
+              <span />
+              <span />
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today %</span>
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today $</span>
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Value</span>
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L %</span>
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L $</span>
+            </div>
+            <div className="w-7 ml-1 sm:ml-2" />
           </div>
           {rows.map((row, i) => {
             const up = row.pl >= 0;
@@ -146,7 +150,7 @@ export function PortfolioSection({
                 <div className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
                   <Link
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_100px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
+                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
                     <div className="min-w-0">
                       <p className="font-mono font-semibold">{row.ticker}</p>
@@ -157,13 +161,13 @@ export function PortfolioSection({
                     <div className="hidden sm:block">
                       <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
                     </div>
-                    <div className="hidden sm:block text-right">
-                      <p className="font-mono text-sm">${row.price.toFixed(2)}</p>
-                    </div>
-                    <div className="hidden sm:block text-right">
-                      <p className={`font-mono text-sm ${todayUp ? "text-gain" : "text-loss"}`}>{todayText}</p>
-                      <p className={`font-mono text-xs ${todayUp ? "text-gain" : "text-loss"}`}>{todayDollarText}</p>
-                    </div>
+                    <span className="hidden sm:inline font-mono text-sm text-right">${row.price.toFixed(2)}</span>
+                    <span className={`hidden sm:inline font-mono text-sm text-right ${todayUp ? "text-gain" : "text-loss"}`}>
+                      {todayText}
+                    </span>
+                    <span className={`hidden sm:inline font-mono text-sm text-right ${todayUp ? "text-gain" : "text-loss"}`}>
+                      {todayDollarText || "—"}
+                    </span>
                     <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
                     <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
                       {pctText}

@@ -56,7 +56,9 @@ export function WatchlistCard({ ticker, quote, history, index, large = false, pe
               </div>
             )}
           </div>
-          <Sparkline points={history} up={up} width={large ? 170 : 110} height={large ? 50 : 32} />
+          <div className="hidden sm:block">
+            <Sparkline points={history} up={up} width={large ? 170 : 110} height={large ? 50 : 32} />
+          </div>
         </div>
       </Link>
     </motion.div>

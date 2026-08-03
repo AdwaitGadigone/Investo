@@ -156,9 +156,11 @@ export default async function TickerPage({ params, searchParams }) {
           </Reveal>
 
           {/* Suspense streams this in separately since the Gemini call is slow. */}
-          <Suspense fallback={<AnalystConsensusSkeleton />}>
-            <AnalystConsensus ticker={ticker} quote={quote} trends={trends} news={news} />
-          </Suspense>
+          <Reveal delay={0.1}>
+            <Suspense fallback={<AnalystConsensusSkeleton />}>
+              <AnalystConsensus ticker={ticker} quote={quote} trends={trends} news={news} />
+            </Suspense>
+          </Reveal>
 
           {news.length > 0 && (
             <Reveal delay={0.15}>

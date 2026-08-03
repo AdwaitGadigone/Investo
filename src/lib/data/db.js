@@ -2,7 +2,6 @@ import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 // Mirrors Investobot's src/services/db.py 1:1, same tables, bot and site share one database.
-
 export async function getWatchlist(guildId, userId) {
   const { data, error } = await supabaseAdmin
     .from("watchlist")
@@ -37,16 +36,6 @@ export async function removeFromWatchlist(guildId, userId, ticker) {
   return count > 0;
 }
 
-export async function getTracked(guildId) {
-  const { data, error } = await supabaseAdmin
-    .from("tracked")
-    .select("ticker")
-    .eq("guild_id", guildId)
-    .order("ticker");
-  if (error) throw error;
-  return data.map((row) => row.ticker);
-}
-
 export async function getPortfolio(guildId, userId) {
   const { data, error } = await supabaseAdmin
     .from("portfolio")
@@ -71,7 +60,6 @@ export async function getActiveAlerts(guildId, userId) {
 }
 
 // Mirrors the bot's weighted-average cost basis logic, buys blend into one average, not separate lots.
-
 export async function buyPosition(guildId, userId, ticker, shares, price) {
   const { data: existing, error: fetchErr } = await supabaseAdmin
     .from("portfolio")
@@ -98,40 +86,6 @@ export async function buyPosition(guildId, userId, ticker, shares, price) {
       .insert({ guild_id: guildId, user_id: userId, ticker, shares, cost_basis: price });
     if (error) throw error;
   }
-}
-
-export async function sellPosition(guildId, userId, ticker, shares) {
-  const { data: existing, error: fetchErr } = await supabaseAdmin
-    .from("portfolio")
-    .select("shares")
-    .eq("guild_id", guildId)
-    .eq("user_id", userId)
-    .eq("ticker", ticker)
-    .maybeSingle();
-  if (fetchErr) throw fetchErr;
-  if (!existing) return "not_found";
-  if (shares > existing.shares) return "too_many";
-
-  const remaining = existing.shares - shares;
-  // A tiny epsilon guards against floating point dust after repeated fractional trades.
-  if (remaining <= 1e-9) {
-    const { error } = await supabaseAdmin
-      .from("portfolio")
-      .delete()
-      .eq("guild_id", guildId)
-      .eq("user_id", userId)
-      .eq("ticker", ticker);
-    if (error) throw error;
-  } else {
-    const { error } = await supabaseAdmin
-      .from("portfolio")
-      .update({ shares: remaining })
-      .eq("guild_id", guildId)
-      .eq("user_id", userId)
-      .eq("ticker", ticker);
-    if (error) throw error;
-  }
-  return "ok";
 }
 
 export async function removePosition(guildId, userId, ticker) {

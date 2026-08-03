@@ -38,18 +38,16 @@ export default async function DashboardPage() {
   const allTickers = [...new Set([...watchlist, ...portfolioTickers])];
   const commodityTickers = commodities.map((c) => c.ticker);
 
-  const [quotes, histories, portfolioHistories, periodChangesByTicker, commodityPeriodChanges] = await Promise.all([
+  // One history fetch per unique ticker, not per list, so a ticker in both watchlist and portfolio isn't fetched twice.
+  const [quotes, allHistories, periodChangesByTicker, commodityPeriodChanges] = await Promise.all([
     getQuotes(allTickers),
-    Promise.all(watchlist.map((ticker) => getHistory(ticker, "1mo"))),
-    Promise.all(portfolioTickers.map((ticker) => getHistory(ticker, "1mo"))),
+    Promise.all(allTickers.map((ticker) => getHistory(ticker, "1mo"))),
     getPeriodChanges(watchlist),
     getPeriodChanges(commodityTickers),
   ]);
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
-  const historyByTicker = Object.fromEntries(watchlist.map((ticker, i) => [ticker, histories[i]]));
-  const portfolioHistoryByTicker = Object.fromEntries(
-    portfolioTickers.map((ticker, i) => [ticker, portfolioHistories[i]])
-  );
+  const historyByTicker = Object.fromEntries(allTickers.map((ticker, i) => [ticker, allHistories[i]]));
+  const portfolioHistoryByTicker = historyByTicker;
 
   const watchlistChanges = watchlist
     .map((t) => quoteByTicker[t]?.changePct)

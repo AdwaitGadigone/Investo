@@ -22,7 +22,17 @@ export function Sparkline({ points, up, width = 110, height = 32 }) {
 
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-      <path d={d} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      {/* pathLength=1 normalizes the dasharray math to 0-1 regardless of the line's real length. */}
+      <path
+        d={d}
+        pathLength="1"
+        className="sparkline-draw"
+        fill="none"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

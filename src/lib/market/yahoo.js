@@ -73,7 +73,7 @@ export async function getRelatedTickers(ticker, limit = 5) {
 }
 
 // Same ranges as the bot's /stock command, plus 10Y since the web chart can go further back.
-export const RANGE_OPTIONS = {
+const RANGE_OPTIONS = {
   "1d": { days: 1, interval: "5m", label: "1D" },
   "1w": { days: 7, interval: "30m", label: "1W" },
   "1mo": { days: 30, interval: "1d", label: "1M" },

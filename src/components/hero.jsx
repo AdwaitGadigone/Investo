@@ -62,7 +62,10 @@ export function Hero({ quotes, user }) {
                   href="/dashboard"
                   className="flex items-center gap-3 bg-discord text-white text-lg font-semibold px-8 py-4 rounded-full hover:bg-discord-hover transition-colors shadow-lg shadow-discord/25"
                 >
-                  Continue as {user.username}
+                  {/* One flex child, not two: flex gap adds unwanted space between separate text nodes/spans. */}
+                  <span>
+                    Continue<span className="hidden sm:inline"> as {user.username}</span>
+                  </span>
                 </Link>
                 <span className="text-sm text-text-muted">You're already signed in.</span>
               </>
@@ -83,7 +86,7 @@ export function Hero({ quotes, user }) {
             transition={{ duration: 0.6, ease: "easeOut" }}
             style={{
               top: "-90px",
-              left: "calc(600px - 56.5vw)",
+              left: "calc(750px - 56.5vw)",
               width: "clamp(460px, 56.5vw - 165px, 1000px)",
               aspectRatio: "1000 / 511",
             }}

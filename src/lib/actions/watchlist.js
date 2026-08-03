@@ -6,7 +6,6 @@ import { addToWatchlist, removeFromWatchlist } from "@/lib/data/db";
 import { GUILD_ID } from "@/lib/config";
 
 // Server Actions let the watchlist forms mutate the database with no separate API route.
-
 export async function addWatchlistTicker(formData) {
   const { discordId } = await getDiscordUser();
   const ticker = formData.get("ticker")?.toString().toUpperCase().trim();
