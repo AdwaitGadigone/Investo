@@ -101,7 +101,11 @@ a[href]:active {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sparkline-draw,
+  .sparkline-draw {
+    animation: none;
+    /* Disabling the animation freezes it at the base stroke-dashoffset:1 above, which is invisible, so unhide it here. */
+    stroke-dashoffset: 0;
+  }
   .row-fade-in {
     animation: none;
   }

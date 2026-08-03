@@ -30,7 +30,6 @@ function MoverList({ title, rows }) {
         <p className="font-display text-lg font-bold tracking-tight">{title}</p>
         <Tooltip text={EXPLAINERS[title]} />
       </div>
-      <div className="h-px bg-border mb-1" />
       {rows.length === 0 ? (
         <p className="text-sm text-text-muted pt-3">Not enough data right now.</p>
       ) : (
