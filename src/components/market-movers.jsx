@@ -34,6 +34,12 @@ function MoverList({ title, rows }) {
         <p className="text-sm text-text-muted pt-3">Not enough data right now.</p>
       ) : (
         <div className="flex flex-col divide-y divide-border">
+          {/* One header row, not a caption per number per row, so it reads as a table. */}
+          <div className="hidden sm:grid grid-cols-[1fr_68px_60px_64px] gap-2 pb-1.5">
+            <span />
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right col-span-2">Change</span>
+          </div>
           {rows.map((row) => {
             const up = row.changePct >= 0;
             const pctText = `${up ? "+" : ""}${row.changePct.toFixed(2)}%`;

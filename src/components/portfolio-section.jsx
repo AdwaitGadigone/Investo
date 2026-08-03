@@ -120,6 +120,16 @@ export function PortfolioSection({
         </div>
       ) : (
         <div className="grid gap-3">
+          {/* One header row instead of a caption under every number in every row, so it reads as a table, not clutter. */}
+          <div className="hidden sm:grid grid-cols-[1fr_70px_90px_100px_100px_90px_100px] gap-4 px-5">
+            <span />
+            <span />
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today</span>
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Value</span>
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L %</span>
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L $</span>
+          </div>
           {rows.map((row, i) => {
             const up = row.pl >= 0;
             const pctText = `${up ? "+" : ""}${row.plPct.toFixed(1)}%`;
@@ -149,25 +159,18 @@ export function PortfolioSection({
                     </div>
                     <div className="hidden sm:block text-right">
                       <p className="font-mono text-sm">${row.price.toFixed(2)}</p>
-                      <p className="text-[10px] text-text-muted">price</p>
                     </div>
                     <div className="hidden sm:block text-right">
                       <p className={`font-mono text-sm ${todayUp ? "text-gain" : "text-loss"}`}>{todayText}</p>
                       <p className={`font-mono text-xs ${todayUp ? "text-gain" : "text-loss"}`}>{todayDollarText}</p>
-                      <p className="text-[10px] text-text-muted">today</p>
                     </div>
-                    <div className="hidden sm:block text-right">
-                      <p className="font-mono text-sm">${row.value.toFixed(2)}</p>
-                      <p className="text-[10px] text-text-muted">value</p>
-                    </div>
-                    <div className="hidden sm:block text-right">
-                      <p className={`font-mono text-sm ${up ? "text-gain" : "text-loss"}`}>{pctText}</p>
-                      <p className="text-[10px] text-text-muted">p/l %</p>
-                    </div>
-                    <div className="hidden sm:block text-right">
-                      <p className={`font-mono text-sm ${up ? "text-gain" : "text-loss"}`}>{dollarText}</p>
-                      <p className="text-[10px] text-text-muted">p/l $</p>
-                    </div>
+                    <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
+                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
+                      {pctText}
+                    </span>
+                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
+                      {dollarText}
+                    </span>
                     <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
                       ${row.value.toFixed(2)}
                       <br />

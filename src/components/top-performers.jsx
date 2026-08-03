@@ -47,6 +47,13 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
         <p className="text-text-muted text-sm">Not enough data right now, check back shortly.</p>
       ) : compact ? (
         <div className="glass rounded-lg divide-y divide-border">
+          {/* One header row, not a caption per number per row, so it reads as a table. */}
+          <div className="hidden sm:grid grid-cols-[24px_60px_1fr_84px_84px] gap-2 sm:gap-4 px-3 sm:px-4 py-2">
+            <span />
+            <span />
+            <span />
+            <span className="text-[10px] uppercase tracking-wide text-text-muted text-right col-span-2">Change</span>
+          </div>
           {rows.map((row, i) => {
             const up = row.changePct >= 0;
             const pctText = `${up ? "+" : ""}${row.changePct.toFixed(1)}%`;

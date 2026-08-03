@@ -75,14 +75,19 @@ export function Hero({ quotes, user }) {
           </motion.div>
         </motion.div>
 
-        {/* max-w-sm matches the card below: keeps the arrow's %-based anchor from drifting off the card on wide screens. */}
-        <div className="relative isolate hidden lg:block w-full max-w-sm">
-          {/* % width + aspect-ratio, not fixed px: the arrow now scales with the card instead of the raw viewport. */}
+        <div className="relative isolate hidden lg:block">
+          {/* vw-based, not tied to this column's box: the text column ends at a page-fixed x, so left/width are solved against the viewport directly to always start just past it and reach the card, at any window size. */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-36 right-[35%] w-[260%] aspect-[1000/511] -z-10 opacity-60"
+            style={{
+              top: "-90px",
+              left: "calc(600px - 56.5vw)",
+              width: "clamp(460px, 56.5vw - 165px, 1000px)",
+              aspectRatio: "1000 / 511",
+            }}
+            className="absolute -z-10 opacity-60"
           >
             <TrendArrow className="w-full h-full" />
           </motion.div>

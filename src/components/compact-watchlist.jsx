@@ -45,6 +45,14 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
       </div>
 
       <div className="glass rounded-lg divide-y divide-border">
+        {/* One header row, not a caption per number per row, so it reads as a table. */}
+        <div className="hidden sm:grid grid-cols-[60px_1fr_80px_84px_84px_24px] gap-2 sm:gap-4 px-3 sm:px-4 py-2">
+          <span />
+          <span />
+          <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
+          <span className="text-[10px] uppercase tracking-wide text-text-muted text-right col-span-2">Change</span>
+          <span />
+        </div>
         {tickers.map((ticker) => {
           const quote = quoteByTicker[ticker];
           const periodChange = period === "day" ? null : periodChangesByTicker?.[ticker]?.[period];
