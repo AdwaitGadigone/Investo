@@ -84,10 +84,13 @@ export function PortfolioSection({
         </div>
         <div className="flex items-center gap-4">
           {positions.length > 0 && (
-            <p className={`font-mono text-sm ${totalPlUp ? "text-gain" : "text-loss"}`}>
-              ${totalValue.toFixed(2)} &middot; {totalPlUp ? "+" : ""}
-              {totalPl.toFixed(2)} ({totalPlUp ? "+" : ""}
-              {totalCost ? ((totalPl / totalCost) * 100).toFixed(1) : "0.0"}% P/L)
+            <p className="font-mono text-sm">
+              ${totalValue.toFixed(2)} total{" "}
+              <span className={totalPlUp ? "text-gain" : "text-loss"}>
+                &middot; {totalPlUp ? "+" : ""}
+                {totalPl.toFixed(2)} P/L ({totalPlUp ? "+" : ""}
+                {totalCost ? ((totalPl / totalCost) * 100).toFixed(1) : "0.0"}%)
+              </span>
             </p>
           )}
           {showViewAllLink && (
@@ -151,18 +154,24 @@ export function PortfolioSection({
                     <div className="hidden sm:block text-right">
                       <p className={`font-mono text-sm ${todayUp ? "text-gain" : "text-loss"}`}>{todayText}</p>
                       <p className={`font-mono text-xs ${todayUp ? "text-gain" : "text-loss"}`}>{todayDollarText}</p>
+                      <p className="text-[10px] text-text-muted">today</p>
                     </div>
-                    <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
-                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
-                      {pctText}
-                    </span>
-                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
-                      {dollarText}
-                    </span>
+                    <div className="hidden sm:block text-right">
+                      <p className="font-mono text-sm">${row.value.toFixed(2)}</p>
+                      <p className="text-[10px] text-text-muted">value</p>
+                    </div>
+                    <div className="hidden sm:block text-right">
+                      <p className={`font-mono text-sm ${up ? "text-gain" : "text-loss"}`}>{pctText}</p>
+                      <p className="text-[10px] text-text-muted">p/l %</p>
+                    </div>
+                    <div className="hidden sm:block text-right">
+                      <p className={`font-mono text-sm ${up ? "text-gain" : "text-loss"}`}>{dollarText}</p>
+                      <p className="text-[10px] text-text-muted">p/l $</p>
+                    </div>
                     <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
                       ${row.value.toFixed(2)}
                       <br />
-                      {pctText}
+                      {pctText} P/L
                     </span>
                   </Link>
                   <form action={removePositionAction} className="ml-1 sm:ml-2">

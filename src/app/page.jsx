@@ -22,28 +22,28 @@ export default async function Home() {
         <div className="flex items-center gap-4">
           <MobileMenu
             links={[
-              { href: "/bot", label: "Bot commands" },
+              { href: BOT_INVITE_URL, label: "Add to server", external: true },
+              { href: "/bot", label: "Commands" },
               { href: "/about", label: "About" },
-              { href: BOT_INVITE_URL, label: "Add the bot to your server", external: true },
             ]}
           />
           <Wordmark className="text-xl" />
         </div>
         <div className="flex items-center gap-5">
-          <Link href="/bot" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
-            Bot commands
-          </Link>
-          <Link href="/about" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
-            About
-          </Link>
           <a
             href={BOT_INVITE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors"
           >
-            Add the bot to your server
+            Add to server
           </a>
+          <Link href="/bot" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
+            Commands
+          </Link>
+          <Link href="/about" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
+            About
+          </Link>
           {user ? (
             <Link
               href="/dashboard"

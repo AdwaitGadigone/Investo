@@ -154,8 +154,8 @@ body::before {
 .hero-photo {
   background-image: url("/hero-bg.jpg");
   background-size: cover;
-  background-position: center 20%;
-  opacity: 0.3;
+  background-position: center 15%;
+  opacity: 0.38;
   mask-image: radial-gradient(ellipse 75% 65% at 60% 35%, black 0%, transparent 100%);
   -webkit-mask-image: radial-gradient(ellipse 75% 65% at 60% 35%, black 0%, transparent 100%);
 }
@@ -163,6 +163,6 @@ body::before {
 @media (prefers-color-scheme: light) {
   /* Light --bg is near-white, so the same photo needs less opacity to stay faint, not muddy. */
   .hero-photo {
-    opacity: 0.18;
+    opacity: 0.24;
   }
 }

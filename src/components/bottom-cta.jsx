@@ -16,7 +16,7 @@ export function BottomCta({ user }) {
         whileInView={{ opacity: 0.12, scale: 1, rotate: -4 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="pointer-events-none absolute left-1/2 top-1/2 w-64 -translate-x-1/2 -translate-y-1/2 -z-10"
+        className="pointer-events-none absolute left-1/2 top-1/2 w-[420px] md:w-[560px] -translate-x-1/2 -translate-y-1/2 -z-10"
       >
         <TrendArrow />
       </motion.div>

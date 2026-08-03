@@ -5,21 +5,25 @@ import { motion } from "motion/react";
 
 const RANGES = [
   { key: "1d", label: "1D" },
+  { key: "1w", label: "1W" },
   { key: "1mo", label: "1M" },
   { key: "3mo", label: "3M" },
   { key: "6mo", label: "6M" },
+  { key: "ytd", label: "YTD" },
   { key: "1y", label: "1Y" },
+  { key: "5y", label: "5Y" },
+  { key: "10y", label: "10Y" },
 ];
 
 export function PortfolioRangeSelector({ active }) {
   return (
-    <div className="inline-flex items-center gap-1 glass rounded-full p-1">
+    <div className="inline-flex items-center gap-1 glass rounded-full p-1 max-w-full overflow-x-auto">
       {RANGES.map((r) => (
         <Link
           key={r.key}
           href={`/portfolio?range=${r.key}`}
           scroll={false}
-          className="relative px-3.5 py-1.5 text-sm font-mono rounded-full"
+          className="relative shrink-0 px-2.5 sm:px-3.5 py-1.5 text-sm font-mono rounded-full"
         >
           {active === r.key && (
             <motion.span
