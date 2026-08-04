@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Sparkline } from "@/components/sparkline";
+import { StockLogo } from "@/components/stock-logo";
 import { IconX } from "@/components/icons";
 import { removeWatchlistTicker } from "@/lib/actions/watchlist";
 
@@ -69,7 +70,10 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
               className="row-fade-in grid grid-cols-[1fr_66px_78px_20px] sm:grid-cols-[60px_1fr_80px_84px_84px_24px] items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-white/[0.03] transition-colors"
             >
               <Link href={`/ticker/${encodeURIComponent(ticker)}`} className="contents">
-                <span className="font-mono font-semibold text-sm truncate">{ticker}</span>
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <StockLogo ticker={ticker} size={18} />
+                  <span className="font-mono font-semibold text-sm truncate">{ticker}</span>
+                </span>
                 <div className="hidden sm:block">
                   <Sparkline points={historyByTicker[ticker]} up={up} width={64} height={24} />
                 </div>

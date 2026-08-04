@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Sparkline } from "@/components/sparkline";
+import { StockLogo } from "@/components/stock-logo";
 
 const PERIODS = [
   { key: "day", label: "Day" },
@@ -65,7 +66,10 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
                 className="grid grid-cols-[20px_1fr_84px] sm:grid-cols-[24px_60px_1fr_84px_84px] items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-white/[0.03] transition-colors"
               >
                 <span className="font-mono text-xs text-text-muted">{i + 1}</span>
-                <span className="font-mono font-semibold text-sm truncate">{row.ticker}</span>
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <StockLogo ticker={row.ticker} size={18} />
+                  <span className="font-mono font-semibold text-sm truncate">{row.ticker}</span>
+                </span>
                 <div className="hidden sm:block">
                   <Sparkline points={row.history} up={up} width={90} height={24} />
                 </div>
@@ -97,7 +101,10 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
                   className="glass rounded-lg p-4 hover:border-gain transition-colors"
                 >
                   <span className="font-mono text-xs text-text-muted">#{i + 1}</span>
-                  <p className="font-mono font-semibold mt-1">{row.ticker}</p>
+                  <p className="flex items-center gap-1.5 font-mono font-semibold mt-1">
+                    <StockLogo ticker={row.ticker} size={20} />
+                    {row.ticker}
+                  </p>
                   <Sparkline points={row.history} up={up} width={110} height={30} />
                   <p className={`font-mono text-sm mt-1 ${up ? "text-gain" : "text-loss"}`}>
                     {up ? "+" : ""}

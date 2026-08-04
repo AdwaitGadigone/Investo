@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Sparkline } from "@/components/sparkline";
+import { StockLogo } from "@/components/stock-logo";
 import { Tooltip } from "@/components/tooltip";
 import { IconX } from "@/components/icons";
 import { removeWatchlistTicker } from "@/lib/actions/watchlist";
@@ -34,7 +35,10 @@ export function WatchlistCard({ ticker, quote, history, index, large = false, pe
       </form>
 
       <Link href={`/ticker/${encodeURIComponent(ticker)}`} className="block pr-6">
-        <span className={`font-mono font-semibold ${large ? "text-lg" : ""}`}>{ticker}</span>
+        <span className="flex items-center gap-2">
+          <StockLogo ticker={ticker} size={large ? 24 : 20} />
+          <span className={`font-mono font-semibold ${large ? "text-lg" : ""}`}>{ticker}</span>
+        </span>
 
         <div className="flex items-end justify-between mt-3">
           <div>

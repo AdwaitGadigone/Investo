@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { Sparkline } from "@/components/sparkline";
+import { StockLogo } from "@/components/stock-logo";
 
 const PERIODS = [
   { key: "day", label: "Day" },
@@ -51,9 +52,12 @@ function MoverList({ title, rows }) {
                 href={`/ticker/${encodeURIComponent(row.ticker)}`}
                 className="grid grid-cols-[1fr_58px_64px] sm:grid-cols-[1fr_50px_64px_58px_62px] items-center gap-2 py-2.5 hover:opacity-80 transition-opacity"
               >
-                <div className="min-w-0">
-                  <p className="font-mono font-semibold text-sm">{row.ticker}</p>
-                  <p className="text-xs text-text-muted truncate">{row.name}</p>
+                <div className="min-w-0 flex items-center gap-1.5">
+                  <StockLogo ticker={row.ticker} size={20} />
+                  <div className="min-w-0">
+                    <p className="font-mono font-semibold text-sm">{row.ticker}</p>
+                    <p className="text-xs text-text-muted truncate">{row.name}</p>
+                  </div>
                 </div>
                 <div className="hidden sm:block">
                   <Sparkline points={row.history} up={up} width={50} height={22} />

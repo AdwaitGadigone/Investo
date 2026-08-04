@@ -14,6 +14,7 @@ import { GradientBlobs } from "@/components/gradient-blobs";
 import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { AnalystConsensus, AnalystConsensusSkeleton } from "@/components/analyst-consensus";
+import { StockLogo } from "@/components/stock-logo";
 import { IconChart, IconBarChart, IconWallet } from "@/components/icons";
 import Link from "next/link";
 
@@ -73,7 +74,8 @@ export default async function TickerPage({ params, searchParams }) {
                   </span>
                 )}
               </div>
-              <div className="flex flex-wrap items-baseline gap-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <StockLogo ticker={quote.ticker} size={48} />
                 <h1 className="font-display text-5xl md:text-6xl font-bold tracking-tight">
                   {quote.ticker}
                 </h1>
