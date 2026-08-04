@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Sparkline } from "@/components/sparkline";
 import { StockLogo } from "@/components/stock-logo";
+import { SortHeader, compareRows } from "@/components/sort-header";
 import { IconX } from "@/components/icons";
 import { removeWatchlistTicker } from "@/lib/actions/watchlist";
 
@@ -21,6 +22,26 @@ const PERIODS = [
 // Dense dashboard row version of the big /watchlist cards, same data, denser layout.
 export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, periodChangesByTicker }) {
   const [period, setPeriod] = useState("day");
+  const [sortKey, setSortKey] = useState(null);
+  const [sortDir, setSortDir] = useState(-1);
+  const handleSort = (key) => {
+    if (key === sortKey) {
+      setSortDir((d) => -d);
+    } else {
+      setSortKey(key);
+      // Defaults to highest-first, that's what "sort by change" usually means, not lowest-first.
+      setSortDir(-1);
+    }
+  };
+
+  const rows = tickers.map((ticker) => {
+    const quote = quoteByTicker[ticker];
+    const periodChange = period === "day" ? null : periodChangesByTicker?.[ticker]?.[period];
+    const pct = period === "day" ? quote?.changePct : periodChange?.pct;
+    const amount = period === "day" ? quote?.change : periodChange?.amount;
+    return { ticker, price: quote?.price ?? null, pct, amount };
+  });
+  const sortedRows = sortKey ? [...rows].sort((a, b) => compareRows(a, b, sortKey, sortDir)) : rows;
 
   return (
     <div>
@@ -48,17 +69,21 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
       <div className="glass rounded-lg divide-y divide-border">
         {/* One header row, not a caption per number per row, so it reads as a table. */}
         <div className="hidden sm:grid grid-cols-[60px_1fr_80px_84px_84px_24px] gap-2 sm:gap-4 px-3 sm:px-4 py-2">
+          <SortHeader label="Ticker" sortKey="ticker" active={sortKey === "ticker"} dir={sortDir} onClick={handleSort} />
           <span />
-          <span />
-          <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
-          <span className="text-[10px] uppercase tracking-wide text-text-muted text-right col-span-2">Change</span>
+          <SortHeader label="Price" sortKey="price" active={sortKey === "price"} dir={sortDir} onClick={handleSort} />
+          <SortHeader
+            label="Change"
+            sortKey="pct"
+            active={sortKey === "pct"}
+            dir={sortDir}
+            onClick={handleSort}
+            className="col-span-2"
+          />
           <span />
         </div>
-        {tickers.map((ticker, i) => {
-          const quote = quoteByTicker[ticker];
-          const periodChange = period === "day" ? null : periodChangesByTicker?.[ticker]?.[period];
-          const pct = period === "day" ? quote?.changePct : periodChange?.pct;
-          const amount = period === "day" ? quote?.change : periodChange?.amount;
+        {sortedRows.map((row, i) => {
+          const { ticker, price, pct, amount } = row;
           const up = pct != null && pct >= 0;
           const pctText = pct != null ? `${up ? "+" : ""}${pct.toFixed(2)}%` : "—";
           const dollarText = amount != null ? `${up ? "+" : "-"}$${Math.abs(amount).toFixed(2)}` : "";
@@ -78,7 +103,7 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
                   <Sparkline points={historyByTicker[ticker]} up={up} width={64} height={24} />
                 </div>
                 <span className="font-mono text-sm text-right">
-                  {quote?.price != null ? `$${quote.price.toFixed(2)}` : "—"}
+                  {price != null ? `$${price.toFixed(2)}` : "—"}
                 </span>
                 <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
                   {pctText}

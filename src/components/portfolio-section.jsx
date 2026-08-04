@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { buyPositionAction, removePositionAction } from "@/lib/actions/portfolio";
 import { IconX } from "@/components/icons";
@@ -5,6 +8,7 @@ import { Tooltip } from "@/components/tooltip";
 import { TickerAutocomplete } from "@/components/ticker-autocomplete";
 import { Sparkline } from "@/components/sparkline";
 import { StockLogo } from "@/components/stock-logo";
+import { SortHeader, compareRows } from "@/components/sort-header";
 
 export function PortfolioSection({
   positions,
@@ -13,6 +17,18 @@ export function PortfolioSection({
   showViewAllLink = false,
   showBuyForm = true,
 }) {
+  const [sortKey, setSortKey] = useState(null);
+  const [sortDir, setSortDir] = useState(-1);
+  const handleSort = (key) => {
+    if (key === sortKey) {
+      setSortDir((d) => -d);
+    } else {
+      setSortKey(key);
+      // Defaults to highest-first, that's what "sort by P/L" usually means, not lowest-first.
+      setSortDir(-1);
+    }
+  };
+
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
 
   let totalValue = 0;
@@ -42,6 +58,7 @@ export function PortfolioSection({
   const totalTodayUp = totalToday >= 0;
   const totalTodayBase = totalValue - totalToday;
   const totalTodayPct = totalTodayBase ? (totalToday / totalTodayBase) * 100 : 0;
+  const sortedRows = sortKey ? [...rows].sort((a, b) => compareRows(a, b, sortKey, sortDir)) : rows;
 
   return (
     <div className="mb-12">
@@ -134,16 +151,22 @@ export function PortfolioSection({
           {/* Mirrors the row's exact structure (same outer padding + trailing button-width spacer) so columns actually line up. */}
           <div className="hidden sm:flex items-center pr-2 sm:pr-4">
             <div className="grid grid-cols-[1fr_70px_90px_90px_100px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5">
+              <SortHeader label="Name" sortKey="name" active={sortKey === "name"} dir={sortDir} onClick={handleSort} />
               <span />
-              <span />
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today</span>
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Value</span>
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L</span>
+              <SortHeader label="Price" sortKey="price" active={sortKey === "price"} dir={sortDir} onClick={handleSort} />
+              <SortHeader
+                label="Today"
+                sortKey="todayChangePct"
+                active={sortKey === "todayChangePct"}
+                dir={sortDir}
+                onClick={handleSort}
+              />
+              <SortHeader label="Value" sortKey="value" active={sortKey === "value"} dir={sortDir} onClick={handleSort} />
+              <SortHeader label="P/L" sortKey="plPct" active={sortKey === "plPct"} dir={sortDir} onClick={handleSort} />
             </div>
             <div className="w-7 ml-1 sm:ml-2" />
           </div>
-          {rows.map((row, i) => {
+          {sortedRows.map((row) => {
             const up = row.pl >= 0;
             const pctText = `${up ? "+" : ""}${row.plPct.toFixed(1)}%`;
             const dollarText = `${up ? "+" : ""}$${row.pl.toFixed(2)}`;
