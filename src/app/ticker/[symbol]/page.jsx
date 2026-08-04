@@ -14,6 +14,8 @@ import { GradientBlobs } from "@/components/gradient-blobs";
 import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { AnalystConsensus, AnalystConsensusSkeleton } from "@/components/analyst-consensus";
+import { TradingViewChart } from "@/components/tradingview-chart";
+import { getUnderlyingTicker } from "@/lib/market/cdrs";
 import { StockLogo } from "@/components/stock-logo";
 import { IconChart, IconBarChart, IconWallet } from "@/components/icons";
 import Link from "next/link";
@@ -113,9 +115,14 @@ export default async function TickerPage({ params, searchParams }) {
               {history.length > 0 ? (
                 <PriceChart data={history} up={up} />
               ) : (
-                <p className="text-text-muted text-sm py-24 text-center">
-                  No chart data available for this range.
-                </p>
+                <>
+                  {/* Thinly-traded tickers (mainly CDRs) can have too few real closes to plot, TradingView's own feed usually still has one. */}
+                  <TradingViewChart symbol={getUnderlyingTicker(ticker) ?? ticker.split(".")[0]} />
+                  <p className="text-text-muted text-xs text-center mt-2">
+                    Not enough Yahoo Finance data to chart {ticker} directly, showing{" "}
+                    {getUnderlyingTicker(ticker) ?? ticker.split(".")[0]} from TradingView instead.
+                  </p>
+                </>
               )}
             </div>
           </Reveal>

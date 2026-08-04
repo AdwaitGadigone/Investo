@@ -39,6 +39,11 @@ export const CDRS = [
   { ticker: "WMT.NE", underlying: "WMT", name: "Walmart" },
 ];
 
+// Reverse lookup, CDR ticker -> real US ticker, used to chart a CDR via TradingView when Yahoo has too little CDR data to plot.
+export function getUnderlyingTicker(cdrTicker) {
+  return CDRS.find((c) => c.ticker === cdrTicker.toUpperCase())?.underlying ?? null;
+}
+
 // Matches a search query against underlying ticker or company name, so typing "AAPL" or "apple" both find the CDR.
 export function findCdrMatches(query) {
   const q = query.trim().toLowerCase();

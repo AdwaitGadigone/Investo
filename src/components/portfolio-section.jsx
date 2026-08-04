@@ -206,13 +206,15 @@ export function PortfolioSection({
                       <div className="w-7 h-7 shrink-0 flex items-center justify-center">
                         <StockLogo ticker={row.ticker} size={28} />
                       </div>
-                      <div className="min-w-0 shrink-0">
+                      <div className="min-w-0 flex-1">
                         <p className="font-semibold truncate">{row.name}</p>
-                        <p className="font-mono text-xs text-text-muted truncate">{row.ticker}</p>
+                        <p className="font-mono text-xs text-text-muted truncate">
+                          {row.ticker}{" "}
+                          <span className="text-warm font-semibold">
+                            &middot; {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
+                          </span>
+                        </p>
                       </div>
-                      <p className="text-xs text-warm font-semibold whitespace-nowrap truncate">
-                        {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
-                      </p>
                     </div>
                     <div className="hidden sm:block">
                       <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
