@@ -4,13 +4,13 @@ import { Reveal } from "@/components/reveal";
 import { IconPlus } from "@/components/icons";
 
 // Reuses the same cached "most actively traded" fetch the dashboard's other panels already made, not a separate one.
-export async function SuggestedStocks({ exclude }) {
+export async function SuggestedStocks({ exclude, className = "mb-12" }) {
   const active = await getPopularTickers();
   const suggestions = active.filter((s) => !exclude.includes(s.ticker)).slice(0, 12);
   if (suggestions.length === 0) return null;
 
   return (
-    <Reveal className="mb-12">
+    <Reveal className={className}>
       <p className="font-display text-2xl font-bold tracking-tight mb-5">Popular right now</p>
       <div className="flex flex-wrap gap-3">
         {suggestions.map((s) => (

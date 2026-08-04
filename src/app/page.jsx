@@ -11,7 +11,6 @@ import { DiscordSignInButton } from "@/components/discord-sign-in-button";
 import { MobileMenu } from "@/components/mobile-menu";
 import { getPreviewQuotes } from "@/lib/market/get-preview-quotes";
 import { getOptionalDiscordUser } from "@/lib/auth/get-discord-user";
-import { BOT_INVITE_URL } from "@/lib/config";
 
 export default async function Home() {
   const [quotes, user] = await Promise.all([getPreviewQuotes(), getOptionalDiscordUser()]);
@@ -22,7 +21,6 @@ export default async function Home() {
         <div className="flex items-center gap-4">
           <MobileMenu
             links={[
-              { href: BOT_INVITE_URL, label: "Add to server", external: true },
               { href: "/bot", label: "Commands" },
               { href: "/about", label: "About" },
             ]}
@@ -30,14 +28,6 @@ export default async function Home() {
           <Wordmark className="text-xl" />
         </div>
         <div className="flex items-center gap-5">
-          <a
-            href={BOT_INVITE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors"
-          >
-            Add to server
-          </a>
           <Link href="/bot" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
             Commands
           </Link>

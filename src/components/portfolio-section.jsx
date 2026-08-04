@@ -16,9 +16,12 @@ export function PortfolioSection({
   historyByTicker = {},
   showViewAllLink = false,
   showBuyForm = true,
+  showRemoveButton = true,
+  collapsedCount = null,
 }) {
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState(-1);
+  const [expanded, setExpanded] = useState(false);
   const handleSort = (key) => {
     if (key === sortKey) {
       setSortDir((d) => -d);
@@ -59,6 +62,8 @@ export function PortfolioSection({
   const totalTodayBase = totalValue - totalToday;
   const totalTodayPct = totalTodayBase ? (totalToday / totalTodayBase) * 100 : 0;
   const sortedRows = sortKey ? [...rows].sort((a, b) => compareRows(a, b, sortKey, sortDir)) : rows;
+  const canCollapse = collapsedCount != null && sortedRows.length > collapsedCount;
+  const visibleRows = canCollapse && !expanded ? sortedRows.slice(0, collapsedCount) : sortedRows;
 
   return (
     <div className="mb-12">
@@ -164,9 +169,9 @@ export function PortfolioSection({
               <SortHeader label="Value" sortKey="value" active={sortKey === "value"} dir={sortDir} onClick={handleSort} />
               <SortHeader label="P/L" sortKey="plPct" active={sortKey === "plPct"} dir={sortDir} onClick={handleSort} />
             </div>
-            <div className="w-7 ml-1 sm:ml-2" />
+            {showRemoveButton && <div className="w-7 ml-1 sm:ml-2" />}
           </div>
-          {sortedRows.map((row) => {
+          {visibleRows.map((row) => {
             const up = row.pl >= 0;
             const pctText = `${up ? "+" : ""}${row.plPct.toFixed(1)}%`;
             const dollarText = `${up ? "+" : ""}$${row.pl.toFixed(2)}`;
@@ -215,19 +220,30 @@ export function PortfolioSection({
                       {pctText} P/L
                     </span>
                   </Link>
-                  <form action={removePositionAction} className="ml-1 sm:ml-2">
-                    <input type="hidden" name="ticker" value={row.ticker} />
-                    <button
-                      type="submit"
-                      className="text-text-muted hover:text-loss w-7 h-7 flex items-center justify-center rounded-full hover:bg-loss/10 transition-colors"
-                      aria-label={`Close ${row.ticker} position`}
-                    >
-                      <IconX width={14} height={14} />
-                    </button>
-                  </form>
+                  {showRemoveButton && (
+                    <form action={removePositionAction} className="ml-1 sm:ml-2">
+                      <input type="hidden" name="ticker" value={row.ticker} />
+                      <button
+                        type="submit"
+                        className="text-text-muted hover:text-loss w-7 h-7 flex items-center justify-center rounded-full hover:bg-loss/10 transition-colors"
+                        aria-label={`Close ${row.ticker} position`}
+                      >
+                        <IconX width={14} height={14} />
+                      </button>
+                    </form>
+                  )}
                 </div>
             );
           })}
+          {canCollapse && (
+            <button
+              type="button"
+              onClick={() => setExpanded((e) => !e)}
+              className="text-sm text-discord hover:underline text-left"
+            >
+              {expanded ? "Show less" : `Show all ${sortedRows.length} holdings ↓`}
+            </button>
+          )}
         </div>
       )}
     </div>

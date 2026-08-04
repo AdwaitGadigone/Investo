@@ -76,15 +76,15 @@ export default async function DashboardPage() {
 
         {watchlist.length === 0 && portfolio.length === 0 && <GettingStarted />}
 
-        <PortfolioSection
-          positions={portfolio}
-          quotes={quotes}
-          historyByTicker={portfolioHistoryByTicker}
-          showViewAllLink
-          showBuyForm={false}
-        />
-
         <MarketMovers data={marketMovers} />
+
+        {/* Side by side so neither list wastes horizontal space. */}
+        <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
+          <TopPerformers data={topPerformers} compact className="mb-0" />
+          <SuggestedStocks exclude={watchlist} className="mb-0" />
+        </div>
+
+        <CommoditiesStrip commodities={commodities} periodChangesByTicker={commodityPeriodChanges} />
 
         {/* Side by side so neither dense list wastes horizontal space. */}
         <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
@@ -122,12 +122,16 @@ export default async function DashboardPage() {
             )}
           </div>
 
-          <TopPerformers data={topPerformers} compact className="mb-0" />
+          <PortfolioSection
+            positions={portfolio}
+            quotes={quotes}
+            historyByTicker={portfolioHistoryByTicker}
+            showViewAllLink
+            showBuyForm={false}
+            showRemoveButton={false}
+            collapsedCount={5}
+          />
         </div>
-
-        <SuggestedStocks exclude={watchlist} />
-
-        <CommoditiesStrip commodities={commodities} periodChangesByTicker={commodityPeriodChanges} />
 
         <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted border-t border-border pt-6">
           <span>

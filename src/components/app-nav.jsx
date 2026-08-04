@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Wordmark } from "@/components/wordmark";
 import { SignOutButton } from "@/components/sign-out-button";
 import { MobileMenu } from "@/components/mobile-menu";
-import { BOT_INVITE_URL } from "@/lib/config";
 
+// Invite lives on the Bot page itself now (top-right button), not as a separate nav link.
 const LINKS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/watchlist", label: "Watchlist" },
@@ -13,13 +13,11 @@ const LINKS = [
   { href: "/about", label: "About" },
 ];
 
-const MOBILE_LINKS = [...LINKS, { href: BOT_INVITE_URL, label: "Invite bot", external: true }];
-
 export function AppNav() {
   return (
     <header className="glass-overlay sticky top-0 z-40 px-6 py-5 flex items-center justify-between relative">
       <div className="flex items-center gap-4 sm:gap-10">
-        <MobileMenu links={MOBILE_LINKS} />
+        <MobileMenu links={LINKS} />
         <Link href="/">
           <Wordmark className="text-xl" />
         </Link>
@@ -33,14 +31,6 @@ export function AppNav() {
               {link.label}
             </Link>
           ))}
-          <a
-            href={BOT_INVITE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-text-muted hover:text-text transition-colors"
-          >
-            Invite bot
-          </a>
         </nav>
       </div>
       <SignOutButton className="border border-border px-4 py-2 text-sm font-medium rounded-full hover:border-discord hover:text-discord transition-colors" />

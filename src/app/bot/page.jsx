@@ -155,7 +155,17 @@ export default async function BotPage() {
 
         <div className="max-w-3xl mx-auto">
           <BackButton className="mb-6" />
-          <p className="font-mono text-xs uppercase tracking-widest text-warm mb-3">The Bot</p>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+            <p className="font-mono text-xs uppercase tracking-widest text-warm">The Bot</p>
+            <a
+              href={BOT_INVITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-discord text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-discord-hover transition-colors"
+            >
+              Add to Discord
+            </a>
+          </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
             Everything Investo can do.
           </h1>
