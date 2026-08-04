@@ -153,10 +153,12 @@ export function PortfolioSection({
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
                     className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
-                    <div className="min-w-0 flex items-baseline justify-between gap-2">
-                      <p className="font-semibold truncate">{row.name}</p>
+                    <div className="min-w-0 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-semibold truncate">{row.name}</p>
+                        <p className="font-mono text-xs text-text-muted truncate">{row.ticker}</p>
+                      </div>
                       <p className="text-xs text-text-muted whitespace-nowrap shrink-0">
-                        <span className="font-mono">{row.ticker}</span> &middot;{" "}
                         {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
                       </p>
                     </div>
