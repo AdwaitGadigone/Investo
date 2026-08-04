@@ -87,6 +87,8 @@ export default async function TickerPage({ params, searchParams }) {
                 <p className="text-xs text-text-muted mt-1">
                   Priced in {quote.currency}, not USD, converted amounts elsewhere on the
                   site may not match this figure directly.
+                  {ticker.toUpperCase().endsWith(".NE") &&
+                    " A .NE ticker is a CDR (Canadian Depositary Receipt), a CAD-hedged fractional share traded on Cboe Canada, not the original US-listed stock."}
                 </p>
               )}
               {quote.change != null && (

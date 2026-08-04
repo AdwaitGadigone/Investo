@@ -26,6 +26,7 @@ export function PortfolioSection({
     totalCost += cost;
     return {
       ...p,
+      name: quote?.name ?? p.ticker,
       price,
       value,
       pl: value - cost,
@@ -79,7 +80,7 @@ export function PortfolioSection({
         <div className="flex items-center gap-2">
           <p className="font-display text-2xl font-bold tracking-tight">Your portfolio</p>
           {positions.length > 0 && (
-            <Tooltip text="Price is per share right now, Today is just today's move, P/L is the total gain or loss versus your average cost" />
+            <Tooltip text="Price is per share right now, Today is just today's move, P/L is the total gain or loss versus your average cost. A .NE ticker is a CDR, a CAD-hedged Canadian version of a US stock." />
           )}
         </div>
         <div className="flex items-center gap-4">
@@ -153,8 +154,10 @@ export function PortfolioSection({
                     className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
                     <div className="min-w-0">
-                      <p className="font-mono font-semibold">{row.ticker}</p>
+                      <p className="font-semibold truncate">{row.name}</p>
                       <p className="text-xs text-text-muted truncate">
+                        <span className="font-mono">{row.ticker}</span>
+                        {" · "}
                         {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
                       </p>
                     </div>
