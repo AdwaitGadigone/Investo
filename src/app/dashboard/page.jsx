@@ -4,6 +4,7 @@ import { getWatchlist, getPortfolio, getActiveAlerts, isDigestEnabled } from "@/
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory, getMarketSnapshot, getCommodities } from "@/lib/market/yahoo";
 import { getTopPerformers, getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
+import { CRYPTOS } from "@/lib/market/crypto-config";
 import { GUILD_ID } from "@/lib/config";
 import { AppNav } from "@/components/app-nav";
 import { SearchBar } from "@/components/search-bar";
@@ -14,6 +15,7 @@ import { SuggestedStocks } from "@/components/suggested-stocks";
 import { TopPerformers } from "@/components/top-performers";
 import { MarketMovers } from "@/components/market-movers";
 import { CommoditiesStrip } from "@/components/commodities-strip";
+import { CryptoStrip } from "@/components/crypto-strip";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { Tooltip } from "@/components/tooltip";
 import { GettingStarted } from "@/components/getting-started";
@@ -37,14 +39,20 @@ export default async function DashboardPage() {
   const portfolioTickers = portfolio.map((p) => p.ticker);
   const allTickers = [...new Set([...watchlist, ...portfolioTickers])];
   const commodityTickers = commodities.map((c) => c.ticker);
+  const cryptoTickers = CRYPTOS.map((c) => c.ticker);
 
   // One history fetch per unique ticker, not per list, so a ticker in both watchlist and portfolio isn't fetched twice.
-  const [quotes, allHistories, periodChangesByTicker, commodityPeriodChanges] = await Promise.all([
-    getQuotes(allTickers),
-    Promise.all(allTickers.map((ticker) => getHistory(ticker, "1mo"))),
-    getPeriodChanges(watchlist),
-    getPeriodChanges(commodityTickers),
-  ]);
+  const [quotes, allHistories, periodChangesByTicker, commodityPeriodChanges, cryptoQuotes, cryptoPeriodChanges] =
+    await Promise.all([
+      getQuotes(allTickers),
+      Promise.all(allTickers.map((ticker) => getHistory(ticker, "1mo"))),
+      getPeriodChanges(watchlist),
+      getPeriodChanges(commodityTickers),
+      getQuotes(cryptoTickers),
+      getPeriodChanges(cryptoTickers),
+    ]);
+  const cryptoByTicker = Object.fromEntries(cryptoQuotes.map((q) => [q.ticker, q]));
+  const cryptoRows = CRYPTOS.map((c) => ({ ...c, ...cryptoByTicker[c.ticker] }));
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
   const historyByTicker = Object.fromEntries(allTickers.map((ticker, i) => [ticker, allHistories[i]]));
   const portfolioHistoryByTicker = historyByTicker;
@@ -83,6 +91,9 @@ export default async function DashboardPage() {
           <TopPerformers data={topPerformers} compact className="mb-0" />
           <CommoditiesStrip commodities={commodities} periodChangesByTicker={commodityPeriodChanges} className="mb-0" />
         </div>
+
+        {/* Its own row, not mixed into the stock lists above, crypto and stocks are different enough to browse separately. */}
+        <CryptoStrip quotes={cryptoRows} periodChangesByTicker={cryptoPeriodChanges} />
 
         {/* Side by side so neither dense list wastes horizontal space. */}
         <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
