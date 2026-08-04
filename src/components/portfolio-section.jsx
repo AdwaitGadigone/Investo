@@ -133,15 +133,13 @@ export function PortfolioSection({
         <div className="grid gap-3">
           {/* Mirrors the row's exact structure (same outer padding + trailing button-width spacer) so columns actually line up. */}
           <div className="hidden sm:flex items-center pr-2 sm:pr-4">
-            <div className="grid grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5">
+            <div className="grid grid-cols-[1fr_70px_90px_90px_100px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5">
               <span />
               <span />
               <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Price</span>
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today %</span>
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today $</span>
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Today</span>
               <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">Value</span>
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L %</span>
-              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L $</span>
+              <span className="text-[10px] uppercase tracking-wide text-text-muted text-right">P/L</span>
             </div>
             <div className="w-7 ml-1 sm:ml-2" />
           </div>
@@ -160,7 +158,7 @@ export function PortfolioSection({
               <div key={row.ticker} className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
                   <Link
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
+                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_100px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
                     <div className="min-w-0 flex items-center gap-3">
                       {/* Fixed slot, not just the logo: keeps names aligned even when a ticker has no logo. */}
@@ -179,19 +177,15 @@ export function PortfolioSection({
                       <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
                     </div>
                     <span className="hidden sm:inline font-mono text-sm text-right">${row.price.toFixed(2)}</span>
-                    <span className={`hidden sm:inline font-mono text-sm text-right ${todayUp ? "text-gain" : "text-loss"}`}>
-                      {todayText}
-                    </span>
-                    <span className={`hidden sm:inline font-mono text-sm text-right ${todayUp ? "text-gain" : "text-loss"}`}>
-                      {todayDollarText || "—"}
-                    </span>
+                    <div className={`hidden sm:block text-right font-mono ${todayUp ? "text-gain" : "text-loss"}`}>
+                      <p className="text-sm">{todayText}</p>
+                      <p className="text-xs opacity-80">{todayDollarText || "—"}</p>
+                    </div>
                     <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
-                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
-                      {pctText}
-                    </span>
-                    <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
-                      {dollarText}
-                    </span>
+                    <div className={`hidden sm:block text-right font-mono ${up ? "text-gain" : "text-loss"}`}>
+                      <p className="text-sm">{pctText}</p>
+                      <p className="text-xs opacity-80">{dollarText}</p>
+                    </div>
                     <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
                       ${row.value.toFixed(2)}
                       <br />
