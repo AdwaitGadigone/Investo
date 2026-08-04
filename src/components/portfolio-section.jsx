@@ -162,18 +162,16 @@ export function PortfolioSection({
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
                     className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
-                    <div className="min-w-0 flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2 min-w-0">
-                        {/* Fixed slot, not just the logo: keeps names aligned even when a ticker has no logo. */}
-                        <div className="w-7 h-7 shrink-0 flex items-center justify-center">
-                          <StockLogo ticker={row.ticker} size={28} />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold truncate">{row.name}</p>
-                          <p className="font-mono text-xs text-text-muted truncate">{row.ticker}</p>
-                        </div>
+                    <div className="min-w-0 flex items-center gap-3">
+                      {/* Fixed slot, not just the logo: keeps names aligned even when a ticker has no logo. */}
+                      <div className="w-7 h-7 shrink-0 flex items-center justify-center">
+                        <StockLogo ticker={row.ticker} size={28} />
                       </div>
-                      <p className="text-xs text-warm font-semibold whitespace-nowrap shrink-0">
+                      <div className="min-w-0 shrink-0">
+                        <p className="font-semibold truncate">{row.name}</p>
+                        <p className="font-mono text-xs text-text-muted truncate">{row.ticker}</p>
+                      </div>
+                      <p className="text-xs text-warm font-semibold whitespace-nowrap truncate">
                         {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
                       </p>
                     </div>
