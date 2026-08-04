@@ -12,12 +12,13 @@ export function compareRows(a, b, key, dir) {
 }
 
 // A clickable column header with a small sort arrow, shared by every sortable table on the site.
-export function SortHeader({ label, sortKey, active, dir, onClick, className = "" }) {
+// align="start" for a wide 1fr column whose row content is left-aligned (name/ticker), "end" (default) for numeric columns.
+export function SortHeader({ label, sortKey, active, dir, onClick, align = "end", className = "" }) {
   return (
     <button
       type="button"
       onClick={() => onClick(sortKey)}
-      className={`flex items-center justify-end gap-0.5 text-[10px] uppercase tracking-wide hover:text-text transition-colors ${
+      className={`flex items-center ${align === "start" ? "justify-start" : "justify-end"} gap-0.5 text-[10px] uppercase tracking-wide hover:text-text transition-colors ${
         active ? "text-text" : "text-text-muted"
       } ${className}`}
     >

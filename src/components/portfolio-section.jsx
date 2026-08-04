@@ -156,7 +156,14 @@ export function PortfolioSection({
           {/* Mirrors the row's exact structure (same outer padding + trailing button-width spacer) so columns actually line up. */}
           <div className="hidden sm:flex items-center pr-2 sm:pr-4">
             <div className="grid grid-cols-[1fr_70px_90px_90px_100px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5">
-              <SortHeader label="Name" sortKey="name" active={sortKey === "name"} dir={sortDir} onClick={handleSort} />
+              <SortHeader
+                label="Name"
+                sortKey="name"
+                align="start"
+                active={sortKey === "name"}
+                dir={sortDir}
+                onClick={handleSort}
+              />
               <span />
               <SortHeader label="Price" sortKey="price" active={sortKey === "price"} dir={sortDir} onClick={handleSort} />
               <SortHeader

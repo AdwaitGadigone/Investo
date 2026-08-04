@@ -69,7 +69,14 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
       <div className="glass rounded-lg divide-y divide-border">
         {/* One header row, not a caption per number per row, so it reads as a table. */}
         <div className="hidden sm:grid grid-cols-[60px_1fr_80px_84px_84px_24px] gap-2 sm:gap-4 px-3 sm:px-4 py-2">
-          <SortHeader label="Ticker" sortKey="ticker" active={sortKey === "ticker"} dir={sortDir} onClick={handleSort} />
+          <SortHeader
+            label="Ticker"
+            sortKey="ticker"
+            align="start"
+            active={sortKey === "ticker"}
+            dir={sortDir}
+            onClick={handleSort}
+          />
           <span />
           <SortHeader label="Price" sortKey="price" active={sortKey === "price"} dir={sortDir} onClick={handleSort} />
           <SortHeader

@@ -16,13 +16,13 @@ const PERIODS = [
 ];
 
 // Yahoo's text search buries gold behind an unrelated company, so this is a direct shortcut.
-export function CommoditiesStrip({ commodities, periodChangesByTicker = {} }) {
+export function CommoditiesStrip({ commodities, periodChangesByTicker = {}, className = "mb-12" }) {
   const [period, setPeriod] = useState("day");
 
   if (commodities.length === 0) return null;
 
   return (
-    <div className="mb-12">
+    <div className={className}>
       <p className="font-display text-2xl font-bold tracking-tight mb-3">Commodities</p>
       <div className="flex items-center gap-1 glass rounded-full p-1 mb-5 w-fit max-w-full overflow-x-auto">
         {PERIODS.map((p) => (

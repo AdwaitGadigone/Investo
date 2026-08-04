@@ -78,13 +78,11 @@ export default async function DashboardPage() {
 
         <MarketMovers data={marketMovers} />
 
-        {/* Side by side so neither list wastes horizontal space. */}
+        {/* Side by side so neither block wastes horizontal space. */}
         <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
           <TopPerformers data={topPerformers} compact className="mb-0" />
-          <SuggestedStocks exclude={watchlist} className="mb-0" />
+          <CommoditiesStrip commodities={commodities} periodChangesByTicker={commodityPeriodChanges} className="mb-0" />
         </div>
-
-        <CommoditiesStrip commodities={commodities} periodChangesByTicker={commodityPeriodChanges} />
 
         {/* Side by side so neither dense list wastes horizontal space. */}
         <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
@@ -120,6 +118,8 @@ export default async function DashboardPage() {
                 periodChangesByTicker={periodChangesByTicker}
               />
             )}
+
+            <SuggestedStocks exclude={watchlist} className="mt-8 mb-0" />
           </div>
 
           <PortfolioSection
