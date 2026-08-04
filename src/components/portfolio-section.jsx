@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { buyPositionAction, removePositionAction } from "@/lib/actions/portfolio";
 import { IconX } from "@/components/icons";
-import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { TickerAutocomplete } from "@/components/ticker-autocomplete";
 import { Sparkline } from "@/components/sparkline";
@@ -39,11 +38,15 @@ export function PortfolioSection({
   });
   const totalPl = totalValue - totalCost;
   const totalPlUp = totalPl >= 0;
+  const totalToday = rows.reduce((sum, r) => sum + (r.todayChange ?? 0), 0);
+  const totalTodayUp = totalToday >= 0;
+  const totalTodayBase = totalValue - totalToday;
+  const totalTodayPct = totalTodayBase ? (totalToday / totalTodayBase) * 100 : 0;
 
   return (
     <div className="mb-12">
       {showBuyForm && (
-        <Reveal className="mb-8">
+        <div className="mb-8">
           <p className="font-display text-xl font-bold tracking-tight mb-3">Add to portfolio</p>
           <form action={buyPositionAction} className="flex flex-wrap gap-3 glass rounded-lg p-4">
             <TickerAutocomplete
@@ -74,34 +77,40 @@ export function PortfolioSection({
               Log buy
             </button>
           </form>
-        </Reveal>
+        </div>
       )}
 
-      <Reveal className="flex items-center justify-between mb-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div className="flex items-center gap-2">
           <p className="font-display text-2xl font-bold tracking-tight">Your portfolio</p>
           {positions.length > 0 && (
             <Tooltip text="Price is per share right now, Today is just today's move, P/L is the total gain or loss versus your average cost. A .NE ticker is a CDR, a CAD-hedged Canadian version of a US stock." />
           )}
         </div>
-        <div className="flex items-center gap-4">
-          {positions.length > 0 && (
-            <p className="font-mono text-sm">
-              ${totalValue.toFixed(2)} total{" "}
-              <span className={totalPlUp ? "text-gain" : "text-loss"}>
-                &middot; {totalPlUp ? "+" : ""}
-                {totalPl.toFixed(2)} P/L ({totalPlUp ? "+" : ""}
-                {totalCost ? ((totalPl / totalCost) * 100).toFixed(1) : "0.0"}%)
-              </span>
-            </p>
-          )}
-          {showViewAllLink && (
-            <Link href="/portfolio" className="text-sm text-discord hover:underline">
-              View all &rarr;
-            </Link>
-          )}
-        </div>
-      </Reveal>
+        {showViewAllLink && (
+          <Link href="/portfolio" className="text-sm text-discord hover:underline">
+            View all &rarr;
+          </Link>
+        )}
+      </div>
+
+      {positions.length > 0 && (
+        <p className="font-mono text-sm mb-5 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span>
+            {positions.length} holding{positions.length === 1 ? "" : "s"} &middot; ${totalValue.toFixed(2)} total
+          </span>
+          <span className={totalTodayUp ? "text-gain" : "text-loss"}>
+            &middot; today {totalTodayUp ? "+" : ""}
+            {totalToday.toFixed(2)} ({totalTodayUp ? "+" : ""}
+            {totalTodayPct.toFixed(2)}%)
+          </span>
+          <span className={totalPlUp ? "text-gain" : "text-loss"}>
+            &middot; all-time {totalPlUp ? "+" : ""}
+            {totalPl.toFixed(2)} ({totalPlUp ? "+" : ""}
+            {totalCost ? ((totalPl / totalCost) * 100).toFixed(1) : "0.0"}%)
+          </span>
+        </p>
+      )}
 
       {positions.length === 0 ? (
         <div className="border border-dashed border-border rounded-lg p-8 text-center">
@@ -148,21 +157,25 @@ export function PortfolioSection({
             const todayDollarText =
               row.todayChange != null ? `${todayUp ? "+" : ""}$${row.todayChange.toFixed(2)}` : "";
             return (
-              <Reveal key={row.ticker} delay={Math.min(i * 0.05, 0.3)}>
-                <div className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
+              <div key={row.ticker} className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
                   <Link
                     href={`/ticker/${encodeURIComponent(row.ticker)}`}
                     className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_90px_100px_90px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
                   >
-                    <div className="min-w-0 flex items-center gap-3">
-                      <StockLogo ticker={row.ticker} />
+                    <div className="min-w-0 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {/* Fixed slot, not just the logo: keeps names aligned even when a ticker has no logo. */}
+                        <div className="w-7 h-7 shrink-0 flex items-center justify-center">
+                          <StockLogo ticker={row.ticker} size={28} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold truncate">{row.name}</p>
+                          <p className="font-mono text-xs text-text-muted truncate">{row.ticker}</p>
+                        </div>
+                      </div>
                       <p className="text-xs text-warm font-semibold whitespace-nowrap shrink-0">
                         {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
                       </p>
-                      <div className="min-w-0">
-                        <p className="font-semibold truncate">{row.name}</p>
-                        <p className="font-mono text-xs text-text-muted truncate">{row.ticker}</p>
-                      </div>
                     </div>
                     <div className="hidden sm:block">
                       <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
@@ -198,7 +211,6 @@ export function PortfolioSection({
                     </button>
                   </form>
                 </div>
-              </Reveal>
             );
           })}
         </div>
