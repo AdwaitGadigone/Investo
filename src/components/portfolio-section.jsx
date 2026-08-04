@@ -166,15 +166,21 @@ export function PortfolioSection({
               />
               <span />
               <SortHeader label="Price" sortKey="price" active={sortKey === "price"} dir={sortDir} onClick={handleSort} />
-              <SortHeader
-                label="Today"
-                sortKey="todayChangePct"
-                active={sortKey === "todayChangePct"}
-                dir={sortDir}
-                onClick={handleSort}
-              />
+              <div className="flex flex-col items-end gap-0.5">
+                <span className="text-[10px] uppercase tracking-wide text-text-muted">Today</span>
+                <div className="flex items-center gap-2">
+                  <SortHeader label="%" sortKey="todayChangePct" active={sortKey === "todayChangePct"} dir={sortDir} onClick={handleSort} />
+                  <SortHeader label="$" sortKey="todayChange" active={sortKey === "todayChange"} dir={sortDir} onClick={handleSort} />
+                </div>
+              </div>
               <SortHeader label="Value" sortKey="value" active={sortKey === "value"} dir={sortDir} onClick={handleSort} />
-              <SortHeader label="P/L" sortKey="plPct" active={sortKey === "plPct"} dir={sortDir} onClick={handleSort} />
+              <div className="flex flex-col items-end gap-0.5">
+                <span className="text-[10px] uppercase tracking-wide text-text-muted">P/L</span>
+                <div className="flex items-center gap-2">
+                  <SortHeader label="%" sortKey="plPct" active={sortKey === "plPct"} dir={sortDir} onClick={handleSort} />
+                  <SortHeader label="$" sortKey="pl" active={sortKey === "pl"} dir={sortDir} onClick={handleSort} />
+                </div>
+              </div>
             </div>
             {showRemoveButton && <div className="w-7 ml-1 sm:ml-2" />}
           </div>

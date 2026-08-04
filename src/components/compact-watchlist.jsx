@@ -79,14 +79,8 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
           />
           <span />
           <SortHeader label="Price" sortKey="price" active={sortKey === "price"} dir={sortDir} onClick={handleSort} />
-          <SortHeader
-            label="Change"
-            sortKey="pct"
-            active={sortKey === "pct"}
-            dir={sortDir}
-            onClick={handleSort}
-            className="col-span-2"
-          />
+          <SortHeader label="Change %" sortKey="pct" active={sortKey === "pct"} dir={sortDir} onClick={handleSort} />
+          <SortHeader label="Change $" sortKey="amount" active={sortKey === "amount"} dir={sortDir} onClick={handleSort} />
           <span />
         </div>
         {sortedRows.map((row, i) => {
