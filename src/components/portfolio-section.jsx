@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { buyPositionAction, removePositionAction } from "@/lib/actions/portfolio";
-import { IconX } from "@/components/icons";
+import { buyPositionAction, editPositionAction, removePositionAction } from "@/lib/actions/portfolio";
+import { IconCheck, IconPencil, IconX } from "@/components/icons";
 import { Tooltip } from "@/components/tooltip";
 import { TickerAutocomplete } from "@/components/ticker-autocomplete";
 import { Sparkline } from "@/components/sparkline";
@@ -22,6 +22,7 @@ export function PortfolioSection({
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState(-1);
   const [expanded, setExpanded] = useState(false);
+  const [editingTicker, setEditingTicker] = useState(null);
   const handleSort = (key) => {
     if (key === sortKey) {
       setSortDir((d) => -d);
@@ -182,7 +183,8 @@ export function PortfolioSection({
                 </div>
               </div>
             </div>
-            {showRemoveButton && <div className="w-7 ml-1 sm:ml-2" />}
+            {/* Matches the row's actual pencil+X button group width so the header columns still line up. */}
+            {showRemoveButton && <div className="w-[60px] ml-1 sm:ml-2" />}
           </div>
           {visibleRows.map((row) => {
             const up = row.pl >= 0;
@@ -195,57 +197,125 @@ export function PortfolioSection({
                 : "—";
             const todayDollarText =
               row.todayChange != null ? `${todayUp ? "+" : ""}$${row.todayChange.toFixed(2)}` : "";
+            const isEditing = editingTicker === row.ticker;
             return (
               <div key={row.ticker} className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
-                  <Link
-                    href={`/ticker/${encodeURIComponent(row.ticker)}`}
-                    className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_100px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
-                  >
-                    <div className="min-w-0 flex items-center gap-3">
-                      {/* Fixed slot, not just the logo: keeps names aligned even when a ticker has no logo. */}
-                      <div className="w-7 h-7 shrink-0 flex items-center justify-center">
-                        <StockLogo ticker={row.ticker} size={28} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-semibold truncate">{row.name}</p>
-                        <p className="font-mono text-xs text-text-muted truncate">
-                          {row.ticker}{" "}
-                          <span className="text-warm font-semibold">
-                            &middot; {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                    <div className="hidden sm:block">
-                      <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
-                    </div>
-                    <span className="hidden sm:inline font-mono text-sm text-right">${row.price.toFixed(2)}</span>
-                    <div className={`hidden sm:block text-right font-mono ${todayUp ? "text-gain" : "text-loss"}`}>
-                      <p className="text-sm">{todayText}</p>
-                      <p className="text-xs opacity-80">{todayDollarText || "—"}</p>
-                    </div>
-                    <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
-                    <div className={`hidden sm:block text-right font-mono ${up ? "text-gain" : "text-loss"}`}>
-                      <p className="text-sm">{pctText}</p>
-                      <p className="text-xs opacity-80">{dollarText}</p>
-                    </div>
-                    <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
-                      ${row.value.toFixed(2)}
-                      <br />
-                      {pctText} P/L
-                    </span>
-                  </Link>
-                  {showRemoveButton && (
-                    <form action={removePositionAction} className="ml-1 sm:ml-2">
+                  {isEditing ? (
+                    <form
+                      action={async (formData) => {
+                        await editPositionAction(formData);
+                        setEditingTicker(null);
+                      }}
+                      className="flex-1 flex flex-wrap items-center gap-3 px-4 sm:px-5 py-3 sm:py-4"
+                    >
                       <input type="hidden" name="ticker" value={row.ticker} />
-                      <button
-                        type="submit"
-                        className="text-text-muted hover:text-loss w-7 h-7 flex items-center justify-center rounded-full hover:bg-loss/10 transition-colors"
-                        aria-label={`Close ${row.ticker} position`}
-                      >
-                        <IconX width={14} height={14} />
-                      </button>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 shrink-0 flex items-center justify-center">
+                          <StockLogo ticker={row.ticker} size={28} />
+                        </div>
+                        <p className="font-semibold truncate">{row.ticker}</p>
+                      </div>
+                      <input
+                        type="number"
+                        step="any"
+                        name="shares"
+                        defaultValue={row.shares}
+                        required
+                        aria-label="Shares"
+                        className="w-24 bg-bg border border-border rounded-md px-2 py-1.5 font-mono text-sm focus:outline-none focus:border-discord transition-colors"
+                      />
+                      <span className="text-text-muted text-xs shrink-0">sh @ $</span>
+                      <input
+                        type="number"
+                        step="any"
+                        name="cost_basis"
+                        defaultValue={row.cost_basis}
+                        required
+                        aria-label="Average cost"
+                        className="w-24 bg-bg border border-border rounded-md px-2 py-1.5 font-mono text-sm focus:outline-none focus:border-discord transition-colors"
+                      />
+                      <span className="text-text-muted text-xs shrink-0">avg</span>
+                      <div className="flex items-center gap-1 ml-auto">
+                        <button
+                          type="submit"
+                          className="text-gain hover:text-gain w-7 h-7 flex items-center justify-center rounded-full hover:bg-gain/10 transition-colors"
+                          aria-label={`Save ${row.ticker}`}
+                        >
+                          <IconCheck width={14} height={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingTicker(null)}
+                          className="text-text-muted hover:text-loss w-7 h-7 flex items-center justify-center rounded-full hover:bg-loss/10 transition-colors"
+                          aria-label="Cancel"
+                        >
+                          <IconX width={14} height={14} />
+                        </button>
+                      </div>
                     </form>
+                  ) : (
+                    <>
+                      <Link
+                        href={`/ticker/${encodeURIComponent(row.ticker)}`}
+                        className="grid grid-cols-[1fr_84px] sm:grid-cols-[1fr_70px_90px_90px_100px_100px] items-center gap-3 sm:gap-4 flex-1 px-4 sm:px-5 py-3 sm:py-4"
+                      >
+                        <div className="min-w-0 flex items-center gap-3">
+                          {/* Fixed slot, not just the logo: keeps names aligned even when a ticker has no logo. */}
+                          <div className="w-7 h-7 shrink-0 flex items-center justify-center">
+                            <StockLogo ticker={row.ticker} size={28} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold truncate">{row.name}</p>
+                            <p className="font-mono text-xs text-text-muted truncate">
+                              {row.ticker}{" "}
+                              <span className="text-warm font-semibold">
+                                &middot; {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="hidden sm:block">
+                          <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
+                        </div>
+                        <span className="hidden sm:inline font-mono text-sm text-right">${row.price.toFixed(2)}</span>
+                        <div className={`hidden sm:block text-right font-mono ${todayUp ? "text-gain" : "text-loss"}`}>
+                          <p className="text-sm">{todayText}</p>
+                          <p className="text-xs opacity-80">{todayDollarText || "—"}</p>
+                        </div>
+                        <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
+                        <div className={`hidden sm:block text-right font-mono ${up ? "text-gain" : "text-loss"}`}>
+                          <p className="text-sm">{pctText}</p>
+                          <p className="text-xs opacity-80">{dollarText}</p>
+                        </div>
+                        <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
+                          ${row.value.toFixed(2)}
+                          <br />
+                          {pctText} P/L
+                        </span>
+                      </Link>
+                      {showRemoveButton && (
+                        <div className="flex items-center gap-1 ml-1 sm:ml-2">
+                          <button
+                            type="button"
+                            onClick={() => setEditingTicker(row.ticker)}
+                            className="text-text-muted hover:text-discord w-7 h-7 flex items-center justify-center rounded-full hover:bg-discord/10 transition-colors"
+                            aria-label={`Edit ${row.ticker} position`}
+                          >
+                            <IconPencil width={14} height={14} />
+                          </button>
+                          <form action={removePositionAction}>
+                            <input type="hidden" name="ticker" value={row.ticker} />
+                            <button
+                              type="submit"
+                              className="text-text-muted hover:text-loss w-7 h-7 flex items-center justify-center rounded-full hover:bg-loss/10 transition-colors"
+                              aria-label={`Close ${row.ticker} position`}
+                            >
+                              <IconX width={14} height={14} />
+                            </button>
+                          </form>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
             );

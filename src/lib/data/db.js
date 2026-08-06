@@ -88,6 +88,17 @@ export async function buyPosition(guildId, userId, ticker, shares, price) {
   }
 }
 
+// Overwrites directly instead of blending like buyPosition, this is for fixing a typo'd entry.
+export async function editPosition(guildId, userId, ticker, shares, costBasis) {
+  const { error } = await supabaseAdmin
+    .from("portfolio")
+    .update({ shares, cost_basis: costBasis })
+    .eq("guild_id", guildId)
+    .eq("user_id", userId)
+    .eq("ticker", ticker);
+  if (error) throw error;
+}
+
 export async function removePosition(guildId, userId, ticker) {
   const { error, count } = await supabaseAdmin
     .from("portfolio")
