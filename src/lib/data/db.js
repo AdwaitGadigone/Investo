@@ -145,6 +145,10 @@ export async function disableDigest(guildId, userId) {
 // The ::text cast keeps guild_id a string end to end, letting it through as a number risks silent precision loss.
 export async function getBotGuilds() {
   const { data, error } = await supabaseAdmin.from("bot_guilds").select("guild_id::text, name, icon_hash");
-  if (error) throw error;
+  if (error) {
+    // Table won't exist until the bot's next redeploy runs its schema migration, fail open to "no servers" instead of crashing login.
+    console.error("getBotGuilds failed, treating as empty:", error.message);
+    return [];
+  }
   return data;
 }
