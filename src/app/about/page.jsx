@@ -28,7 +28,7 @@ const SOURCES = [
   },
   {
     name: "Discord",
-    body: "Sign-in, and the bot itself lives here. The bot's own token is what checks you're actually a member of the server before letting you into the site.",
+    body: "Sign-in, and the bot itself lives here. Which of your own servers show up on the site depends on which ones actually have Investo added.",
   },
 ];
 
@@ -91,7 +91,7 @@ export default async function AboutPage() {
             >
               Claude Code
             </a>
-            . It's a genuine, still-growing project, not a demo.
+            . Still actively growing, new features go in most weeks.
           </p>
 
           <Reveal delay={0.05}>

@@ -27,7 +27,7 @@ export async function updateSession(request) {
   const { data } = await supabase.auth.getClaims();
   const isLoggedIn = Boolean(data?.claims);
 
-  const publicPaths = ["/", "/login", "/auth", "/no-servers", "/about", "/bot"];
+  const publicPaths = ["/", "/login", "/auth", "/no-servers", "/about", "/bot", "/privacy", "/terms"];
   const isPublicPath = publicPaths.some(
     (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
   );
