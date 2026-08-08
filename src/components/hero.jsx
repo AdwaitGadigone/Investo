@@ -38,7 +38,7 @@ export function Hero({ quotes, user }) {
           >
             <span className="text-discord">Stocks</span>,{" "}
             <span className="text-warm">crypto</span> &amp;{" "}
-            <span className="text-cool">more</span>.
+            <span className="text-cool">more</span>&hellip;
           </motion.h1>
 
           <motion.p
