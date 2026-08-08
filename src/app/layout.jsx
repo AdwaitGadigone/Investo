@@ -1,10 +1,16 @@
-import { Bricolage_Grotesque, Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, IBM_Plex_Mono, Fraunces } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // A display font with real personality, not another "Inter alternative" every AI tool uses.
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
+  subsets: ["latin"],
+});
+
+// A characterful serif reserved for the hero headline, reads premium/editorial against Bricolage's grotesque body copy.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
 });
 
@@ -30,7 +36,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${instrumentSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${instrumentSans.variable} ${ibmPlexMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg text-text font-sans">
         {children}

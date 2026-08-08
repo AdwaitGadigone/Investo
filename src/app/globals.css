@@ -54,6 +54,7 @@
   --font-sans: var(--font-instrument);
   --font-display: var(--font-bricolage);
   --font-mono: var(--font-ibm-plex-mono);
+  --font-wealth: var(--font-fraunces);
 
   --radius-sm: 4px;
   --radius-md: 8px;

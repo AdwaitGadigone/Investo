@@ -34,10 +34,9 @@ export function Hero({ quotes, user }) {
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="font-display text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.92]"
+            className="font-wealth text-6xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.92]"
           >
-            One place for{" "}
-            <span className="text-discord">stocks</span>,{" "}
+            <span className="text-discord">Stocks</span>,{" "}
             <span className="text-warm">crypto</span> &amp;{" "}
             <span className="text-cool">more</span>.
           </motion.h1>
