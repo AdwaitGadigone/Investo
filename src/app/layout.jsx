@@ -28,9 +28,30 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
 });
 
+const DESCRIPTION =
+  "Track stocks, crypto, and more, in Discord and on the web. Watchlists, portfolios, price alerts, and a daily digest, synced instantly either way.";
+
 export const metadata = {
-  title: "Investo",
-  description: "Live quotes, portfolios, and watchlists, synced straight from Discord.",
+  metadataBase: new URL("https://investoweb.vercel.app"),
+  title: {
+    default: "Investo",
+    // %s lets a page override just its own piece, e.g. a ticker page could become "AAPL — Investo".
+    template: "%s — Investo",
+  },
+  description: DESCRIPTION,
+  keywords: ["Discord bot", "stock tracker", "crypto tracker", "watchlist", "portfolio tracker", "price alerts"],
+  openGraph: {
+    title: "Investo",
+    description: DESCRIPTION,
+    url: "https://investoweb.vercel.app",
+    siteName: "Investo",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Investo",
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({ children }) {

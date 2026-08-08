@@ -27,7 +27,20 @@ export async function updateSession(request) {
   const { data } = await supabase.auth.getClaims();
   const isLoggedIn = Boolean(data?.claims);
 
-  const publicPaths = ["/", "/login", "/auth", "/no-servers", "/about", "/bot", "/privacy", "/terms"];
+  const publicPaths = [
+    "/",
+    "/login",
+    "/auth",
+    "/no-servers",
+    "/about",
+    "/bot",
+    "/privacy",
+    "/terms",
+    // Crawlers and link-preview bots are never logged in, these can't be gated behind auth.
+    "/opengraph-image",
+    "/robots.txt",
+    "/sitemap.xml",
+  ];
   const isPublicPath = publicPaths.some(
     (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
   );
