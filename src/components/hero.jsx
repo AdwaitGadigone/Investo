@@ -34,11 +34,12 @@ export function Hero({ quotes, user }) {
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="font-impact uppercase text-6xl sm:text-7xl lg:text-8xl tracking-normal leading-[0.9]"
+            className="font-impact uppercase tracking-normal leading-[0.9]"
+            style={{ fontSize: "clamp(1.75rem, 3.6vw, 4.5rem)" }}
           >
             <span className="text-discord">Stocks</span>,{" "}
             <span className="text-warm">crypto</span> &amp;{" "}
-            <span className="text-cool">more</span>&hellip;
+            <span className="text-cool">more</span>
           </motion.h1>
 
           <motion.p
