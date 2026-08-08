@@ -17,6 +17,8 @@ export function DiscordSignInButton({ className = "" }) {
       provider: "discord",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
+        // Needed to list the user's own servers, so login can work for any server the bot is in, not just one.
+        scopes: "identify guilds",
       },
     });
   };

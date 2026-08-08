@@ -141,3 +141,10 @@ export async function disableDigest(guildId, userId) {
   if (error) throw error;
   return count > 0;
 }
+
+// The ::text cast keeps guild_id a string end to end, letting it through as a number risks silent precision loss.
+export async function getBotGuilds() {
+  const { data, error } = await supabaseAdmin.from("bot_guilds").select("guild_id::text, name, icon_hash");
+  if (error) throw error;
+  return data;
+}

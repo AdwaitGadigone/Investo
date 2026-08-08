@@ -4,7 +4,7 @@ import { getQuote, getHistory, getRelatedTickers } from "@/lib/market/yahoo";
 import { getCompanyNews, getRecommendationTrends } from "@/lib/market/finnhub";
 import { getWatchlist } from "@/lib/data/db";
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
-import { GUILD_ID } from "@/lib/config";
+import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
 import { Footer } from "@/components/footer";
 import { PriceChart } from "@/components/price-chart";
@@ -38,13 +38,14 @@ export default async function TickerPage({ params, searchParams }) {
   const ticker = symbol.toUpperCase();
 
   const { discordId } = await getDiscordUser();
+  const guildId = await getActiveGuildId();
 
   const [quote, history, news, trends, watchlist] = await Promise.all([
     getQuote(ticker),
     getHistory(ticker, range),
     getCompanyNews(ticker),
     getRecommendationTrends(ticker),
-    getWatchlist(GUILD_ID, discordId),
+    getWatchlist(guildId, discordId),
   ]);
 
   if (!quote) notFound();

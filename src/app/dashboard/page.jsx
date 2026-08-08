@@ -5,7 +5,7 @@ import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory, getMarketSnapshot, getCommodities } from "@/lib/market/yahoo";
 import { getTopPerformers, getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
 import { CRYPTOS } from "@/lib/market/crypto-config";
-import { GUILD_ID } from "@/lib/config";
+import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
 import { SearchBar } from "@/components/search-bar";
 import { MarketSnapshot } from "@/components/market-snapshot";
@@ -23,13 +23,14 @@ import { GettingStarted } from "@/components/getting-started";
 // Same Supabase tables the bot writes to, this is what proves "same account, everywhere."
 export default async function DashboardPage() {
   const { discordId, username } = await getDiscordUser();
+  const guildId = await getActiveGuildId();
 
   const [watchlist, portfolio, alerts, digestOn, topPerformers, marketSnapshot, marketMovers, commodities] =
     await Promise.all([
-      getWatchlist(GUILD_ID, discordId),
-      getPortfolio(GUILD_ID, discordId),
-      getActiveAlerts(GUILD_ID, discordId),
-      isDigestEnabled(GUILD_ID, discordId),
+      getWatchlist(guildId, discordId),
+      getPortfolio(guildId, discordId),
+      getActiveAlerts(guildId, discordId),
+      isDigestEnabled(guildId, discordId),
       getTopPerformers(),
       getMarketSnapshot(),
       getMarketMovers(),

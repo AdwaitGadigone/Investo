@@ -3,7 +3,7 @@ import { getPortfolio } from "@/lib/data/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory } from "@/lib/market/yahoo";
 import { getPortfolioHistory } from "@/lib/market/portfolio-history";
-import { GUILD_ID } from "@/lib/config";
+import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
 import { Footer } from "@/components/footer";
 import { GradientBlobs } from "@/components/gradient-blobs";
@@ -17,8 +17,9 @@ import { AnimatedNumber } from "@/components/animated-number";
 export default async function PortfolioPage({ searchParams }) {
   const { range = "3mo" } = await searchParams;
   const { discordId } = await getDiscordUser();
+  const guildId = await getActiveGuildId();
 
-  const positions = await getPortfolio(GUILD_ID, discordId);
+  const positions = await getPortfolio(guildId, discordId);
   const tickers = positions.map((p) => p.ticker);
 
   const [quotes, history, tickerHistories] = await Promise.all([

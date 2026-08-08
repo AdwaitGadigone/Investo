@@ -3,7 +3,7 @@ import { getWatchlist } from "@/lib/data/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory } from "@/lib/market/yahoo";
 import { getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
-import { GUILD_ID } from "@/lib/config";
+import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { WatchlistGrid } from "@/components/watchlist-grid";
@@ -12,7 +12,8 @@ import { addWatchlistTicker } from "@/lib/actions/watchlist";
 
 export default async function WatchlistPage() {
   const { discordId } = await getDiscordUser();
-  const tickers = await getWatchlist(GUILD_ID, discordId);
+  const guildId = await getActiveGuildId();
+  const tickers = await getWatchlist(guildId, discordId);
 
   const [quotes, histories, marketMovers, periodChangesByTicker] = await Promise.all([
     getQuotes(tickers),

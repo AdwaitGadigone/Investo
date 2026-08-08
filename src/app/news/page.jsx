@@ -2,7 +2,7 @@ import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getWatchlist, isDigestEnabled } from "@/lib/data/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getAggregatedNews } from "@/lib/market/finnhub";
-import { GUILD_ID } from "@/lib/config";
+import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { Reveal } from "@/components/reveal";
@@ -12,10 +12,11 @@ import { DigestToggle } from "@/components/digest-toggle";
 // The digest DM's content viewable any time, plus news aggregated across the whole watchlist.
 export default async function NewsPage() {
   const { discordId } = await getDiscordUser();
+  const guildId = await getActiveGuildId();
 
   const [watchlist, digestOn] = await Promise.all([
-    getWatchlist(GUILD_ID, discordId),
-    isDigestEnabled(GUILD_ID, discordId),
+    getWatchlist(guildId, discordId),
+    isDigestEnabled(guildId, discordId),
   ]);
 
   const [quotes, news] = await Promise.all([

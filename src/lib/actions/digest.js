@@ -2,17 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
+import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { isDigestEnabled, enableDigest, disableDigest } from "@/lib/data/db";
-import { GUILD_ID } from "@/lib/config";
 
 export async function toggleDigestAction() {
   const { discordId } = await getDiscordUser();
+  const guildId = await getActiveGuildId();
 
-  const on = await isDigestEnabled(GUILD_ID, discordId);
+  const on = await isDigestEnabled(guildId, discordId);
   if (on) {
-    await disableDigest(GUILD_ID, discordId);
+    await disableDigest(guildId, discordId);
   } else {
-    await enableDigest(GUILD_ID, discordId);
+    await enableDigest(guildId, discordId);
   }
 
   revalidatePath("/news");
