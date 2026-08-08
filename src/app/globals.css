@@ -54,7 +54,8 @@
   --font-sans: var(--font-instrument);
   --font-display: var(--font-bricolage);
   --font-mono: var(--font-ibm-plex-mono);
-  --font-impact: var(--font-anton);
+  /* Impact isn't a web font, it's just installed on most Windows machines, Anton (same bold condensed style) covers everyone else. */
+  --font-impact: Impact, var(--font-anton), sans-serif;
 
   --radius-sm: 4px;
   --radius-md: 8px;
