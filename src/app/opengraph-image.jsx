@@ -1,10 +1,15 @@
+import { readFile } from "fs/promises";
+import path from "path";
 import { ImageResponse } from "next/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Generated at request time, no separate image asset to keep in sync with the brand colors.
-export default function OpengraphImage() {
+// Generated at request time, reads the logo straight off disk since satori can't resolve a relative /public path.
+export default async function OpengraphImage() {
+  const logoBuffer = await readFile(path.join(process.cwd(), "public", "investo-logo.png"));
+  const logoSrc = `data:image/png;base64,${logoBuffer.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -29,11 +34,7 @@ export default function OpengraphImage() {
           }}
         />
         <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          <svg width="90" height="90" viewBox="0 0 24 24" fill="none" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 16 L9 11" stroke="#d03b3b" />
-            <path d="M9 11 L14 15 L21 5" stroke="#0ca30c" />
-            <path d="M15 5 L21 5 L21 11" stroke="#0ca30c" />
-          </svg>
+          <img src={logoSrc} width={140} height={105} />
           <div style={{ display: "flex", fontSize: 108, fontWeight: 800, color: "#f2f2f0", letterSpacing: -2 }}>
             INVEST
             <span style={{ color: "#0ca30c" }}>O</span>

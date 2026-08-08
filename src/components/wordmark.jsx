@@ -1,4 +1,4 @@
-// Red into green glyph, not just green, so it reads as "stocks" not "line going up."
+// Red into green glyph, not just green, so it reads as "stocks" not "line going up," kept flat since the fuller globe logo doesn't read at nav-icon scale.
 export function Wordmark({ className = "" }) {
   return (
     <span className={`inline-flex items-center gap-2 font-display font-bold tracking-tight ${className}`}>
