@@ -18,6 +18,7 @@ import {
   IconWallet,
   IconBell,
   IconChat,
+  IconInfo,
 } from "@/components/icons";
 
 // Mirrors Investobot's src/cogs/help.py SECTIONS, keep both in sync when a command changes.
@@ -102,6 +103,10 @@ const SECTIONS = [
         body: "Log a buy, blends into your average cost if you already hold some.",
       },
       { cmd: "/portfolio sell <ticker> <shares>", body: "Log a sell, reduces or closes the position." },
+      {
+        cmd: "/portfolio edit <ticker> [shares] [avg_cost]",
+        body: "Correct the share count or average cost directly, no blending, for fixing a typo'd entry.",
+      },
       { cmd: "/portfolio remove <ticker>", body: "Fully clear a position." },
       { cmd: "/portfolio view", body: "See every holding with live profit/loss, plus your totals." },
     ],
@@ -118,7 +123,14 @@ const SECTIONS = [
       { cmd: "/alert list", body: "Show your alerts and their ID numbers." },
       { cmd: "/alert remove <alert_id>", body: "Cancel one." },
       { cmd: "/notify", body: "Toggle the Stock Alerts role, anyone with it gets pinged on automatic updates." },
-      { cmd: "/digest", body: "Toggle a daily DM summarizing your watchlist, sent every morning." },
+      {
+        cmd: "/digest [content]",
+        body: "Toggle a daily DM summarizing your watchlist, portfolio, or both. A dropdown right on the DM lets you switch what it shows afterward too.",
+      },
+      {
+        cmd: "/serverdigest set | off",
+        body: "Admin-only (Manage Server). Posts a daily digest of the server's tracked list to a channel of your choice, with a switchable time window and a section flagging other big movers.",
+      },
     ],
   },
   {
@@ -129,6 +141,21 @@ const SECTIONS = [
       {
         cmd: "@ mention the bot",
         body: "Ask about a stock, investing in general, or reply to its message to keep a follow-up thread going, it answers using an AI that pulls in live prices for any ticker you mention.",
+      },
+    ],
+  },
+  {
+    icon: IconInfo,
+    color: "bg-warm/15 text-warm",
+    title: "Feedback & Status",
+    commands: [
+      {
+        cmd: "/feedback <message> [category]",
+        body: "Send a bug report, suggestion, or general feedback straight to the bot owner.",
+      },
+      {
+        cmd: "/status",
+        body: "Checks Discord latency, the database, Yahoo Finance, and today's Gemini usage, shows what's actually responding right now.",
       },
     ],
   },

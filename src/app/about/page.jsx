@@ -12,11 +12,11 @@ import { BOT_INVITE_URL } from "@/lib/config";
 const SOURCES = [
   {
     name: "Yahoo Finance",
-    body: "Live quotes, price history for every chart, market indices, and the gainers/losers/most active/related-tickers panels.",
+    body: "Price history for every chart, market indices, the gainers/losers/most active/related-tickers panels, and price/change for anything Finnhub doesn't cover.",
   },
   {
     name: "Finnhub",
-    body: "Company news headlines and the analyst buy/hold/sell consensus shown on every ticker page.",
+    body: "Company news, the analyst buy/hold/sell consensus, and real-time (not delayed) price/change for US-listed stocks on ticker pages.",
   },
   {
     name: "Google Gemini",
