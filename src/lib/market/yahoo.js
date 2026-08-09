@@ -1,6 +1,7 @@
 import "server-only";
 import YahooFinance from "yahoo-finance2";
 import { COMMODITIES } from "@/lib/market/commodities-config";
+import { getRealtimeQuote } from "@/lib/market/finnhub";
 
 // Closest JS match to the bot's yfinance calls, same underlying data source.
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
@@ -9,17 +10,18 @@ const unitBySymbol = Object.fromEntries(COMMODITIES.map((c) => [c.ticker, c.unit
 
 export async function getQuote(ticker) {
   try {
-    const q = await yf.quote(ticker);
+    // Concurrent, not sequential, so the real-time overlay doesn't add extra wait time on top of the Yahoo call.
+    const [q, realtime] = await Promise.all([yf.quote(ticker), getRealtimeQuote(ticker)]);
     if (!q || q.regularMarketPrice == null) return null;
 
     return {
       ticker: q.symbol,
       name: q.longName || q.shortName || q.symbol,
-      price: q.regularMarketPrice,
-      change: q.regularMarketChange,
-      changePct: q.regularMarketChangePercent,
-      dayLow: q.regularMarketDayLow,
-      dayHigh: q.regularMarketDayHigh,
+      price: realtime?.c ?? q.regularMarketPrice,
+      change: realtime?.d ?? q.regularMarketChange,
+      changePct: realtime?.dp ?? q.regularMarketChangePercent,
+      dayLow: realtime?.l ?? q.regularMarketDayLow,
+      dayHigh: realtime?.h ?? q.regularMarketDayHigh,
       yearLow: q.fiftyTwoWeekLow,
       yearHigh: q.fiftyTwoWeekHigh,
       volume: q.regularMarketVolume,

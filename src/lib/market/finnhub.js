@@ -33,6 +33,24 @@ export async function getAggregatedNews(tickers, perTicker = 4) {
   return results.flat().sort((a, b) => (b.datetime ?? 0) - (a.datetime ?? 0));
 }
 
+// Real-time for US stocks, unlike Yahoo's free feed which runs 15-20 minutes delayed. Returns null for
+// anything Finnhub doesn't cover (CDRs, crypto, commodities futures), which just falls back to Yahoo's price.
+export async function getRealtimeQuote(ticker) {
+  if (!KEY) return null;
+
+  try {
+    const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${KEY}`, {
+      next: { revalidate: 5 },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data || !data.c) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
 // Free tier has no price target, but recommendation trends (buy/hold/sell) are free.
 export async function getRecommendationTrends(ticker) {
   if (!KEY) return null;
