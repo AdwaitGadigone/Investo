@@ -5,16 +5,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Sparkline } from "@/components/sparkline";
 import { StockLogo } from "@/components/stock-logo";
-
-const PERIODS = [
-  { key: "day", label: "Day" },
-  { key: "week", label: "Week" },
-  { key: "month", label: "Month" },
-  { key: "threeMonth", label: "3M" },
-  { key: "ytd", label: "YTD" },
-  { key: "year", label: "Year" },
-  { key: "fiveYear", label: "5Y" },
-];
+import { PeriodDropdown } from "@/components/period-dropdown";
 
 export function TopPerformers({ data, compact = false, className = "mb-12" }) {
   const [period, setPeriod] = useState("day");
@@ -24,24 +15,7 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
     <div className={className}>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         <p className="font-display text-2xl font-bold tracking-tight">Top performers</p>
-        <div className="flex items-center gap-1 glass rounded-full p-1 max-w-full overflow-x-auto">
-          {PERIODS.map((p) => (
-            <button
-              key={p.key}
-              onClick={() => setPeriod(p.key)}
-              className="relative shrink-0 px-2.5 sm:px-3.5 py-1.5 text-sm font-mono rounded-full"
-            >
-              {period === p.key && (
-                <motion.span
-                  layoutId="performers-pill"
-                  className="absolute inset-0 bg-discord rounded-full -z-10"
-                  transition={{ type: "spring", stiffness: 500, damping: 32 }}
-                />
-              )}
-              <span className={period === p.key ? "text-white" : "text-text-muted"}>{p.label}</span>
-            </button>
-          ))}
-        </div>
+        <PeriodDropdown value={period} onChange={setPeriod} />
       </div>
 
       {rows.length === 0 ? (

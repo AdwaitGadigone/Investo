@@ -2,22 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion } from "motion/react";
 import { Sparkline } from "@/components/sparkline";
 import { StockLogo } from "@/components/stock-logo";
 import { SortHeader, compareRows } from "@/components/sort-header";
 import { IconX } from "@/components/icons";
+import { PeriodDropdown } from "@/components/period-dropdown";
 import { removeWatchlistTicker } from "@/lib/actions/watchlist";
-
-const PERIODS = [
-  { key: "day", label: "Day" },
-  { key: "week", label: "Week" },
-  { key: "month", label: "Month" },
-  { key: "threeMonth", label: "3M" },
-  { key: "ytd", label: "YTD" },
-  { key: "year", label: "Year" },
-  { key: "fiveYear", label: "5Y" },
-];
 
 // Dense dashboard row version of the big /watchlist cards, same data, denser layout.
 export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, periodChangesByTicker }) {
@@ -46,24 +36,7 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
   return (
     <div>
       <div className="flex justify-end mb-3">
-        <div className="flex items-center gap-1 glass rounded-full p-1 max-w-full overflow-x-auto">
-          {PERIODS.map((p) => (
-            <button
-              key={p.key}
-              onClick={() => setPeriod(p.key)}
-              className="relative shrink-0 px-2.5 sm:px-3.5 py-1.5 text-sm font-mono rounded-full"
-            >
-              {period === p.key && (
-                <motion.span
-                  layoutId="compact-watchlist-pill"
-                  className="absolute inset-0 bg-discord rounded-full -z-10"
-                  transition={{ type: "spring", stiffness: 500, damping: 32 }}
-                />
-              )}
-              <span className={period === p.key ? "text-white" : "text-text-muted"}>{p.label}</span>
-            </button>
-          ))}
-        </div>
+        <PeriodDropdown value={period} onChange={setPeriod} />
       </div>
 
       <div className="glass rounded-lg divide-y divide-border">
