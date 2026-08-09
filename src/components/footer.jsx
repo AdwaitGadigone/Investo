@@ -14,6 +14,9 @@ export function Footer() {
         <Link href="/terms" className="hover:text-text transition-colors">
           Terms
         </Link>
+        <Link href="/status" className="hover:text-text transition-colors">
+          Status
+        </Link>
       </div>
     </footer>
   );

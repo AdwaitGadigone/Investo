@@ -1,6 +1,7 @@
 import { getBotHeartbeat, pingDatabase } from "@/lib/data/db";
 import { Wordmark } from "@/components/wordmark";
 import { GradientBlobs } from "@/components/gradient-blobs";
+import { BackButton } from "@/components/back-button";
 
 // Anything past this many minutes without a heartbeat means the bot process is down or hung, not just mid-cycle.
 const HEARTBEAT_STALE_MINUTES = 5;
@@ -32,6 +33,7 @@ export default async function StatusPage() {
     <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 relative overflow-hidden">
       <GradientBlobs variant="features" />
       <div className="w-full max-w-md relative">
+        <BackButton className="mb-6" />
         <Wordmark className="text-2xl mb-8 justify-center" />
         <h1 className="font-display text-2xl font-bold tracking-tight mb-6 text-center">System Status</h1>
 
