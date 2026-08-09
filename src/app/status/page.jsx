@@ -34,7 +34,10 @@ export default async function StatusPage() {
       <GradientBlobs variant="features" />
       <div className="w-full max-w-md relative">
         <BackButton className="mb-6" />
-        <Wordmark className="text-2xl mb-8 justify-center" />
+        {/* Wordmark is an inline span, needs an actual flex wrapper to center, "justify-center" on it alone is a no-op. */}
+        <div className="flex justify-center mb-8">
+          <Wordmark className="text-2xl" />
+        </div>
         <h1 className="font-display text-2xl font-bold tracking-tight mb-6 text-center">System Status</h1>
 
         <div className="grid gap-3">
