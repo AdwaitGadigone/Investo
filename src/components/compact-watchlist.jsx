@@ -86,7 +86,7 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
         {sortedRows.map((row, i) => {
           const { ticker, price, pct, amount } = row;
           const up = pct != null && pct >= 0;
-          const pctText = pct != null ? `${up ? "+" : ""}${pct.toFixed(2)}%` : "—";
+          const pctText = pct != null ? `${up ? "+" : ""}${pct.toFixed(2)}%` : "-";
           const dollarText = amount != null ? `${up ? "+" : "-"}$${Math.abs(amount).toFixed(2)}` : "";
 
           return (
@@ -104,7 +104,7 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
                   <Sparkline points={historyByTicker[ticker]} up={up} width={64} height={24} />
                 </div>
                 <span className="font-mono text-sm text-right">
-                  {price != null ? `$${price.toFixed(2)}` : "—"}
+                  {price != null ? `$${price.toFixed(2)}` : "-"}
                 </span>
                 <span className={`hidden sm:inline font-mono text-sm text-right ${up ? "text-gain" : "text-loss"}`}>
                   {pctText}

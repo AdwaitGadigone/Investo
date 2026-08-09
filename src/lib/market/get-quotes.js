@@ -3,8 +3,7 @@ import YahooFinance from "yahoo-finance2";
 
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
-// Yahoo, not Finnhub: Finnhub has no coverage at all for Canadian-listed tickers (.TO, .NE CDRs),
-// so any TSX stock or CDR silently came back with no name, no price, no today's change.
+// Yahoo only here, Finnhub has zero coverage of Canadian-listed tickers (.TO, .NE CDRs), bulk fetches stay simple.
 export async function getQuotes(tickers) {
   if (tickers.length === 0) return [];
 

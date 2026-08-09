@@ -12,9 +12,7 @@ export async function getPortfolioHistory(positions, range = "3mo") {
     }))
   );
 
-  // Different exchanges (NASDAQ, TSX, Cboe Canada for CDRs) close their daily bar at different exact
-  // seconds, so two tickers almost never share a timestamp even on the same trading day. Bucketing by
-  // calendar date instead of raw epoch time is what actually sums positions together correctly.
+  // Different exchanges close their daily bar at different exact seconds, bucket by calendar date instead to sum correctly.
   const isIntraday = range === "1d" || range === "1w";
   const valueByBucket = new Map();
   for (const { shares, history } of histories) {

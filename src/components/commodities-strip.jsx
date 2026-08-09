@@ -59,7 +59,7 @@ export function CommoditiesStrip({ commodities, periodChangesByTicker = {}, clas
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="font-mono text-sm">${c.price.toFixed(2)}</span>
                 <span className={`font-mono text-xs ${up ? "text-gain" : "text-loss"}`}>
-                  {changePct != null ? `${up ? "+" : ""}${changePct.toFixed(2)}%` : "—"}
+                  {changePct != null ? `${up ? "+" : ""}${changePct.toFixed(2)}%` : "-"}
                 </span>
               </div>
               {c.unit && <p className="text-xs text-text-muted mt-0.5">per {c.unit}</p>}

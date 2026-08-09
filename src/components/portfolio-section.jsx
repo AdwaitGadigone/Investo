@@ -194,7 +194,7 @@ export function PortfolioSection({
             const todayText =
               row.todayChangePct != null
                 ? `${todayUp ? "+" : ""}${row.todayChangePct.toFixed(2)}%`
-                : "—";
+                : "-";
             const todayDollarText =
               row.todayChange != null ? `${todayUp ? "+" : ""}$${row.todayChange.toFixed(2)}` : "";
             const isEditing = editingTicker === row.ticker;
@@ -280,7 +280,7 @@ export function PortfolioSection({
                         <span className="hidden sm:inline font-mono text-sm text-right">${row.price.toFixed(2)}</span>
                         <div className={`hidden sm:block text-right font-mono ${todayUp ? "text-gain" : "text-loss"}`}>
                           <p className="text-sm">{todayText}</p>
-                          <p className="text-xs opacity-80">{todayDollarText || "—"}</p>
+                          <p className="text-xs opacity-80">{todayDollarText || "-"}</p>
                         </div>
                         <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
                         <div className={`hidden sm:block text-right font-mono ${up ? "text-gain" : "text-loss"}`}>

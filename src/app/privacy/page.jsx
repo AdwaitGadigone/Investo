@@ -81,21 +81,21 @@ export default async function PrivacyPage() {
               </h2>
               <ul className="space-y-2">
                 <li>
-                  <span className="text-text font-semibold">Google Gemini</span> — the
+                  <span className="text-text font-semibold">Google Gemini</span>: the
                   text of your question or the data behind an AI-written take, only when
                   you actually trigger that feature.
                 </li>
                 <li>
-                  <span className="text-text font-semibold">Yahoo Finance / Finnhub</span> —
+                  <span className="text-text font-semibold">Yahoo Finance / Finnhub</span>:
                   ticker symbols only, to look up prices and news, never anything tied
                   to your identity.
                 </li>
                 <li>
-                  <span className="text-text font-semibold">Supabase</span> — hosts our
+                  <span className="text-text font-semibold">Supabase</span>: hosts our
                   database, everything listed above lives there.
                 </li>
                 <li>
-                  <span className="text-text font-semibold">Vercel</span> — hosts this
+                  <span className="text-text font-semibold">Vercel</span>: hosts this
                   website.
                 </li>
               </ul>

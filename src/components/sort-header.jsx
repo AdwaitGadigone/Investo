@@ -11,8 +11,7 @@ export function compareRows(a, b, key, dir) {
   return dir * (av - bv);
 }
 
-// A clickable column header with a small sort arrow, shared by every sortable table on the site.
-// align="start" for a wide 1fr column whose row content is left-aligned (name/ticker), "end" (default) for numeric columns.
+// A clickable sortable column header, align="start" for name/ticker columns, "end" (default) for numeric ones.
 export function SortHeader({ label, sortKey, active, dir, onClick, align = "end", className = "" }) {
   return (
     <button

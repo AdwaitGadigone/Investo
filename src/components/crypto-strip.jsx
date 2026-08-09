@@ -60,9 +60,9 @@ export function CryptoStrip({ quotes, periodChangesByTicker = {}, className = "m
               <div>
                 <p className="text-sm font-semibold">{q.label}</p>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <span className="font-mono text-sm">${q.price?.toFixed(2) ?? "—"}</span>
+                  <span className="font-mono text-sm">${q.price?.toFixed(2) ?? "-"}</span>
                   <span className={`font-mono text-xs ${up ? "text-gain" : "text-loss"}`}>
-                    {changePct != null ? `${up ? "+" : ""}${changePct.toFixed(2)}%` : "—"}
+                    {changePct != null ? `${up ? "+" : ""}${changePct.toFixed(2)}%` : "-"}
                   </span>
                 </div>
               </div>

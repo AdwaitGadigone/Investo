@@ -1,6 +1,4 @@
-// CIBC's Canadian Depositary Receipts: fractional, CAD-hedged shares of US stocks, traded on Cboe Canada (NEO).
-// Yahoo's own search doesn't surface these for a plain "AAPL" query, so /api/search injects matches from this list.
-// Verified against real Yahoo Finance quotes, several CDR tickers don't match the underlying (BOFA, COLA, MCDS, VISA, BRK).
+// CIBC's CDRs (CAD-hedged fractional US shares on Cboe Canada), injected into /api/search since Yahoo's own search misses them.
 export const CDRS = [
   { ticker: "AAPL.NE", underlying: "AAPL", name: "Apple" },
   { ticker: "ABBV.NE", underlying: "ABBV", name: "AbbVie" },

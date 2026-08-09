@@ -35,8 +35,8 @@ export const metadata = {
   metadataBase: new URL("https://investoweb.vercel.app"),
   title: {
     default: "Investo",
-    // %s lets a page override just its own piece, e.g. a ticker page could become "AAPL — Investo".
-    template: "%s — Investo",
+    // %s lets a page override just its own piece, e.g. a ticker page could become "AAPL · Investo".
+    template: "%s · Investo",
   },
   description: DESCRIPTION,
   keywords: ["Discord bot", "stock tracker", "crypto tracker", "watchlist", "portfolio tracker", "price alerts"],

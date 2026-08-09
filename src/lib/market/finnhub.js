@@ -33,8 +33,7 @@ export async function getAggregatedNews(tickers, perTicker = 4) {
   return results.flat().sort((a, b) => (b.datetime ?? 0) - (a.datetime ?? 0));
 }
 
-// Real-time for US stocks, unlike Yahoo's free feed which runs 15-20 minutes delayed. Returns null for
-// anything Finnhub doesn't cover (CDRs, crypto, commodities futures), which just falls back to Yahoo's price.
+// Real-time for US stocks unlike Yahoo's delayed free feed, returns null for anything else it doesn't cover.
 export async function getRealtimeQuote(ticker) {
   if (!KEY) return null;
 
