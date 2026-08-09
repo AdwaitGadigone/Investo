@@ -36,6 +36,7 @@ export async function updateSession(request) {
     "/bot",
     "/privacy",
     "/terms",
+    "/status",
     // Crawlers and link-preview bots are never logged in, these can't be gated behind auth.
     "/opengraph-image",
     "/robots.txt",

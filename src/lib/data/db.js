@@ -152,3 +152,24 @@ export async function getBotGuilds() {
   }
   return data;
 }
+
+// The bot writes this every 2 minutes, a stale timestamp here means the bot process itself is down or hung.
+export async function getBotHeartbeat() {
+  const { data, error } = await supabaseAdmin
+    .from("bot_status")
+    .select("last_heartbeat")
+    .eq("singleton_id", 1)
+    .maybeSingle();
+  if (error) {
+    // Table won't exist until the bot's next redeploy, that's "no heartbeat yet", not a real database failure.
+    console.error("getBotHeartbeat failed:", error.message);
+    return null;
+  }
+  return data?.last_heartbeat ?? null;
+}
+
+// Checks a table that's always existed, independent of whichever migration the bot's last deploy happened to add.
+export async function pingDatabase() {
+  const { error } = await supabaseAdmin.from("watchlist").select("ticker").limit(1);
+  return !error;
+}
