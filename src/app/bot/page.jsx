@@ -43,16 +43,25 @@ const SECTIONS = [
         cmd: "/movers",
         body: "Today's (or this week's/month's/3 months'/year's/5 years') top gainers, top losers, and most active stocks, filtered to real, well-known companies. Toggle between the three with buttons, pick the time span from a dropdown, same data as the website's Market Movers panel.",
       },
+      { cmd: "/fgi", body: "The crypto market's Fear & Greed Index right now, from alternative.me." },
     ],
   },
   {
     icon: IconSparkle,
     color: "bg-cool/15 text-cool",
-    title: "Analyst Ratings",
+    title: "Analyst Ratings & Sentiment",
     commands: [
       {
         cmd: "/rating <ticker>",
         body: "The full buy/hold/sell breakdown from Wall Street analysts, the average price target, and an AI-written take explaining why the rating looks the way it does.",
+      },
+      {
+        cmd: "/sentiment <ticker>",
+        body: "An AI read on current news sentiment, bullish, bearish, or mixed, grounded in real recent headlines, not a free-floating score.",
+      },
+      {
+        cmd: "/company_overview <ticker>",
+        body: "Business description, sector and industry, and valuation metrics like P/E, P/B, dividend yield, and beta.",
       },
     ],
   },
