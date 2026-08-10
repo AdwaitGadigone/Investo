@@ -25,7 +25,14 @@ export async function GET(request) {
     if (!error && data.user && data.session) {
       // Only ever available right here, Supabase doesn't persist or refresh the raw provider token afterward.
       const providerToken = data.session.provider_token;
-      const userGuilds = providerToken ? await fetchUserGuilds(providerToken) : [];
+      const userGuilds = providerToken ? await fetchUserGuilds(providerToken) : null;
+
+      // null means the Discord API call itself failed (rate limit, outage, bad token), not "zero servers".
+      // Sending that case to /no-servers would wrongly tell a member of a mutual server they have none.
+      if (userGuilds === null) {
+        return NextResponse.redirect(`${origin}/login?error=guilds`);
+      }
+
       const botGuilds = await getBotGuilds();
       const botGuildIds = new Set(botGuilds.map((g) => g.guild_id));
 
@@ -34,12 +41,20 @@ export async function GET(request) {
         .map((g) => ({ id: g.id, name: g.name, icon: guildIconUrl(g.id, g.icon) }));
 
       if (mutualGuilds.length === 0) {
-        return NextResponse.redirect(`${origin}/no-servers`);
+        // Clears any stale cookies from a previous login where the user had more servers than they do now,
+        // otherwise a leftover investo_guild/investo_guilds cookie would let /dashboard "work" anyway.
+        const response = NextResponse.redirect(`${origin}/no-servers`);
+        response.cookies.delete(GUILD_COOKIE);
+        response.cookies.delete(GUILDS_COOKIE);
+        return response;
       }
 
       if (mutualGuilds.length === 1) {
         const response = NextResponse.redirect(`${origin}/dashboard`);
         response.cookies.set(GUILD_COOKIE, mutualGuilds[0].id, COOKIE_OPTIONS);
+        // Same staleness guard: a user who used to be in multiple mutual servers and is now down to one
+        // shouldn't still have an old multi-server list backing the switcher and selectGuildAction's check.
+        response.cookies.delete(GUILDS_COOKIE);
         return response;
       }
 

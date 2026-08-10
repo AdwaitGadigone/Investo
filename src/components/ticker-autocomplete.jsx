@@ -9,6 +9,8 @@ export function TickerAutocomplete({ name = "ticker", placeholder = "Ticker", cl
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
+  // Tracks the most recently fired query, so a slower earlier response can't overwrite a faster later one.
+  const latestQuery = useRef("");
 
   useEffect(() => {
     const query = value.trim();
@@ -18,12 +20,13 @@ export function TickerAutocomplete({ name = "ticker", placeholder = "Ticker", cl
     }
 
     const timeout = setTimeout(async () => {
+      latestQuery.current = query;
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
-        setResults(data.results ?? []);
+        if (latestQuery.current === query) setResults(data.results ?? []);
       } catch {
-        setResults([]);
+        if (latestQuery.current === query) setResults([]);
       }
     }, 200);
 

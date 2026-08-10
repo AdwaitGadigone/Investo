@@ -11,6 +11,8 @@ export function SearchBar({ className = "" }) {
   const [activeIndex, setActiveIndex] = useState(-1);
   const router = useRouter();
   const containerRef = useRef(null);
+  // Tracks the most recently fired query, so a slower earlier response can't overwrite a faster later one.
+  const latestQuery = useRef("");
 
   // Debounced, so a fast typer doesn't fire a network request per keystroke.
   useEffect(() => {
@@ -21,13 +23,15 @@ export function SearchBar({ className = "" }) {
     }
 
     const timeout = setTimeout(async () => {
+      latestQuery.current = query;
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
+        if (latestQuery.current !== query) return;
         setResults(data.results ?? []);
         setActiveIndex(-1);
       } catch {
-        setResults([]);
+        if (latestQuery.current === query) setResults([]);
       }
     }, 200);
 
