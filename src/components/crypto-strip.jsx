@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { StockLogo } from "@/components/stock-logo";
-import { PeriodDropdown } from "@/components/period-dropdown";
+import { PeriodPills } from "@/components/period-pills";
 
 // Kept as its own row, not folded into "Popular right now": crypto and stocks are different enough to browse separately.
 export function CryptoStrip({ quotes, periodChangesByTicker = {}, className = "mb-12" }) {
@@ -16,7 +16,7 @@ export function CryptoStrip({ quotes, periodChangesByTicker = {}, className = "m
     <div className={className}>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         <p className="font-display text-2xl font-bold tracking-tight">Crypto</p>
-        <PeriodDropdown value={period} onChange={setPeriod} />
+        <PeriodPills value={period} onChange={setPeriod} layoutId="crypto-pill" />
       </div>
 
       <Reveal className="flex flex-wrap gap-3">

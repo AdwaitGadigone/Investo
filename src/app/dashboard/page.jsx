@@ -87,6 +87,8 @@ export default async function DashboardPage() {
 
         <MarketMovers data={marketMovers} />
 
+        <div className="border-t border-border/60 mb-12" />
+
         {/* Side by side so neither block wastes horizontal space. */}
         <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
           <TopPerformers data={topPerformers} compact className="mb-0" />
@@ -96,22 +98,24 @@ export default async function DashboardPage() {
         {/* Its own row, not mixed into the stock lists above, crypto and stocks are different enough to browse separately. */}
         <CryptoStrip quotes={cryptoRows} periodChangesByTicker={cryptoPeriodChanges} />
 
+        <div className="border-t border-border/60 mb-12" />
+
         {/* Side by side so neither dense list wastes horizontal space. */}
         <div className="grid gap-8 lg:grid-cols-2 items-start mb-12">
           <div>
-            <div className="flex flex-wrap items-baseline justify-between gap-3 mb-5">
-              <p className="font-display text-2xl font-bold tracking-tight">Your watchlist</p>
-              <div className="flex items-center gap-4">
-                {avgWatchlistChange != null && (
-                  <p className={`font-mono text-sm ${avgWatchlistChange >= 0 ? "text-gain" : "text-loss"}`}>
-                    {avgWatchlistChange >= 0 ? "+" : ""}
-                    {avgWatchlistChange.toFixed(2)}% average today
-                  </p>
-                )}
+            <div className="mb-5">
+              <div className="flex flex-wrap items-baseline justify-between gap-3">
+                <p className="font-display text-2xl font-bold tracking-tight">Your watchlist</p>
                 <Link href="/watchlist" className="text-sm text-discord hover:underline">
                   View all &rarr;
                 </Link>
               </div>
+              {avgWatchlistChange != null && (
+                <p className={`font-mono text-sm mt-1 ${avgWatchlistChange >= 0 ? "text-gain" : "text-loss"}`}>
+                  {avgWatchlistChange >= 0 ? "+" : ""}
+                  {avgWatchlistChange.toFixed(2)}% average today
+                </p>
+              )}
             </div>
 
             {watchlist.length === 0 ? (

@@ -6,7 +6,7 @@ import { Sparkline } from "@/components/sparkline";
 import { StockLogo } from "@/components/stock-logo";
 import { SortHeader, compareRows } from "@/components/sort-header";
 import { IconX } from "@/components/icons";
-import { PeriodDropdown } from "@/components/period-dropdown";
+import { PeriodPills } from "@/components/period-pills";
 import { removeWatchlistTicker } from "@/lib/actions/watchlist";
 
 // Dense dashboard row version of the big /watchlist cards, same data, denser layout.
@@ -36,7 +36,7 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
   return (
     <div>
       <div className="flex justify-end mb-3">
-        <PeriodDropdown value={period} onChange={setPeriod} />
+        <PeriodPills value={period} onChange={setPeriod} layoutId="compact-watchlist-pill" />
       </div>
 
       <div className="glass rounded-lg divide-y divide-border">

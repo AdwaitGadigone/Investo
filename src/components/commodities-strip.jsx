@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
-import { PeriodDropdown } from "@/components/period-dropdown";
+import { PeriodPills } from "@/components/period-pills";
 
 // Yahoo's text search buries gold behind an unrelated company, so this is a direct shortcut.
 export function CommoditiesStrip({ commodities, periodChangesByTicker = {}, className = "mb-12" }) {
@@ -15,7 +15,7 @@ export function CommoditiesStrip({ commodities, periodChangesByTicker = {}, clas
     <div className={className}>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         <p className="font-display text-2xl font-bold tracking-tight">Commodities</p>
-        <PeriodDropdown value={period} onChange={setPeriod} />
+        <PeriodPills value={period} onChange={setPeriod} layoutId="commodities-pill" />
       </div>
 
       <Reveal className="flex flex-wrap gap-3">

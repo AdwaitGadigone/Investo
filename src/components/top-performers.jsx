@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Sparkline } from "@/components/sparkline";
 import { StockLogo } from "@/components/stock-logo";
-import { PeriodDropdown } from "@/components/period-dropdown";
+import { PeriodPills } from "@/components/period-pills";
 
 export function TopPerformers({ data, compact = false, className = "mb-12" }) {
   const [period, setPeriod] = useState("day");
@@ -15,7 +15,7 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
     <div className={className}>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         <p className="font-display text-2xl font-bold tracking-tight">Top performers</p>
-        <PeriodDropdown value={period} onChange={setPeriod} />
+        <PeriodPills value={period} onChange={setPeriod} layoutId="performers-pill" />
       </div>
 
       {rows.length === 0 ? (

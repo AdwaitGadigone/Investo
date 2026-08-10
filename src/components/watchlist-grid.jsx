@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { WatchlistCard } from "@/components/watchlist-card";
-import { PeriodDropdown } from "@/components/period-dropdown";
+import { PeriodPills } from "@/components/period-pills";
 
 const PERIOD_TEXT = {
   day: "today",
@@ -21,7 +21,7 @@ export function WatchlistGrid({ tickers, quoteByTicker, historyByTicker, periodC
   return (
     <div className="mb-12">
       <div className="flex justify-end mb-5">
-        <PeriodDropdown value={period} onChange={setPeriod} />
+        <PeriodPills value={period} onChange={setPeriod} layoutId="watchlist-grid-pill" />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

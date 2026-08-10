@@ -80,9 +80,9 @@ export function SearchBar({ className = "" }) {
       <form onSubmit={handleSubmit}>
         <div className="relative">
           <svg
-            className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-text-muted"
-            width="18"
-            height="18"
+            className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 text-discord"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -102,7 +102,7 @@ export function SearchBar({ className = "" }) {
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder="Search any stock or crypto (AAPL, BTC-USD...)"
-            className="w-full bg-surface border border-border rounded-full pl-12 pr-6 py-4 font-mono uppercase text-sm placeholder:normal-case placeholder:font-sans placeholder:text-text-muted/60 focus:outline-none focus:border-discord transition-colors"
+            className="w-full bg-surface border-2 border-discord/25 rounded-full pl-14 pr-6 py-5 font-mono uppercase text-sm sm:text-base placeholder:normal-case placeholder:font-sans placeholder:text-text-muted/70 focus:outline-none focus:border-discord shadow-[0_0_50px_-18px_rgba(88,101,242,0.5)] transition-all"
             autoComplete="off"
           />
         </div>

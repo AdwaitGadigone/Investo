@@ -6,7 +6,7 @@ import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { Sparkline } from "@/components/sparkline";
 import { StockLogo } from "@/components/stock-logo";
-import { PeriodDropdown } from "@/components/period-dropdown";
+import { PeriodPills } from "@/components/period-pills";
 
 const EXPLAINERS = {
   "Top Gainers": "Biggest % price increase over the period picked above, filtered to real, well-known companies (not thin-volume microcaps).",
@@ -81,7 +81,7 @@ export function MarketMovers({ data }) {
     <div className="mb-12">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         <p className="font-display text-2xl font-bold tracking-tight">Market movers</p>
-        <PeriodDropdown value={period} onChange={setPeriod} />
+        <PeriodPills value={period} onChange={setPeriod} layoutId="movers-pill" />
       </div>
       <Reveal className="grid gap-4 sm:grid-cols-3">
         <MoverList title="Top Gainers" rows={rows.gainers} />
