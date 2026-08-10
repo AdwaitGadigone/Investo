@@ -71,19 +71,24 @@ export default async function DashboardPage() {
 
       <main className="relative flex-1 overflow-hidden px-6 md:px-12 lg:px-16 py-16">
         <GradientBlobs variant="steps" />
-        <img
-          src="/investo-logo.png"
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none select-none absolute top-32 right-32 md:right-64 w-72 md:w-96 opacity-[0.06] -z-10"
-        />
 
-        <p className="font-mono text-xs uppercase tracking-widest text-warm mb-3">
-          Dashboard
-        </p>
-        <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
-          Welcome back, {username}.
-        </h1>
+        {/* Anchored to this header block specifically, not the whole page, so it can never drift down
+            into Market Movers or lower sections on a shorter viewport. */}
+        <div className="relative">
+          <img
+            src="/investo-logo.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none select-none absolute top-1/2 -translate-y-1/2 right-0 md:right-12 w-40 md:w-56 opacity-[0.08] -z-10"
+          />
+
+          <p className="font-mono text-xs uppercase tracking-widest text-warm mb-3">
+            Dashboard
+          </p>
+          <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
+            Welcome back, {username}.
+          </h1>
+        </div>
 
         <MarketSnapshot indices={marketSnapshot} />
 
