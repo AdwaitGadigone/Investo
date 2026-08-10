@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getAvailableGuilds } from "@/lib/auth/active-guild";
 
 const GUILD_COOKIE = "investo_guild";
 
@@ -12,6 +13,11 @@ const COOKIE_OPTIONS = { httpOnly: true, secure: true, sameSite: "lax", path: "/
 export async function selectGuildAction(formData) {
   const guildId = formData.get("guildId")?.toString();
   if (!guildId) return;
+
+  // A Server Action can be invoked directly with a forged body, so re-check against the mutual-guild list the
+  // OAuth callback already verified, instead of trusting whatever guildId the request claims.
+  const availableGuilds = await getAvailableGuilds();
+  if (!availableGuilds.some((g) => g.id === guildId)) return;
 
   const cookieStore = await cookies();
   cookieStore.set(GUILD_COOKIE, guildId, COOKIE_OPTIONS);
