@@ -79,7 +79,7 @@ export default async function DashboardPage() {
             src="/investo-logo.png"
             alt=""
             aria-hidden="true"
-            className="pointer-events-none select-none absolute top-full -mt-6 right-4 md:right-24 w-72 md:w-96 opacity-[0.06] -z-10"
+            className="pointer-events-none select-none absolute top-full -mt-30 right-25 md:right-10 w-72 md:w-96 opacity-[0.06] -z-10"
           />
 
           <p className="font-mono text-xs uppercase tracking-widest text-warm mb-3">
