@@ -75,10 +75,11 @@ export default async function AboutPage() {
             What Investo actually is.
           </h1>
           <p className="text-text-muted leading-relaxed mb-4">
-            Investo started as a Discord bot for tracking stocks in a friend group's
-            server, watchlists, price alerts, a daily digest, and a bot you can just
-            @ mention with questions. This site is the same thing on the web, same
-            account, same data, nothing here is a separate copy of anything.
+            Investo started as a Discord bot for tracking stocks, watchlists, price
+            alerts, a daily digest, and a bot you can just @ mention with questions.
+            Now it runs in any server that adds it. This site is the same thing on
+            the web, same account, same data, nothing here is a separate copy of
+            anything.
           </p>
           <p className="text-text-muted leading-relaxed mb-10">
             Built by{" "}

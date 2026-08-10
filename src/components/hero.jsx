@@ -27,7 +27,7 @@ export function Hero({ quotes, user }) {
           >
             <span className="h-2 w-2 rounded-full bg-cool animate-pulse" />
             <span className="font-mono text-xs uppercase tracking-widest text-text-muted">
-              Live on the web now
+              Actively tracking the market
             </span>
           </motion.div>
 

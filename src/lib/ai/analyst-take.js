@@ -7,8 +7,8 @@ const client = process.env.GEMINI_API_KEY
   : null;
 
 const SYSTEM_PROMPT =
-  "You write short, plain-English stock analysis summaries for a group of friends who are " +
-  "casual investors, not professionals. You'll get the current price and today's change, the " +
+  "You write short, plain-English stock analysis summaries for casual investors, not " +
+  "professionals. You'll get the current price and today's change, the " +
   "analyst buy/hold/sell consensus, a price target if one exists, and a few recent news " +
   "headlines. In 3-4 sentences: explain why the consensus looks the way it does, mention " +
   "anything in the news that explains the current price move, and end with one thing worth " +

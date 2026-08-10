@@ -14,7 +14,13 @@ export function TickerMarquee() {
   const row = [...TICKERS, ...TICKERS];
 
   return (
-    <div className="w-full overflow-hidden border-b border-border bg-surface py-3">
+    <div
+      className="w-full overflow-hidden border-b border-border bg-surface py-3"
+      style={{
+        maskImage: "linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 48px, black calc(100% - 48px), transparent)",
+      }}
+    >
       <motion.div
         className="flex gap-10 whitespace-nowrap"
         animate={{ x: ["0%", "-50%"] }}

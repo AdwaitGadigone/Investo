@@ -71,6 +71,12 @@ export default async function DashboardPage() {
 
       <main className="relative flex-1 overflow-hidden px-6 md:px-12 lg:px-16 py-16">
         <GradientBlobs variant="steps" />
+        <img
+          src="/investo-logo.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none select-none absolute -top-12 -right-16 md:right-0 w-72 md:w-96 opacity-[0.06] -z-10"
+        />
 
         <p className="font-mono text-xs uppercase tracking-widest text-warm mb-3">
           Dashboard

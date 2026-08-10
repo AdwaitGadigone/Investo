@@ -47,7 +47,11 @@ export function HowItWorks() {
       </motion.h2>
 
       <div className="relative grid gap-x-10 gap-y-16 md:grid-cols-3">
-        <div className="hidden md:block absolute top-[14px] left-[10%] right-[10%] h-px bg-border" />
+        {/* Ties the connector to the same discord/warm/cool sequence as the numbered dots, instead of a flat gray line. */}
+        <div
+          className="hidden md:block absolute top-[14px] left-[10%] right-[10%] h-px"
+          style={{ background: "linear-gradient(to right, var(--discord), var(--warm), var(--cool))" }}
+        />
 
         {STEPS.map((step, i) => (
           <motion.div
