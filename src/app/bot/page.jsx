@@ -32,6 +32,10 @@ const SECTIONS = [
         cmd: "/stock <ticker> [range]",
         body: "Price, day/52-week range, volume, market cap, a price+volume chart, and the analyst consensus, all in one embed. Range picks the chart window: 1D, 1W, 1M (default), 3M, 6M, YTD, 1Y, or 5Y.",
       },
+      {
+        cmd: "/compare <ticker1> <ticker2>",
+        body: "Price, market cap, and analyst consensus for two tickers side by side.",
+      },
     ],
   },
   {
