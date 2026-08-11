@@ -15,7 +15,7 @@ export const PERIODS = [
 // One shared pill row, layoutId must be unique per usage or the sliding pill animates between unrelated selectors.
 export function PeriodPills({ value, onChange, layoutId, periods = PERIODS, className = "" }) {
   return (
-    <div className={`flex items-center gap-1 glass rounded-full p-1 max-w-full overflow-x-auto ${className}`}>
+    <div className={`flex w-fit items-center gap-1 glass rounded-full p-1 max-w-full overflow-x-auto ${className}`}>
       {periods.map((p) => (
         <button
           key={p.key}
