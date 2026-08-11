@@ -1,8 +1,23 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
+
+// Just the pages that actually fan out to Yahoo/Finnhub on every load, not the static marketing pages,
+// those don't need protecting and a real visitor browsing them shouldn't ever bump into this.
+const RATE_LIMITED_PATHS = ["/dashboard", "/ticker", "/commodities"];
 
 // Just an "are they logged in" gate, the real guild membership check runs once at OAuth callback.
 export async function updateSession(request) {
+  const pathname = request.nextUrl.pathname;
+
+  // Checked before auth, applies equally whether logged in or not, these pages fan out to real API calls
+  // on every load and used to be gated behind an account, that gate is gone now that they're public.
+  if (RATE_LIMITED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    if (isRateLimited(getClientIp(request), 60, 60 * 1000)) {
+      return new NextResponse("Too many requests, slow down.", { status: 429 });
+    }
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -49,9 +64,7 @@ export async function updateSession(request) {
     "/robots.txt",
     "/sitemap.xml",
   ];
-  const isPublicPath = publicPaths.some(
-    (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith(`${path}/`)
-  );
+  const isPublicPath = publicPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 
   if (!isLoggedIn && !isPublicPath) {
     const url = request.nextUrl.clone();

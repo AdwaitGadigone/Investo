@@ -86,7 +86,7 @@ export default async function DashboardPage() {
             src="/investo-logo.png"
             alt=""
             aria-hidden="true"
-            className="pointer-events-none select-none absolute top-full -mt-30 right-25 md:right-10 w-72 md:w-96 opacity-[0.06] -z-10"
+            className="pointer-events-none select-none absolute top-full -mt-25 right-25 md:right-10 w-72 md:w-96 opacity-[0.06] -z-10"
           />
 
           <p className="font-mono text-xs uppercase tracking-widest text-warm mb-3">
@@ -191,10 +191,10 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted border-t border-border pt-6">
-            <span>
+            <Link href="/alerts" className="hover:text-text transition-colors">
               <span className="font-mono text-gain font-semibold">{alerts.length}</span> active price{" "}
               {alerts.length === 1 ? "alert" : "alerts"}
-            </span>
+            </Link>
             <span className="text-border">&middot;</span>
             <span className="flex items-center gap-1.5">
               Daily digest DM:{" "}

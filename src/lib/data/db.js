@@ -59,6 +59,26 @@ export async function getActiveAlerts(guildId, userId) {
   return data;
 }
 
+// Mirrors the bot's add_alert exactly, same table, checked by /alert set in Discord.
+export async function addAlert(guildId, userId, ticker, direction, targetPrice) {
+  const { error } = await supabaseAdmin
+    .from("alerts")
+    .insert({ guild_id: guildId, user_id: userId, ticker, direction, target_price: targetPrice });
+  if (error) throw error;
+}
+
+// Hard delete, not a soft active=0 flip, matches the bot's remove_alert. Scoped by user_id only (not guild_id
+// too), same as the bot: alert ids are a global sequence, one id can only ever belong to one user's one alert.
+export async function removeAlert(userId, alertId) {
+  const { error, count } = await supabaseAdmin
+    .from("alerts")
+    .delete({ count: "exact" })
+    .eq("id", alertId)
+    .eq("user_id", userId);
+  if (error) throw error;
+  return count > 0;
+}
+
 // Mirrors the bot's weighted-average cost basis logic, buys blend into one average, not separate lots.
 export async function buyPosition(guildId, userId, ticker, shares, price) {
   const { data: existing, error: fetchErr } = await supabaseAdmin

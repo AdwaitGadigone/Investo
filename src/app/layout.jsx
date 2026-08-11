@@ -31,11 +31,15 @@ const ibmPlexMono = IBM_Plex_Mono({
 const DESCRIPTION =
   "Track stocks, crypto, and more, in Discord and on the web. Watchlists, portfolios, price alerts, and a daily digest, synced instantly either way.";
 
-export const metadata = {
-  metadataBase: new URL("https://investoweb.vercel.app"),
+// This version of Next.js splits colorScheme out of metadata into its own viewport export.
+export const viewport = {
   // Dark is the only theme now, this hints browser-native chrome (scrollbars, form controls) to
   // match instead of rendering light, which fought the page even after the CSS itself went dark-only.
   colorScheme: "dark",
+};
+
+export const metadata = {
+  metadataBase: new URL("https://investoweb.vercel.app"),
   title: {
     default: "Investo",
     // %s lets a page override just its own piece, e.g. a ticker page could become "AAPL · Investo".

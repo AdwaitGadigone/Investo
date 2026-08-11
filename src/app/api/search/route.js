@@ -1,5 +1,6 @@
 import YahooFinance from "yahoo-finance2";
 import { findCdrMatches } from "@/lib/market/cdrs";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
@@ -10,6 +11,12 @@ export async function GET(request) {
 
   if (!q || q.length < 1) {
     return Response.json({ results: [] });
+  }
+
+  // The search bar is now reachable by anyone, not just logged-in users, and fires on every keystroke,
+  // the one endpoint on the newly-public surface that's actually cheap to hammer with a script.
+  if (isRateLimited(getClientIp(request), 60, 60 * 1000)) {
+    return Response.json({ results: [] }, { status: 429 });
   }
 
   try {
