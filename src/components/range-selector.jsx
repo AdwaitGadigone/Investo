@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 
+// Same timeframes Google's own stock chart offers.
 const RANGES = [
   { key: "1d", label: "1D" },
-  { key: "1w", label: "1W" },
+  { key: "5d", label: "5D" },
   { key: "1mo", label: "1M" },
-  { key: "3mo", label: "3M" },
   { key: "6mo", label: "6M" },
   { key: "ytd", label: "YTD" },
   { key: "1y", label: "1Y" },
   { key: "5y", label: "5Y" },
-  { key: "10y", label: "10Y" },
+  { key: "max", label: "Max" },
 ];
 
 // One sliding pill (Framer Motion layoutId) moves between buttons, not a highlight per button.

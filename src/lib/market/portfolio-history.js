@@ -2,7 +2,7 @@ import "server-only";
 import { getHistory } from "@/lib/market/yahoo";
 
 // Approximate: current share count applied to past prices, there's no transaction log to know exact buy dates.
-export async function getPortfolioHistory(positions, range = "3mo") {
+export async function getPortfolioHistory(positions, range = "1mo") {
   if (positions.length === 0) return [];
 
   const histories = await Promise.all(
@@ -12,7 +12,7 @@ export async function getPortfolioHistory(positions, range = "3mo") {
     }))
   );
 
-  if (range !== "1d" && range !== "1w") {
+  if (range !== "1d" && range !== "5d") {
     // Different exchanges close their daily bar at different exact seconds, bucket by calendar date instead to sum correctly.
     const valueByBucket = new Map();
     for (const { shares, history } of histories) {

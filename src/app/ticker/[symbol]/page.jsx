@@ -34,7 +34,7 @@ function formatLarge(n) {
 
 export default async function TickerPage({ params, searchParams }) {
   const { symbol } = await params;
-  const { range = "3mo" } = await searchParams;
+  const { range = "1mo" } = await searchParams;
   const ticker = symbol.toUpperCase();
 
   const user = await getOptionalDiscordUser();

@@ -15,7 +15,7 @@ import { PortfolioSection } from "@/components/portfolio-section";
 import { AnimatedNumber } from "@/components/animated-number";
 
 export default async function PortfolioPage({ searchParams }) {
-  const { range = "3mo" } = await searchParams;
+  const { range = "1mo" } = await searchParams;
   const { discordId } = await getDiscordUser();
   const guildId = await getActiveGuildId();
 

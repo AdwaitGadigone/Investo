@@ -107,17 +107,16 @@ export async function getRelatedTickers(ticker, limit = 5) {
   }
 }
 
-// Same ranges as the bot's /stock command, plus 10Y since the web chart can go further back.
+// Same timeframes Google's own stock chart offers, so this doesn't feel like a random custom set.
 const RANGE_OPTIONS = {
   "1d": { days: 1, interval: "5m", label: "1D" },
-  "1w": { days: 7, interval: "30m", label: "1W" },
+  "5d": { days: 5, interval: "15m", label: "5D" },
   "1mo": { days: 30, interval: "1d", label: "1M" },
-  "3mo": { days: 90, interval: "1d", label: "3M" },
   "6mo": { days: 180, interval: "1d", label: "6M" },
   "ytd": { ytd: true, interval: "1d", label: "YTD" },
   "1y": { days: 365, interval: "1d", label: "1Y" },
   "5y": { days: 365 * 5, interval: "1wk", label: "5Y" },
-  "10y": { days: 365 * 10, interval: "1wk", label: "10Y" },
+  "max": { max: true, interval: "1mo", label: "Max" },
 };
 
 // Chart history is the most expensive Yahoo call (up to 10 years of bars) and was being refetched from
@@ -128,10 +127,10 @@ const HISTORY_CACHE_TTL_DAILY = 5 * 60 * 1000;
 const historyCache = new Map();
 const historyInFlight = new Map();
 
-export async function getHistory(ticker, range = "3mo") {
-  const opts = RANGE_OPTIONS[range] ?? RANGE_OPTIONS["3mo"];
+export async function getHistory(ticker, range = "1mo") {
+  const opts = RANGE_OPTIONS[range] ?? RANGE_OPTIONS["1mo"];
   const cacheKey = `${ticker}:${range}`;
-  const ttl = range === "1d" || range === "1w" ? HISTORY_CACHE_TTL_INTRADAY : HISTORY_CACHE_TTL_DAILY;
+  const ttl = range === "1d" || range === "5d" ? HISTORY_CACHE_TTL_INTRADAY : HISTORY_CACHE_TTL_DAILY;
 
   const cached = historyCache.get(cacheKey);
   if (cached && Date.now() - cached.time < ttl) return cached.value;
@@ -139,10 +138,14 @@ export async function getHistory(ticker, range = "3mo") {
   const pending = historyInFlight.get(cacheKey);
   if (pending) return pending;
 
-  // YTD starts from Jan 1, not a fixed day count back from today.
+  // YTD starts from Jan 1, not a fixed day count back from today. Max has no real start date, Yahoo just
+  // clips to whichever is later: this or the ticker's actual first trade date (the yahoo-finance2 docs'
+  // own example for "maximum available period" does the same, an old fixed date rather than a day count).
   const period1 = opts.ytd
     ? new Date(new Date().getFullYear(), 0, 1)
-    : new Date(Date.now() - opts.days * 24 * 60 * 60 * 1000);
+    : opts.max
+      ? new Date("1970-01-01")
+      : new Date(Date.now() - opts.days * 24 * 60 * 60 * 1000);
 
   const promise = (async () => {
     try {
