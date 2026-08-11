@@ -17,7 +17,7 @@ export function TrendArrow({ className = "" }) {
     >
       <motion.polyline
         points={LINE}
-        stroke="var(--text)"
+        stroke="var(--text-muted)"
         strokeWidth="18"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -32,7 +32,7 @@ export function TrendArrow({ className = "" }) {
         style={{ transformOrigin: "660px 55px" }}
       >
         <g transform={`translate(660,55) rotate(${HEAD_ANGLE})`}>
-          <polygon points="0,-38 68,0 0,38" fill="var(--text)" />
+          <polygon points="0,-38 68,0 0,38" fill="var(--text-muted)" />
         </g>
       </motion.g>
     </svg>

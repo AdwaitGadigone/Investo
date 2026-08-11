@@ -247,9 +247,9 @@ export default async function BotPage() {
                 </p>
                 <p className="text-sm text-text-muted leading-relaxed max-w-md">
                   Every 15 minutes, Investo checks the server's tracked list for big moves (5%+)
-                  and posts them to a channel the server owner picked, plus a fixed list of
-                  well-known tickers for genuinely wild moves (15%+) even if nobody's tracking
-                  them.
+                  and posts them to whichever channel <code className="font-mono text-warm">/notify</code> was
+                  first run in, plus a fixed list of well-known tickers for genuinely wild moves
+                  (15%+) even if nobody's tracking them.
                 </p>
               </div>
               <a

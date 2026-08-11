@@ -14,11 +14,18 @@ const EXPLAINERS = {
   "Most Active": "Highest trading volume today. This one always reflects today specifically, volume history isn't tracked far enough back to rank it by week or month yet.",
 };
 
-function MoverList({ title, rows }) {
+function MoverList({ title, rows, badge }) {
   return (
     <div className="glass rounded-lg p-5">
       <div className="flex items-center gap-1.5 mb-3">
         <p className="font-display text-lg font-bold tracking-tight">{title}</p>
+        {/* Only this one panel ignores the period pills above (always today's volume), a badge that stays
+            visible regardless of which period is picked, not just a tooltip nobody hovers, makes that obvious. */}
+        {badge && (
+          <span className="font-mono text-[10px] uppercase tracking-wide text-text-muted bg-surface-2 px-1.5 py-0.5 rounded">
+            {badge}
+          </span>
+        )}
         <Tooltip text={EXPLAINERS[title]} />
       </div>
       {rows.length === 0 ? (
@@ -86,7 +93,7 @@ export function MarketMovers({ data }) {
       <Reveal className="grid gap-4 sm:grid-cols-3">
         <MoverList title="Top Gainers" rows={rows.gainers} />
         <MoverList title="Top Losers" rows={rows.losers} />
-        <MoverList title="Most Active" rows={rows.active} />
+        <MoverList title="Most Active" rows={rows.active} badge="today" />
       </Reveal>
     </div>
   );
