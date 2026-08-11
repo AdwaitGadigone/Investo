@@ -15,7 +15,7 @@ import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
 import { AnalystConsensus, AnalystConsensusSkeleton } from "@/components/analyst-consensus";
 import { TradingViewChart } from "@/components/tradingview-chart";
-import { getUnderlyingTicker } from "@/lib/market/cdrs";
+import { getUnderlyingTicker, getUnderlyingTvSymbol } from "@/lib/market/cdrs";
 import { StockLogo } from "@/components/stock-logo";
 import { IconChart, IconBarChart, IconWallet } from "@/components/icons";
 import Link from "next/link";
@@ -34,8 +34,11 @@ function formatLarge(n) {
 
 export default async function TickerPage({ params, searchParams }) {
   const { symbol } = await params;
-  const { range = "1mo" } = await searchParams;
   const ticker = symbol.toUpperCase();
+  // CDRs trade thin on Cboe Canada, verified directly: 1mo has ~5 real closes across every CDR checked
+  // (vs. 200+ over 1y), so the 1mo default that works fine for a normal US stock renders as basically
+  // empty for these, defaulting to a longer window that's actually verified to have real data to plot.
+  const { range = ticker.endsWith(".NE") ? "1y" : "1mo" } = await searchParams;
 
   const user = await getOptionalDiscordUser();
   const guildId = user ? await peekActiveGuildId() : null;
@@ -122,8 +125,10 @@ export default async function TickerPage({ params, searchParams }) {
                 <PriceChart data={history} up={up} />
               ) : (
                 <>
-                  {/* Thinly-traded tickers (mainly CDRs) can have too few real closes to plot, TradingView's own feed usually still has one. */}
-                  <TradingViewChart symbol={getUnderlyingTicker(ticker) ?? ticker.split(".")[0]} />
+                  {/* Thinly-traded tickers (mainly CDRs) can have too few real closes to plot, TradingView's own feed usually still has one.
+                      Needs the exchange-prefixed form (NASDAQ:AAPL, not bare AAPL), TradingView's widget doesn't reliably resolve
+                      an unprefixed symbol, that was the actual bug behind CDR charts never rendering at all. */}
+                  <TradingViewChart symbol={getUnderlyingTvSymbol(ticker) ?? ticker.split(".")[0]} />
                   <p className="text-text-muted text-xs text-center mt-2">
                     Not enough Yahoo Finance data to chart {ticker} directly, showing{" "}
                     {getUnderlyingTicker(ticker) ?? ticker.split(".")[0]} from TradingView instead.

@@ -52,7 +52,8 @@ export default async function DashboardPage() {
   const [quotes, allHistories, periodChangesByTicker, commodityPeriodChanges, cryptoQuotes, cryptoPeriodChanges] =
     await Promise.all([
       getQuotes(allTickers),
-      Promise.all(allTickers.map((ticker) => getHistory(ticker, "1mo"))),
+      // CDRs trade thin enough that 1mo has almost no real data to plot, verified directly, 1y does.
+      Promise.all(allTickers.map((ticker) => getHistory(ticker, ticker.endsWith(".NE") ? "1y" : "1mo"))),
       getPeriodChanges(watchlist),
       getPeriodChanges(commodityTickers),
       getQuotes(cryptoTickers),
