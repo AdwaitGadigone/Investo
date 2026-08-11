@@ -21,6 +21,7 @@ export default async function Home() {
         <div className="flex items-center gap-4">
           <MobileMenu
             links={[
+              { href: "/dashboard", label: "Dashboard" },
               { href: "/bot", label: "Commands" },
               { href: "/about", label: "About" },
             ]}
@@ -28,6 +29,10 @@ export default async function Home() {
           <Wordmark className="text-xl" />
         </div>
         <div className="flex items-center gap-5">
+          {/* Dashboard is browsable without an account now, this is the only way a guest would ever discover that. */}
+          <Link href="/dashboard" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
+            Dashboard
+          </Link>
           <Link href="/bot" className="hidden sm:inline text-sm text-text-muted hover:text-text transition-colors">
             Commands
           </Link>

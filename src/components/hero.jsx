@@ -72,7 +72,9 @@ export function Hero({ quotes, user }) {
             ) : (
               <>
                 <DiscordSignInButton className="flex items-center gap-3 bg-discord text-white text-lg font-semibold px-8 py-4 rounded-full hover:bg-discord-hover transition-colors shadow-lg shadow-discord/25" />
-                <span className="text-sm text-text-muted">Free, takes 5 seconds.</span>
+                <Link href="/dashboard" className="text-sm text-text-muted hover:text-text underline underline-offset-2 transition-colors">
+                  or browse without signing in
+                </Link>
               </>
             )}
           </motion.div>
