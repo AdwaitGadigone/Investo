@@ -8,10 +8,43 @@ const yf = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
 
 const unitBySymbol = Object.fromEntries(COMMODITIES.map((c) => [c.ticker, c.unit]));
 
+// yahoo-finance2 makes its own HTTP calls under the hood, bypassing Next's fetch cache entirely, so without
+// this every single page view (now including anonymous ones) re-hit Yahoo fresh for every ticker involved.
+// Same manual TTL-cache + in-flight-dedup shape already used in discover.js. 20s keeps quotes feeling live
+// while still deduping the common case of several tickers/visitors overlapping within a few seconds.
+const QUOTE_CACHE_TTL = 20 * 1000;
+const quoteCache = new Map();
+const quoteInFlight = new Map();
+
+async function cachedYahooQuote(ticker) {
+  const now = Date.now();
+  const cached = quoteCache.get(ticker);
+  if (cached && now - cached.time < QUOTE_CACHE_TTL) return cached.value;
+
+  const pending = quoteInFlight.get(ticker);
+  if (pending) return pending;
+
+  const promise = yf
+    .quote(ticker)
+    .then((value) => {
+      quoteCache.set(ticker, { value, time: Date.now() });
+      quoteInFlight.delete(ticker);
+      return value;
+    })
+    .catch((err) => {
+      quoteInFlight.delete(ticker);
+      throw err;
+    });
+  quoteInFlight.set(ticker, promise);
+  return promise;
+}
+
 export async function getQuote(ticker) {
   try {
     // Concurrent, not sequential, so the real-time overlay doesn't add extra wait time on top of the Yahoo call.
-    const [q, realtime] = await Promise.all([yf.quote(ticker), getRealtimeQuote(ticker)]);
+    // Finnhub's own real-time price still refreshes independently (5s revalidate in finnhub.js), only the
+    // slower-changing Yahoo fields (name, ranges, market cap, exchange) are the ones being cached here.
+    const [q, realtime] = await Promise.all([cachedYahooQuote(ticker), getRealtimeQuote(ticker)]);
     if (!q || q.regularMarketPrice == null) return null;
 
     return {
@@ -87,20 +120,45 @@ const RANGE_OPTIONS = {
   "10y": { days: 365 * 10, interval: "1wk", label: "10Y" },
 };
 
+// Chart history is the most expensive Yahoo call (up to 10 years of bars) and was being refetched from
+// scratch on every page view with no caching at all. Intraday ranges still change through the trading day
+// so get a short TTL, daily-bar-and-up ranges only update once a day so a longer TTL is free accuracy-wise.
+const HISTORY_CACHE_TTL_INTRADAY = 60 * 1000;
+const HISTORY_CACHE_TTL_DAILY = 5 * 60 * 1000;
+const historyCache = new Map();
+const historyInFlight = new Map();
+
 export async function getHistory(ticker, range = "3mo") {
   const opts = RANGE_OPTIONS[range] ?? RANGE_OPTIONS["3mo"];
+  const cacheKey = `${ticker}:${range}`;
+  const ttl = range === "1d" || range === "1w" ? HISTORY_CACHE_TTL_INTRADAY : HISTORY_CACHE_TTL_DAILY;
+
+  const cached = historyCache.get(cacheKey);
+  if (cached && Date.now() - cached.time < ttl) return cached.value;
+
+  const pending = historyInFlight.get(cacheKey);
+  if (pending) return pending;
+
   // YTD starts from Jan 1, not a fixed day count back from today.
   const period1 = opts.ytd
     ? new Date(new Date().getFullYear(), 0, 1)
     : new Date(Date.now() - opts.days * 24 * 60 * 60 * 1000);
 
-  try {
-    const result = await yf.chart(ticker, { period1, interval: opts.interval });
-    // Seconds, not a date string, lightweight-charts needs this for intraday ranges too.
-    return result.quotes
-      .filter((q) => q.close != null)
-      .map((q) => ({ time: Math.floor(q.date.getTime() / 1000), value: q.close }));
-  } catch {
-    return [];
-  }
+  const promise = (async () => {
+    try {
+      const result = await yf.chart(ticker, { period1, interval: opts.interval });
+      // Seconds, not a date string, lightweight-charts needs this for intraday ranges too.
+      const value = result.quotes
+        .filter((q) => q.close != null)
+        .map((q) => ({ time: Math.floor(q.date.getTime() / 1000), value: q.close }));
+      historyCache.set(cacheKey, { value, time: Date.now() });
+      return value;
+    } catch {
+      return [];
+    } finally {
+      historyInFlight.delete(cacheKey);
+    }
+  })();
+  historyInFlight.set(cacheKey, promise);
+  return promise;
 }

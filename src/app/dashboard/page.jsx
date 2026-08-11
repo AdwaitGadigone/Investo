@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { getDiscordUser } from "@/lib/auth/get-discord-user";
+import { getOptionalDiscordUser } from "@/lib/auth/get-discord-user";
 import { getWatchlist, getPortfolio, getActiveAlerts, isDigestEnabled } from "@/lib/data/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory, getMarketSnapshot, getCommodities } from "@/lib/market/yahoo";
 import { getTopPerformers, getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
 import { CRYPTOS } from "@/lib/market/crypto-config";
-import { getActiveGuildId } from "@/lib/auth/active-guild";
+import { peekActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
 import { SearchBar } from "@/components/search-bar";
 import { MarketSnapshot } from "@/components/market-snapshot";
@@ -19,18 +19,24 @@ import { CryptoStrip } from "@/components/crypto-strip";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { Tooltip } from "@/components/tooltip";
 import { GettingStarted } from "@/components/getting-started";
+import { SignInPrompt } from "@/components/sign-in-prompt";
 
 // Same Supabase tables the bot writes to, this is what proves "same account, everywhere."
+// Public for anyone to browse (market data needs no guild at all), personal sections degrade to a
+// sign-in prompt when logged out instead of the page requiring auth to load at all.
 export default async function DashboardPage() {
-  const { discordId, username } = await getDiscordUser();
-  const guildId = await getActiveGuildId();
+  const user = await getOptionalDiscordUser();
+  // peek, not the redirecting getActiveGuildId, a logged-in user with no guild cookie yet (a rare
+  // edge case, normally set at login) should fall back to the guest view here, not force a redirect.
+  const guildId = user ? await peekActiveGuildId() : null;
+  const isPersonalized = Boolean(user && guildId);
 
   const [watchlist, portfolio, alerts, digestOn, topPerformers, marketSnapshot, marketMovers, commodities] =
     await Promise.all([
-      getWatchlist(guildId, discordId),
-      getPortfolio(guildId, discordId),
-      getActiveAlerts(guildId, discordId),
-      isDigestEnabled(guildId, discordId),
+      isPersonalized ? getWatchlist(guildId, user.discordId) : Promise.resolve([]),
+      isPersonalized ? getPortfolio(guildId, user.discordId) : Promise.resolve([]),
+      isPersonalized ? getActiveAlerts(guildId, user.discordId) : Promise.resolve([]),
+      isPersonalized ? isDigestEnabled(guildId, user.discordId) : Promise.resolve(false),
       getTopPerformers(),
       getMarketSnapshot(),
       getMarketMovers(),
@@ -86,7 +92,7 @@ export default async function DashboardPage() {
             Dashboard
           </p>
           <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            Welcome back, {username}.
+            {user ? `Welcome back, ${user.username}.` : "See what's moving, right now."}
           </h1>
         </div>
 
@@ -94,7 +100,7 @@ export default async function DashboardPage() {
 
         <SearchBar className="max-w-xl mb-12" />
 
-        {watchlist.length === 0 && portfolio.length === 0 && <GettingStarted />}
+        {isPersonalized && watchlist.length === 0 && portfolio.length === 0 && <GettingStarted />}
 
         <MarketMovers data={marketMovers} />
 
@@ -129,7 +135,12 @@ export default async function DashboardPage() {
               )}
             </div>
 
-            {watchlist.length === 0 ? (
+            {!isPersonalized ? (
+              <SignInPrompt
+                title="Sign in to build a watchlist."
+                body="Track any stock or crypto and see it here, and in Discord, instantly."
+              />
+            ) : watchlist.length === 0 ? (
               <div className="border border-dashed border-border rounded-lg p-8 text-center">
                 <p className="text-text-muted mb-1">Nothing on your watchlist yet.</p>
                 <p className="text-sm text-text-muted">
@@ -149,31 +160,50 @@ export default async function DashboardPage() {
             <SuggestedStocks exclude={watchlist} className="mt-8 mb-0" />
           </div>
 
-          <PortfolioSection
-            positions={portfolio}
-            quotes={quotes}
-            historyByTicker={portfolioHistoryByTicker}
-            showViewAllLink
-            showBuyForm={false}
-            showRemoveButton={false}
-            collapsedCount={5}
-          />
+          {!isPersonalized ? (
+            <div>
+              <p className="font-display text-2xl font-bold tracking-tight mb-5">Your portfolio</p>
+              <SignInPrompt
+                title="Sign in to track a portfolio."
+                body="Log real positions and see live profit and loss, not just price movement."
+              />
+            </div>
+          ) : (
+            <PortfolioSection
+              positions={portfolio}
+              quotes={quotes}
+              historyByTicker={portfolioHistoryByTicker}
+              showViewAllLink
+              showBuyForm={false}
+              showRemoveButton={false}
+              collapsedCount={5}
+            />
+          )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted border-t border-border pt-6">
-          <span>
-            <span className="font-mono text-gain font-semibold">{alerts.length}</span> active price{" "}
-            {alerts.length === 1 ? "alert" : "alerts"}
-          </span>
-          <span className="text-border">&middot;</span>
-          <span className="flex items-center gap-1.5">
-            Daily digest DM:{" "}
-            <span className={digestOn ? "text-cool font-semibold" : "font-semibold"}>
-              {digestOn ? "On" : "Off"}
+        {!isPersonalized ? (
+          <div className="text-sm text-text-muted border-t border-border pt-6">
+            <Link href="/login" className="text-discord hover:underline font-semibold">
+              Sign in
+            </Link>{" "}
+            to set price alerts and a daily digest DM.
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted border-t border-border pt-6">
+            <span>
+              <span className="font-mono text-gain font-semibold">{alerts.length}</span> active price{" "}
+              {alerts.length === 1 ? "alert" : "alerts"}
             </span>
-            <Tooltip text="Toggle with /digest in Discord, DMs a morning summary of your watchlist" />
-          </span>
-        </div>
+            <span className="text-border">&middot;</span>
+            <span className="flex items-center gap-1.5">
+              Daily digest DM:{" "}
+              <span className={digestOn ? "text-cool font-semibold" : "font-semibold"}>
+                {digestOn ? "On" : "Off"}
+              </span>
+              <Tooltip text="Toggle with /digest in Discord, DMs a morning summary of your watchlist" />
+            </span>
+          </div>
+        )}
       </main>
     </div>
   );

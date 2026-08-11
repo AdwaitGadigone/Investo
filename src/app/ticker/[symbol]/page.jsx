@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { getQuote, getHistory, getRelatedTickers } from "@/lib/market/yahoo";
 import { getCompanyNews, getRecommendationTrends } from "@/lib/market/finnhub";
 import { getWatchlist } from "@/lib/data/db";
-import { getDiscordUser } from "@/lib/auth/get-discord-user";
-import { getActiveGuildId } from "@/lib/auth/active-guild";
+import { getOptionalDiscordUser } from "@/lib/auth/get-discord-user";
+import { peekActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
 import { Footer } from "@/components/footer";
 import { PriceChart } from "@/components/price-chart";
@@ -37,15 +37,16 @@ export default async function TickerPage({ params, searchParams }) {
   const { range = "3mo" } = await searchParams;
   const ticker = symbol.toUpperCase();
 
-  const { discordId } = await getDiscordUser();
-  const guildId = await getActiveGuildId();
+  const user = await getOptionalDiscordUser();
+  const guildId = user ? await peekActiveGuildId() : null;
+  const isPersonalized = Boolean(user && guildId);
 
   const [quote, history, news, trends, watchlist] = await Promise.all([
     getQuote(ticker),
     getHistory(ticker, range),
     getCompanyNews(ticker),
     getRecommendationTrends(ticker),
-    getWatchlist(guildId, discordId),
+    isPersonalized ? getWatchlist(guildId, user.discordId) : Promise.resolve([]),
   ]);
 
   if (!quote) notFound();
@@ -105,7 +106,11 @@ export default async function TickerPage({ params, searchParams }) {
               )}
             </div>
 
-            <WatchlistToggle ticker={ticker} isWatchlisted={watchlist.includes(ticker)} />
+            <WatchlistToggle
+              ticker={ticker}
+              isWatchlisted={watchlist.includes(ticker)}
+              loggedIn={isPersonalized}
+            />
           </div>
 
           <Reveal>

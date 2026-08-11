@@ -37,6 +37,13 @@ export async function updateSession(request) {
     "/privacy",
     "/terms",
     "/status",
+    // Market data needs no guild or personal account at all, browsable by anyone. The pages themselves
+    // still branch on getOptionalDiscordUser()/peekActiveGuildId() to show real personal data when logged in,
+    // or a sign-in prompt in place of it when not, this just stops the middleware forcing a login wall first.
+    "/dashboard",
+    "/ticker",
+    "/commodities",
+    "/api/search",
     // Crawlers and link-preview bots are never logged in, these can't be gated behind auth.
     "/opengraph-image",
     "/robots.txt",

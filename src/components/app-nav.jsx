@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/wordmark";
 import { SignOutButton } from "@/components/sign-out-button";
+import { DiscordSignInButton } from "@/components/discord-sign-in-button";
 import { MobileMenu } from "@/components/mobile-menu";
 import { ServerSwitcher } from "@/components/server-switcher";
 import { getAvailableGuilds, peekActiveGuildId } from "@/lib/auth/active-guild";
+import { getOptionalDiscordUser } from "@/lib/auth/get-discord-user";
 
 // Invite lives on the Bot page itself now (top-right button), not as a separate nav link.
 const LINKS = [
@@ -16,7 +18,11 @@ const LINKS = [
 ];
 
 export async function AppNav() {
-  const [guilds, activeGuildId] = await Promise.all([getAvailableGuilds(), peekActiveGuildId()]);
+  const [guilds, activeGuildId, user] = await Promise.all([
+    getAvailableGuilds(),
+    peekActiveGuildId(),
+    getOptionalDiscordUser(),
+  ]);
 
   return (
     <header className="glass-overlay sticky top-0 z-40 px-6 py-5 flex items-center justify-between relative">
@@ -42,7 +48,13 @@ export async function AppNav() {
         {guilds.length > 1 && (
           <ServerSwitcher guilds={guilds} activeGuildId={activeGuildId} className="hidden sm:block" />
         )}
-        <SignOutButton className="border border-border px-4 py-2 text-sm font-medium rounded-full hover:border-discord hover:text-discord transition-colors" />
+        {/* AppNav now also renders on public pages a guest can reach, a bare "Sign out" button
+            with nothing to sign out of made no sense there, this branches on the real auth state. */}
+        {user ? (
+          <SignOutButton className="border border-border px-4 py-2 text-sm font-medium rounded-full hover:border-discord hover:text-discord transition-colors" />
+        ) : (
+          <DiscordSignInButton className="flex items-center gap-2 bg-discord text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-discord-hover transition-colors" />
+        )}
       </div>
     </header>
   );
