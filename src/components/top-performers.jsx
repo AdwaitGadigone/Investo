@@ -13,8 +13,8 @@ export function TopPerformers({ data, compact = false, className = "mb-12" }) {
 
   return (
     <div className={className}>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-        <p className="font-display text-2xl font-bold tracking-tight">Top performers</p>
+      <div className="mb-5">
+        <p className="font-display text-2xl font-bold tracking-tight mb-3">Top performers</p>
         <PeriodPills value={period} onChange={setPeriod} layoutId="performers-pill" />
       </div>
 

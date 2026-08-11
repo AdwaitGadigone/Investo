@@ -86,8 +86,8 @@ export function MarketMovers({ data }) {
 
   return (
     <div className="mb-12">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-        <p className="font-display text-2xl font-bold tracking-tight">Market movers</p>
+      <div className="mb-5">
+        <p className="font-display text-2xl font-bold tracking-tight mb-3">Market movers</p>
         <PeriodPills value={period} onChange={setPeriod} layoutId="movers-pill" />
       </div>
       <Reveal className="grid gap-4 sm:grid-cols-3">

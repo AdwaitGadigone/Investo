@@ -13,8 +13,8 @@ export function CommoditiesStrip({ commodities, periodChangesByTicker = {}, clas
 
   return (
     <div className={className}>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-        <p className="font-display text-2xl font-bold tracking-tight">Commodities</p>
+      <div className="mb-5">
+        <p className="font-display text-2xl font-bold tracking-tight mb-3">Commodities</p>
         <PeriodPills value={period} onChange={setPeriod} layoutId="commodities-pill" />
       </div>
 

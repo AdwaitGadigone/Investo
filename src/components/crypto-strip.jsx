@@ -14,8 +14,8 @@ export function CryptoStrip({ quotes, periodChangesByTicker = {}, className = "m
 
   return (
     <div className={className}>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-        <p className="font-display text-2xl font-bold tracking-tight">Crypto</p>
+      <div className="mb-5">
+        <p className="font-display text-2xl font-bold tracking-tight mb-3">Crypto</p>
         <PeriodPills value={period} onChange={setPeriod} layoutId="crypto-pill" />
       </div>
 
