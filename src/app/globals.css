@@ -24,18 +24,6 @@
   --loss: #d03b3b;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f7f6f3;
-    --surface: #ffffff;
-    --surface-2: #f0efec;
-    --border: #e2e0da;
-    --text: #1c1d20;
-    --text-muted: #6b6c72;
-    --discord-hover: #4752c4;
-  }
-}
-
 /* Tailwind v4 turns every --color-* token below into real utility classes (bg-bg, text-bg, ...). */
 @theme inline {
   --color-bg: var(--bg);
@@ -134,16 +122,6 @@ body::before {
     0 8px 30px rgba(0, 0, 0, 0.25);
 }
 
-@media (prefers-color-scheme: light) {
-  .glass {
-    background: rgba(255, 255, 255, 0.55);
-    border-color: rgba(255, 255, 255, 0.7);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-      0 8px 30px rgba(0, 0, 0, 0.07);
-  }
-}
-
 /* More opaque glass for anything floating OVER text (nav, dropdowns, tooltips), not page-flow cards. */
 .glass-overlay {
   /* Literal rgba, not color-mix(): that function wasn't rendering the real opacity in this pipeline. */
@@ -156,17 +134,6 @@ body::before {
     0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
-@media (prefers-color-scheme: light) {
-  .glass-overlay {
-    /* rgb(247,246,243) is this theme's --bg (#f7f6f3). */
-    background: rgba(247, 246, 243, 0.9);
-    border-color: rgba(255, 255, 255, 0.7);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-      0 8px 30px rgba(0, 0, 0, 0.1);
-  }
-}
-
 /* Fully opaque, no backdrop-filter: for typeahead dropdowns specifically, removes any chance of bleed-through. */
 .solid-overlay {
   background: rgb(24, 25, 28);
@@ -174,16 +141,6 @@ body::before {
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
     0 8px 30px rgba(0, 0, 0, 0.35);
-}
-
-@media (prefers-color-scheme: light) {
-  .solid-overlay {
-    background: rgb(247, 246, 243);
-    border-color: rgba(255, 255, 255, 0.7);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-      0 8px 30px rgba(0, 0, 0, 0.1);
-  }
 }
 
 /* Feathered mask, not a hard rectangle: reads as an ambient photo, not a pasted-in image. */
@@ -194,11 +151,4 @@ body::before {
   opacity: 0.38;
   mask-image: radial-gradient(ellipse 75% 65% at 60% 35%, black 0%, transparent 100%);
   -webkit-mask-image: radial-gradient(ellipse 75% 65% at 60% 35%, black 0%, transparent 100%);
-}
-
-@media (prefers-color-scheme: light) {
-  /* Light --bg is near-white, so the same photo needs less opacity to stay faint, not muddy. */
-  .hero-photo {
-    opacity: 0.24;
-  }
 }

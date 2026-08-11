@@ -20,7 +20,7 @@ export function WatchlistGrid({ tickers, quoteByTicker, historyByTicker, periodC
 
   return (
     <div className="mb-12">
-      <div className="flex justify-end mb-5">
+      <div className="flex justify-start mb-5">
         <PeriodPills value={period} onChange={setPeriod} layoutId="watchlist-grid-pill" />
       </div>
 

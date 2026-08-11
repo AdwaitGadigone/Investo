@@ -33,6 +33,9 @@ const DESCRIPTION =
 
 export const metadata = {
   metadataBase: new URL("https://investoweb.vercel.app"),
+  // Dark is the only theme now, this hints browser-native chrome (scrollbars, form controls) to
+  // match instead of rendering light, which fought the page even after the CSS itself went dark-only.
+  colorScheme: "dark",
   title: {
     default: "Investo",
     // %s lets a page override just its own piece, e.g. a ticker page could become "AAPL · Investo".
