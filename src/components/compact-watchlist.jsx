@@ -35,7 +35,7 @@ export function CompactWatchlist({ tickers, quoteByTicker, historyByTicker, peri
 
   return (
     <div>
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-start mb-3">
         <PeriodPills value={period} onChange={setPeriod} layoutId="compact-watchlist-pill" />
       </div>
 
