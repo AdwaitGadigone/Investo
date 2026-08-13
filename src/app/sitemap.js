@@ -21,7 +21,12 @@ export default async function sitemap() {
   ];
 
   // Reuses the same cached screener call the dashboard's "Top performers" already triggers, not a fresh fetch.
-  const popular = await getPopularTickers().catch(() => []);
+  // The underlying yf.screener() call has no timeout of its own, a slow Yahoo response could otherwise hang
+  // this whole route past Vercel's function timeout, racing it against a timeout keeps /sitemap.xml responsive.
+  const popular = await Promise.race([
+    getPopularTickers(),
+    new Promise((resolve) => setTimeout(() => resolve([]), 5000)),
+  ]).catch(() => []);
   const tickerSymbols = [
     ...new Set([...popular.map((t) => t.ticker), ...CDRS.map((c) => c.ticker), ...CRYPTOS.map((c) => c.ticker)]),
   ];

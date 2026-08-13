@@ -32,8 +32,11 @@ export function isRateLimited(key, limit, windowMs) {
   return false;
 }
 
-// Vercel sets x-forwarded-for to the real client IP, request.ip isn't populated on this runtime.
+// Vercel's edge appends the real connecting IP as the LAST entry in x-forwarded-for, anything before that
+// is client-supplied and trivially spoofable, request.ip isn't populated on this runtime.
 export function getClientIp(request) {
   const forwarded = request.headers.get("x-forwarded-for");
-  return forwarded ? forwarded.split(",")[0].trim() : "unknown";
+  if (!forwarded) return "unknown";
+  const parts = forwarded.split(",");
+  return parts[parts.length - 1].trim();
 }

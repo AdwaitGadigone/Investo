@@ -21,7 +21,9 @@ export async function GET(request) {
 
   // Code-exchange calls out to Supabase and Discord, a much heavier operation per request than a normal
   // page load, a tighter limit than the general public-page one makes sense here specifically.
-  if (isRateLimited(getClientIp(request), 20, 60 * 1000)) {
+  // Namespaced with "auth:" so this stricter budget is its own bucket, not shared with the looser
+  // page-view limiter below, unrelated dashboard/ticker traffic from the same IP shouldn't burn this one down.
+  if (isRateLimited(`auth:${getClientIp(request)}`, 20, 60 * 1000)) {
     return NextResponse.redirect(`${origin}/login?error=rate_limited`);
   }
 

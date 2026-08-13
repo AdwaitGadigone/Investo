@@ -18,7 +18,12 @@ export default async function TickerOpengraphImage({ params }) {
 
   const up = quote?.changePct != null && quote.changePct >= 0;
   const color = up ? "#0ca30c" : "#d03b3b";
-  const priceText = quote?.price != null ? `${quote.currency && quote.currency !== "USD" ? quote.currency : "$"}${quote.price.toFixed(2)}` : null;
+  const priceText =
+    quote?.price != null
+      ? quote.currency && quote.currency !== "USD"
+        ? `${quote.currency} ${quote.price.toFixed(2)}`
+        : `$${quote.price.toFixed(2)}`
+      : null;
   const changeText =
     quote?.change != null
       ? `${up ? "+" : ""}${quote.change.toFixed(2)} (${up ? "+" : ""}${quote.changePct.toFixed(2)}%)`

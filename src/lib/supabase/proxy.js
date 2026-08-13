@@ -13,7 +13,9 @@ export async function updateSession(request) {
   // Checked before auth, applies equally whether logged in or not, these pages fan out to real API calls
   // on every load and used to be gated behind an account, that gate is gone now that they're public.
   if (RATE_LIMITED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
-    if (isRateLimited(getClientIp(request), 60, 60 * 1000)) {
+    // Namespaced with "page:" so this bucket isn't shared with the search API's separate limiter below,
+    // hammering one shouldn't burn down the other's budget for the same visitor.
+    if (isRateLimited(`page:${getClientIp(request)}`, 60, 60 * 1000)) {
       return new NextResponse("Too many requests, slow down.", { status: 429 });
     }
   }

@@ -15,7 +15,9 @@ export async function GET(request) {
 
   // The search bar is now reachable by anyone, not just logged-in users, and fires on every keystroke,
   // the one endpoint on the newly-public surface that's actually cheap to hammer with a script.
-  if (isRateLimited(getClientIp(request), 60, 60 * 1000)) {
+  // Namespaced with "search:" so this bucket isn't shared with the page-view limiter in proxy.js,
+  // hammering one shouldn't burn down the other's budget for the same visitor.
+  if (isRateLimited(`search:${getClientIp(request)}`, 60, 60 * 1000)) {
     return Response.json({ results: [] }, { status: 429 });
   }
 
