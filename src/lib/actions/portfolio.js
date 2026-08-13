@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { buyPosition, editPosition, removePosition } from "@/lib/data/db";
+import { getQuote } from "@/lib/market/yahoo";
 
 export async function buyPositionAction(formData) {
   const { discordId } = await getDiscordUser();
@@ -15,6 +16,11 @@ export async function buyPositionAction(formData) {
   if (!ticker || !Number.isFinite(shares) || shares <= 0 || !Number.isFinite(price) || price <= 0) {
     return;
   }
+
+  // Same check the bot's /portfolio buy does, only on the creation path, editPosition below just corrects
+  // numbers on a position that already passed this check once.
+  const quote = await getQuote(ticker);
+  if (!quote) return;
 
   await buyPosition(guildId, discordId, ticker, shares, price);
   revalidatePath("/dashboard");

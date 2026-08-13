@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { fetchUserGuilds } from "@/lib/discord/user-guilds";
 import { getBotGuilds } from "@/lib/data/db";
+import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 const GUILD_COOKIE = "investo_guild";
 const GUILDS_COOKIE = "investo_guilds";
@@ -17,6 +18,12 @@ function guildIconUrl(guildId, iconHash) {
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+
+  // Code-exchange calls out to Supabase and Discord, a much heavier operation per request than a normal
+  // page load, a tighter limit than the general public-page one makes sense here specifically.
+  if (isRateLimited(getClientIp(request), 20, 60 * 1000)) {
+    return NextResponse.redirect(`${origin}/login?error=rate_limited`);
+  }
 
   if (code) {
     const supabase = await createClient();
