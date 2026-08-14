@@ -26,17 +26,32 @@ export async function getMostActive(count = 25) {
 async function getScreenerByMarketCap(scrId, count = 40, limit = 5) {
   try {
     const result = await yf.screener({ scrIds: scrId, count });
-    return result.quotes
-      .filter((q) => q.symbol && q.shortName && q.regularMarketPrice != null && q.marketCap != null)
-      .sort((a, b) => b.marketCap - a.marketCap)
-      .slice(0, limit)
-      .map((q) => ({
-        ticker: q.symbol,
-        name: q.shortName,
-        price: q.regularMarketPrice,
-        change: q.regularMarketChange ?? 0,
-        changePct: q.regularMarketChangePercent ?? 0,
-      }));
+    let quotes = result.quotes.filter(
+      (q) => q.symbol && q.shortName && q.regularMarketPrice != null && q.marketCap != null && q.regularMarketChangePercent != null
+    );
+
+    // Yahoo's own day_gainers/day_losers screener bucket can momentarily lag behind the live change
+    // field during a fast-moving session, a ticker that was up when Yahoo last ranked the list can
+    // have already flipped negative by the time this same response's price field is read. Trusting
+    // the screener's category label alone let an actual loser show up inside "Top Gainers", this is
+    // the real guard against that happening again, not just a display-order cleanup.
+    if (scrId === "day_gainers") quotes = quotes.filter((q) => q.regularMarketChangePercent >= 0);
+    else if (scrId === "day_losers") quotes = quotes.filter((q) => q.regularMarketChangePercent <= 0);
+
+    // Filters out thin-volume microcaps first (keeps only the bigger half of real companies in this
+    // batch), then ranks THAT set by actual percent move, sorting the final list by market cap alone
+    // (the old behavior) meant "Top Gainers" was really "biggest companies that happened to be up",
+    // not ranked by how much they'd actually moved, which is what "Top" is supposed to mean here.
+    const byCap = [...quotes].sort((a, b) => b.marketCap - a.marketCap).slice(0, Math.max(Math.floor(quotes.length / 2), limit));
+    byCap.sort((a, b) => (scrId === "day_losers" ? a.regularMarketChangePercent - b.regularMarketChangePercent : b.regularMarketChangePercent - a.regularMarketChangePercent));
+
+    return byCap.slice(0, limit).map((q) => ({
+      ticker: q.symbol,
+      name: q.shortName,
+      price: q.regularMarketPrice,
+      change: q.regularMarketChange ?? 0,
+      changePct: q.regularMarketChangePercent,
+    }));
   } catch {
     return [];
   }
