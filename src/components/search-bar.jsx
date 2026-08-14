@@ -135,9 +135,14 @@ export function SearchBar({ className = "" }) {
                   <span className="font-mono font-semibold">{result.symbol}</span>
                   <span className="text-text-muted text-sm ml-3">{result.name}</span>
                 </span>
-                {result.exchange && (
-                  <span className="text-xs text-text-muted font-mono">{result.exchange}</span>
-                )}
+                <span className="flex items-center gap-2 shrink-0">
+                  {result.type && (
+                    <span className="text-xs text-discord bg-discord/10 rounded-full px-2 py-0.5">{result.type}</span>
+                  )}
+                  {result.exchange && (
+                    <span className="text-xs text-text-muted font-mono">{result.exchange}</span>
+                  )}
+                </span>
               </button>
             ))}
           </motion.div>

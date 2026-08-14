@@ -81,9 +81,14 @@ export function TickerAutocomplete({ name = "ticker", placeholder = "Ticker", cl
                   <span className="font-mono font-semibold text-sm">{r.symbol}</span>
                   <span className="text-text-muted text-xs ml-2">{r.name}</span>
                 </span>
-                {r.exchange && (
-                  <span className="text-xs text-text-muted font-mono">{r.exchange}</span>
-                )}
+                <span className="flex items-center gap-2 shrink-0">
+                  {r.type && (
+                    <span className="text-xs text-discord bg-discord/10 rounded-full px-2 py-0.5">{r.type}</span>
+                  )}
+                  {r.exchange && (
+                    <span className="text-xs text-text-muted font-mono">{r.exchange}</span>
+                  )}
+                </span>
               </button>
             ))}
           </motion.div>

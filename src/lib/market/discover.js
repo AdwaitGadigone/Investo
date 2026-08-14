@@ -262,9 +262,13 @@ export async function getMarketMovers() {
       changePct: r.changes[period].pct,
       history: r.sparkline,
     });
+    // Same guard as getScreenerByMarketCap above: this universe is only 25 tickers, if fewer than 5 are
+    // actually down over a given period, just taking the bottom 5 by rank let a real gainer show up under "Losers".
+    const gainers = sorted.filter((r) => r.changes[period].pct >= 0).slice(0, 5);
+    const losers = sorted.filter((r) => r.changes[period].pct <= 0).slice(-5).reverse();
     movers[period] = {
-      gainers: sorted.slice(0, 5).map(toRow),
-      losers: sorted.slice(-5).reverse().map(toRow),
+      gainers: gainers.map(toRow),
+      losers: losers.map(toRow),
       active,
     };
   }

@@ -22,19 +22,27 @@ export async function GET(request) {
   }
 
   try {
-    const { quotes } = await yf.search(q, { quotesCount: 6, newsCount: 0 });
+    // Futures/options aren't something Investo can quote/chart, and they're rarely what someone
+    // searching a plain name like "bitcoin" or "gold" actually wants, dropped to cut dropdown noise.
+    const ALLOWED_TYPES = new Set(["EQUITY", "ETF", "CRYPTOCURRENCY", "INDEX", "MUTUALFUND", "CURRENCY"]);
+
+    const { quotes } = await yf.search(q, { quotesCount: 8, newsCount: 0 });
     const results = quotes
-      .filter((quote) => quote.symbol && (quote.shortname || quote.longname))
+      .filter((quote) => quote.symbol && (quote.shortname || quote.longname) && ALLOWED_TYPES.has(quote.quoteType))
       .map((quote) => ({
         symbol: quote.symbol,
         name: quote.longname || quote.shortname,
         exchange: quote.exchDisp,
+        // A plain ticker like "BTC" can match both the actual cryptocurrency and an unrelated ETF that
+        // just happens to share the symbol (Grayscale's ETF is literally named "...(BTC)"), this label
+        // is what lets someone tell them apart before picking one, not just after.
+        type: quote.typeDisp,
       }));
 
     // Yahoo's own search doesn't surface CDRs for a plain "AAPL" query, so these are added on top.
     const cdrResults = findCdrMatches(q)
       .filter((c) => !results.some((r) => r.symbol === c.ticker))
-      .map((c) => ({ symbol: c.ticker, name: `${c.name} CDR (CAD-hedged)`, exchange: "NEO" }));
+      .map((c) => ({ symbol: c.ticker, name: `${c.name} CDR (CAD-hedged)`, exchange: "NEO", type: "CDR" }));
 
     return Response.json({ results: [...results, ...cdrResults].slice(0, 8) });
   } catch {
