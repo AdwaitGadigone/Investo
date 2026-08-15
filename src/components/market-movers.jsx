@@ -90,7 +90,10 @@ export function MarketMovers({ data }) {
         <p className="font-display text-2xl font-bold tracking-tight mb-3">Market movers</p>
         <PeriodPills value={period} onChange={setPeriod} layoutId="movers-pill" />
       </div>
-      <Reveal className="grid gap-4 sm:grid-cols-3">
+      {/* Each row switches to its wider layout at sm: (see below), so the 3-column split has to wait
+          until lg:, otherwise a card only gets a third of the screen while still trying to render the
+          wide row, and the sparkline/change columns overlap the row above it. */}
+      <Reveal className="grid gap-4 lg:grid-cols-3">
         <MoverList title="Top Gainers" rows={rows.gainers} />
         <MoverList title="Top Losers" rows={rows.losers} />
         <MoverList title="Most Active" rows={rows.active} badge="today" />

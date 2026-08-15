@@ -15,7 +15,6 @@ const LINKS = [
   { href: "/alerts", label: "Alerts" },
   { href: "/news", label: "News" },
   { href: "/bot", label: "Bot" },
-  { href: "/about", label: "About" },
 ];
 
 export async function AppNav() {
