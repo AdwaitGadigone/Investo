@@ -1,5 +1,5 @@
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
-import { getActiveAlerts } from "@/lib/data/db";
+import { getActiveAlerts } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";

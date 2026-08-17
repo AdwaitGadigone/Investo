@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getQuote, getHistory, getRelatedTickers } from "@/lib/market/yahoo";
 import { getCompanyNews, getRecommendationTrends } from "@/lib/market/finnhub";
-import { getWatchlist } from "@/lib/data/db";
+import { getWatchlist } from "@/lib/db";
 import { getOptionalDiscordUser } from "@/lib/auth/get-discord-user";
 import { peekActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";

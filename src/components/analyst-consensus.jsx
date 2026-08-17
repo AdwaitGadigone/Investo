@@ -1,4 +1,4 @@
-import { generateAnalystTake } from "@/lib/ai/analyst-take";
+import { generateAnalystTake } from "@/lib/analyst-take";
 import { Tooltip } from "@/components/tooltip";
 import { IconSparkle } from "@/components/icons";
 

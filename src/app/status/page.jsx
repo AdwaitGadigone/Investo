@@ -1,4 +1,4 @@
-import { getBotHeartbeat, pingDatabase } from "@/lib/data/db";
+import { getBotHeartbeat, pingDatabase } from "@/lib/db";
 import { Wordmark } from "@/components/wordmark";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { BackButton } from "@/components/back-button";

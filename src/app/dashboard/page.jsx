@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getOptionalDiscordUser } from "@/lib/auth/get-discord-user";
-import { getWatchlist, getPortfolio, getActiveAlerts, isDigestEnabled } from "@/lib/data/db";
+import { getWatchlist, getPortfolio, getActiveAlerts, isDigestEnabled } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory, getMarketSnapshot, getCommodities } from "@/lib/market/yahoo";
 import { getTopPerformers, getMarketMovers, getPeriodChanges } from "@/lib/market/discover";

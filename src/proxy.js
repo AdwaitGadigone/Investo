@@ -1,4 +1,4 @@
-import { updateSession } from "@/lib/supabase/proxy";
+import { updateSession } from "@/lib/supabase/session";
 
 // Next.js 16 renamed middleware.ts to proxy.ts, must live next to app/, hence src/proxy.js.
 export async function proxy(request) {

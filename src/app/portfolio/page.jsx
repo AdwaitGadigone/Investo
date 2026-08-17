@@ -1,5 +1,5 @@
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
-import { getPortfolio } from "@/lib/data/db";
+import { getPortfolio } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory } from "@/lib/market/yahoo";
 import { getPortfolioHistory } from "@/lib/market/portfolio-history";

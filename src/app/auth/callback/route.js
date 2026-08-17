@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { fetchUserGuilds } from "@/lib/discord/user-guilds";
-import { getBotGuilds } from "@/lib/data/db";
+import { fetchUserGuilds } from "@/lib/discord-user-guilds";
+import { getBotGuilds } from "@/lib/db";
 import { isRateLimited, getClientIp } from "@/lib/rate-limit";
 
 const GUILD_COOKIE = "investo_guild";

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
-import { buyPosition, editPosition, removePosition } from "@/lib/data/db";
+import { buyPosition, editPosition, removePosition } from "@/lib/db";
 import { getQuote } from "@/lib/market/yahoo";
 
 export async function buyPositionAction(formData) {

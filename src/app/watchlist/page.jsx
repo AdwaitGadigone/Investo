@@ -1,5 +1,5 @@
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
-import { getWatchlist } from "@/lib/data/db";
+import { getWatchlist } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getHistory } from "@/lib/market/yahoo";
 import { getMarketMovers, getPeriodChanges } from "@/lib/market/discover";

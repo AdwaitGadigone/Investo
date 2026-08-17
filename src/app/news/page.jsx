@@ -1,5 +1,5 @@
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
-import { getWatchlist, isDigestEnabled } from "@/lib/data/db";
+import { getWatchlist, isDigestEnabled } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getAggregatedNews } from "@/lib/market/finnhub";
 import { getActiveGuildId } from "@/lib/auth/active-guild";

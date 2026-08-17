@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
-import { addToWatchlist, removeFromWatchlist } from "@/lib/data/db";
+import { addToWatchlist, removeFromWatchlist } from "@/lib/db";
 import { getQuote } from "@/lib/market/yahoo";
 
 // Server Actions let the watchlist forms mutate the database with no separate API route.
