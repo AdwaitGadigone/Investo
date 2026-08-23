@@ -23,12 +23,13 @@ just one, sign in and pick which of your servers to view if you're in more than 
 - **Crypto**: a dedicated strip for popular coins, kept separate from stocks on purpose
 - **News & analyst ratings**: recent headlines and the Wall Street buy/hold/sell consensus for
   any ticker, plus an AI-written take explaining *why* the rating looks the way it does
-- **Search**: autocomplete across stocks, crypto, and commodities, with exchange and currency
-  shown so a Toronto-listed stock in CAD doesn't get mistaken for a USD price
+- **Search**: autocomplete by company or asset name, not just the exact ticker, with exchange
+  and asset type shown next to each result so a search like "BTC" doesn't mix up the actual
+  cryptocurrency with a similarly-named ETF
 - **Commodities**: gold, silver, oil, and natural gas, surfaced directly since they barely show
   up in normal ticker search
-- **CDR support**: Canadian Depositary Receipts and other CAD-hedged tickers are searchable and
-  explained, not just quietly broken
+- **CDR support**: Canadian Depositary Receipts and other CAD-hedged tickers are searchable,
+  priced, and charted correctly
 - **Status page**: `/status`, a plain look at whether the site, database, and bot are actually up
 
 ## The Discord bot
@@ -36,12 +37,16 @@ just one, sign in and pick which of your servers to view if you're in more than 
 The bot (`/Investobot`) is where all of this started. It runs the same underlying data (Supabase
 Postgres) as the website and supports:
 
-- `/stock <ticker>`: quote, chart, and analyst consensus in one embed
+- `/stock <ticker>` / `/compare <ticker1> <ticker2>`: quote, chart, and analyst consensus, for
+  one ticker or two side by side
 - `/movers`: today's (or any other time span's) top gainers, losers, and most active, with
   buttons to switch categories and a dropdown to change the time span
 - `/watchlist` / `/track` / `/portfolio` / `/alert` / `/digest` / `/serverdigest`: the same
-  features as the site, usable straight from Discord
-- `/rating`, `/news`: analyst ratings and headlines for any ticker
+  features as the site, usable straight from Discord. DM the bot the word "digest" for an
+  on-demand summary too, since slash commands don't work in DMs
+- `/rating`, `/sentiment`, `/company_overview`, `/news`: analyst ratings, AI-read news
+  sentiment, business/valuation fundamentals, and headlines, for any ticker
+- Every command that takes a ticker autocompletes by name, not just the exact symbol
 - `/feedback`: send a bug report or suggestion straight to the owner
 - `/status`: check whether Discord, the database, Yahoo Finance, and Gemini are actually responding
 - @ mention the bot with a question and it'll answer using an AI that pulls in live prices for
