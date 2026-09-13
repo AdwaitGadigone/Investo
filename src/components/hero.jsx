@@ -81,17 +81,15 @@ export function Hero({ quotes, user }) {
         </motion.div>
 
         <div className="relative isolate hidden lg:block">
-          {/* Percentages, not vw units, resolve against this container's own box (which is just the card's
-              natural size, the arrow/note are absolutely positioned so they don't affect it), so this scales
-              together with the card at any viewport width instead of the two drifting apart from each other. */}
+          {/* vw-based, not tied to this column's box: the text column ends at a page-fixed x, so left/width are solved against the viewport directly to always start just past it and reach the card, at any window size. */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             style={{
-              top: "-30%",
-              left: "-25%",
-              width: "150%",
+              top: "-90px",
+              left: "calc(750px - 56.5vw)",
+              width: "clamp(460px, 56.5vw - 165px, 1000px)",
               aspectRatio: "1000 / 511",
             }}
             className="absolute -z-10 opacity-60"
