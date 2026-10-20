@@ -70,6 +70,34 @@ export async function getQuote(ticker) {
   }
 }
 
+// Reuses the same quote cache above, "EURUSD=X" is just another ticker symbol to Yahoo.
+export async function getFxRate(fromCurrency, toCurrency) {
+  const from = (fromCurrency || "USD").toUpperCase();
+  const to = (toCurrency || "USD").toUpperCase();
+  if (from === to) return 1;
+
+  try {
+    const direct = await cachedYahooQuote(`${from}${to}=X`);
+    if (direct?.regularMarketPrice) return direct.regularMarketPrice;
+  } catch {}
+
+  try {
+    // Yahoo doesn't list every pair in both directions, the inverse often exists even when the direct one doesn't.
+    const inverse = await cachedYahooQuote(`${to}${from}=X`);
+    if (inverse?.regularMarketPrice) return 1 / inverse.regularMarketPrice;
+  } catch {}
+
+  return null;
+}
+
+// One rate fetched per distinct non-USD currency actually present, not per position, a portfolio of
+// 20 EUR positions still only means one EURUSD=X lookup (itself cached above).
+export async function getFxRatesFor(currencies) {
+  const distinct = [...new Set(currencies)].filter((c) => c && c !== "USD");
+  const rates = await Promise.all(distinct.map((c) => getFxRate(c, "USD")));
+  return Object.fromEntries(distinct.map((c, i) => [c, rates[i] ?? 1]));
+}
+
 const INDICES = [
   { symbol: "^GSPC", label: "S&P 500" },
   { symbol: "^IXIC", label: "Nasdaq" },

@@ -1,7 +1,7 @@
 import { getDiscordUser } from "@/lib/auth/get-discord-user";
 import { getPortfolio } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
-import { getHistory } from "@/lib/market/yahoo";
+import { getHistory, getFxRatesFor } from "@/lib/market/yahoo";
 import { getPortfolioHistory } from "@/lib/market/portfolio-history";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
@@ -29,18 +29,28 @@ export default async function PortfolioPage({ searchParams }) {
   ]);
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
   const historyByTicker = Object.fromEntries(tickers.map((ticker, i) => [ticker, tickerHistories[i]]));
+  const fxRates = await getFxRatesFor(quotes.map((q) => q.currency));
 
   let totalValue = 0;
   let totalCost = 0;
+  let totalPl = 0;
   let dayChange = 0;
   for (const p of positions) {
     const quote = quoteByTicker[p.ticker];
     const price = quote?.price ?? p.cost_basis;
-    totalValue += p.shares * price;
-    totalCost += p.shares * p.cost_basis;
-    if (quote?.change != null) dayChange += quote.change * p.shares;
+    const isShort = p.direction === "short";
+    const currency = quote?.currency ?? "USD";
+    const rate = currency === "USD" ? 1 : fxRates[currency] ?? 1;
+    const value = p.shares * price;
+    const cost = p.shares * p.cost_basis;
+    // A short profits when price falls below what it was shorted at, the opposite of a long. Summed
+    // directly here instead of derived from totalValue - totalCost, same reasoning as portfolio-section.jsx.
+    const pl = isShort ? cost - value : value - cost;
+    totalValue += value * rate;
+    totalCost += cost * rate;
+    totalPl += pl * rate;
+    if (quote?.change != null) dayChange += quote.change * p.shares * (isShort ? -1 : 1) * rate;
   }
-  const totalPl = totalValue - totalCost;
   const totalPlUp = totalPl >= 0;
   const dayChangeUp = dayChange >= 0;
   const dayChangePct = totalValue - dayChange !== 0 ? (dayChange / (totalValue - dayChange)) * 100 : 0;
@@ -113,7 +123,7 @@ export default async function PortfolioPage({ searchParams }) {
           </Reveal>
         )}
 
-        <PortfolioSection positions={positions} quotes={quotes} historyByTicker={historyByTicker} />
+        <PortfolioSection positions={positions} quotes={quotes} historyByTicker={historyByTicker} fxRates={fxRates} />
       </main>
       <Footer />
     </div>

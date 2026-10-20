@@ -22,7 +22,9 @@ export async function buyPositionAction(formData) {
   const quote = await getQuote(ticker);
   if (!quote) return;
 
-  await buyPosition(guildId, discordId, ticker, shares, price);
+  // false means it's a short opened via the bot, buying here would wrongly blend into the wrong side.
+  const ok = await buyPosition(guildId, discordId, ticker, shares, price);
+  if (!ok) return;
   revalidatePath("/dashboard");
 }
 

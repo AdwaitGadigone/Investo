@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getOptionalDiscordUser } from "@/lib/auth/get-discord-user";
 import { getWatchlist, getPortfolio, getActiveAlerts, isDigestEnabled } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
-import { getHistory, getMarketSnapshot, getCommodities } from "@/lib/market/yahoo";
+import { getHistory, getMarketSnapshot, getCommodities, getFxRatesFor } from "@/lib/market/yahoo";
 import { getTopPerformers, getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
 import { CRYPTOS } from "@/lib/market/crypto-config";
 import { peekActiveGuildId } from "@/lib/auth/active-guild";
@@ -64,6 +64,9 @@ export default async function DashboardPage() {
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
   const historyByTicker = Object.fromEntries(allTickers.map((ticker, i) => [ticker, allHistories[i]]));
   const portfolioHistoryByTicker = historyByTicker;
+  const portfolioFxRates = await getFxRatesFor(
+    portfolioTickers.map((t) => quoteByTicker[t]?.currency)
+  );
 
   const watchlistChanges = watchlist
     .map((t) => quoteByTicker[t]?.changePct)
@@ -174,6 +177,7 @@ export default async function DashboardPage() {
               positions={portfolio}
               quotes={quotes}
               historyByTicker={portfolioHistoryByTicker}
+              fxRates={portfolioFxRates}
               showViewAllLink
               showBuyForm={false}
               showRemoveButton={false}

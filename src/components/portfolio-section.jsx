@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { buyPositionAction, editPositionAction, removePositionAction } from "@/lib/actions/portfolio";
+import { formatPrice, formatSignedPrice } from "@/lib/format-currency";
 import { IconCheck, IconPencil, IconX } from "@/components/icons";
 import { Tooltip } from "@/components/tooltip";
 import { TickerAutocomplete } from "@/components/ticker-autocomplete";
@@ -14,6 +15,9 @@ export function PortfolioSection({
   positions,
   quotes,
   historyByTicker = {},
+  // Currency code -> rate to USD, for the handful of positions not already in USD, so the totals below
+  // are one meaningful sum instead of adding raw numbers across different currencies.
+  fxRates = {},
   showViewAllLink = false,
   showBuyForm = true,
   showRemoveButton = true,
@@ -35,33 +39,54 @@ export function PortfolioSection({
 
   const quoteByTicker = Object.fromEntries(quotes.map((q) => [q.ticker, q]));
 
-  let totalValue = 0;
-  let totalCost = 0;
+  let totalValueUsd = 0;
+  let totalCostUsd = 0;
+  let totalPlUsd = 0;
+  let totalTodayUsd = 0;
   const rows = positions.map((p) => {
     const quote = quoteByTicker[p.ticker];
     const price = quote?.price ?? p.cost_basis;
+    const currency = quote?.currency ?? "USD";
+    const isShort = p.direction === "short";
     const value = p.shares * price;
     const cost = p.shares * p.cost_basis;
-    totalValue += value;
-    totalCost += cost;
+    // A short profits when price falls below what it was shorted at, the opposite of a long.
+    const pl = isShort ? cost - value : value - cost;
+    // Today's move flips sign the same way, a short loses money when the price goes up today.
+    const todayChange = quote?.change != null ? quote.change * p.shares * (isShort ? -1 : 1) : null;
+
+    // Positions can be in different listing currencies, normalized to USD before adding to one total.
+    // totalPl is summed directly from each position's own correctly-signed pl, not derived from
+    // totalValue - totalCost, that subtraction stops meaning anything once a short is in the mix.
+    const rate = currency === "USD" ? 1 : fxRates[currency] ?? 1;
+    totalValueUsd += value * rate;
+    totalCostUsd += cost * rate;
+    totalPlUsd += pl * rate;
+    totalTodayUsd += (todayChange ?? 0) * rate;
+
     return {
       ...p,
       name: quote?.name ?? p.ticker,
+      currency,
+      isShort,
       price,
       value,
-      pl: value - cost,
-      plPct: cost ? ((value - cost) / cost) * 100 : 0,
+      pl,
+      plPct: cost ? (pl / cost) * 100 : 0,
       // Today's move on the position, separate from the all-time P/L versus cost basis.
-      todayChangePct: quote?.changePct ?? null,
-      todayChange: quote?.change != null ? quote.change * p.shares : null,
+      todayChangePct: quote?.changePct != null ? quote.changePct * (isShort ? -1 : 1) : null,
+      todayChange,
     };
   });
-  const totalPl = totalValue - totalCost;
+  // Normalized to USD above, the per-row figures stay in each position's own native currency.
+  const totalPl = totalPlUsd;
   const totalPlUp = totalPl >= 0;
-  const totalToday = rows.reduce((sum, r) => sum + (r.todayChange ?? 0), 0);
+  const totalToday = totalTodayUsd;
   const totalTodayUp = totalToday >= 0;
-  const totalTodayBase = totalValue - totalToday;
+  const totalTodayBase = totalValueUsd - totalToday;
   const totalTodayPct = totalTodayBase ? (totalToday / totalTodayBase) * 100 : 0;
+  const totalValue = totalValueUsd;
+  const totalCost = totalCostUsd;
   const sortedRows = sortKey ? [...rows].sort((a, b) => compareRows(a, b, sortKey, sortDir)) : rows;
   const canCollapse = collapsedCount != null && sortedRows.length > collapsedCount;
   const visibleRows = canCollapse && !expanded ? sortedRows.slice(0, collapsedCount) : sortedRows;
@@ -107,7 +132,7 @@ export function PortfolioSection({
         <div className="flex items-center gap-2">
           <p className="font-display text-2xl font-bold tracking-tight">Your portfolio</p>
           {positions.length > 0 && (
-            <Tooltip text="Price is per share right now, Today is just today's move, P/L is the total gain or loss versus your average cost. A .NE ticker is a CDR, a CAD-hedged Canadian version of a US stock." />
+            <Tooltip text="Price is per share right now, Today is just today's move, P/L is the total gain or loss versus your average cost. Totals are converted to USD for positions priced in another currency. A .NE ticker is a CDR, a CAD-hedged Canadian version of a US stock, and a Short tag means P/L is inverted, it gains when the price drops." />
           )}
         </div>
         {showViewAllLink && (
@@ -189,14 +214,14 @@ export function PortfolioSection({
           {visibleRows.map((row) => {
             const up = row.pl >= 0;
             const pctText = `${up ? "+" : ""}${row.plPct.toFixed(1)}%`;
-            const dollarText = `${up ? "+" : ""}$${row.pl.toFixed(2)}`;
+            const dollarText = formatSignedPrice(row.pl, row.currency);
             const todayUp = row.todayChangePct != null && row.todayChangePct >= 0;
             const todayText =
               row.todayChangePct != null
                 ? `${todayUp ? "+" : ""}${row.todayChangePct.toFixed(2)}%`
                 : "-";
             const todayDollarText =
-              row.todayChange != null ? `${todayUp ? "+" : ""}$${row.todayChange.toFixed(2)}` : "";
+              row.todayChange != null ? formatSignedPrice(row.todayChange, row.currency) : "";
             const isEditing = editingTicker === row.ticker;
             return (
               <div key={row.ticker} className="flex items-center glass rounded-lg pr-2 sm:pr-4 hover:border-discord transition-colors">
@@ -224,7 +249,9 @@ export function PortfolioSection({
                         aria-label="Shares"
                         className="w-24 bg-bg border border-border rounded-md px-2 py-1.5 font-mono text-sm focus:outline-none focus:border-discord transition-colors"
                       />
-                      <span className="text-text-muted text-xs shrink-0">sh @ $</span>
+                      <span className="text-text-muted text-xs shrink-0">
+                        sh @ {row.currency && row.currency !== "USD" ? `${row.currency} ` : "$"}
+                      </span>
                       <input
                         type="number"
                         step="any"
@@ -265,11 +292,19 @@ export function PortfolioSection({
                             <StockLogo ticker={row.ticker} size={28} />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="font-semibold truncate">{row.name}</p>
+                            <p className="font-semibold truncate">
+                              {row.name}
+                              {row.isShort && (
+                                <span className="ml-1.5 text-[10px] uppercase tracking-wide text-loss border border-loss/40 rounded px-1 py-0.5 align-middle">
+                                  Short
+                                </span>
+                              )}
+                            </p>
                             <p className="font-mono text-xs text-text-muted truncate">
                               {row.ticker}{" "}
                               <span className="text-warm font-semibold">
-                                &middot; {row.shares.toLocaleString()} sh @ ${row.cost_basis.toFixed(2)} avg
+                                &middot; {row.shares.toLocaleString()} sh @ {formatPrice(row.cost_basis, row.currency)}{" "}
+                                {row.isShort ? "shorted at" : "avg"}
                               </span>
                             </p>
                           </div>
@@ -277,18 +312,22 @@ export function PortfolioSection({
                         <div className="hidden sm:block">
                           <Sparkline points={historyByTicker[row.ticker]} up={up} width={64} height={24} />
                         </div>
-                        <span className="hidden sm:inline font-mono text-sm text-right">${row.price.toFixed(2)}</span>
+                        <span className="hidden sm:inline font-mono text-sm text-right">
+                          {formatPrice(row.price, row.currency)}
+                        </span>
                         <div className={`hidden sm:block text-right font-mono ${todayUp ? "text-gain" : "text-loss"}`}>
                           <p className="text-sm">{todayText}</p>
                           <p className="text-xs opacity-80">{todayDollarText || "-"}</p>
                         </div>
-                        <span className="hidden sm:inline font-mono text-sm text-right">${row.value.toFixed(2)}</span>
+                        <span className="hidden sm:inline font-mono text-sm text-right">
+                          {formatPrice(row.value, row.currency)}
+                        </span>
                         <div className={`hidden sm:block text-right font-mono ${up ? "text-gain" : "text-loss"}`}>
                           <p className="text-sm">{pctText}</p>
                           <p className="text-xs opacity-80">{dollarText}</p>
                         </div>
                         <span className={`sm:hidden font-mono text-xs text-right ${up ? "text-gain" : "text-loss"}`}>
-                          ${row.value.toFixed(2)}
+                          {formatPrice(row.value, row.currency)}
                           <br />
                           {pctText} P/L
                         </span>

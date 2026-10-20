@@ -39,7 +39,7 @@ export async function removeFromWatchlist(guildId, userId, ticker) {
 export async function getPortfolio(guildId, userId) {
   const { data, error } = await supabaseAdmin
     .from("portfolio")
-    .select("ticker, shares, cost_basis")
+    .select("ticker, direction, shares, cost_basis")
     .eq("guild_id", guildId)
     .eq("user_id", userId)
     .order("ticker");
@@ -80,15 +80,21 @@ export async function removeAlert(userId, alertId) {
 }
 
 // Mirrors the bot's weighted-average cost basis logic, buys blend into one average, not separate lots.
+// The website has no shorting UI, this is always a "long" buy, but a short opened via the bot still
+// lives in the same table, so this has to refuse to blend into it instead of silently corrupting it.
 export async function buyPosition(guildId, userId, ticker, shares, price) {
   const { data: existing, error: fetchErr } = await supabaseAdmin
     .from("portfolio")
-    .select("shares, cost_basis")
+    .select("direction, shares, cost_basis")
     .eq("guild_id", guildId)
     .eq("user_id", userId)
     .eq("ticker", ticker)
     .maybeSingle();
   if (fetchErr) throw fetchErr;
+
+  if (existing && existing.direction === "short") {
+    return false;
+  }
 
   if (existing) {
     const totalShares = existing.shares + shares;
@@ -103,9 +109,10 @@ export async function buyPosition(guildId, userId, ticker, shares, price) {
   } else {
     const { error } = await supabaseAdmin
       .from("portfolio")
-      .insert({ guild_id: guildId, user_id: userId, ticker, shares, cost_basis: price });
+      .insert({ guild_id: guildId, user_id: userId, ticker, shares, cost_basis: price, direction: "long" });
     if (error) throw error;
   }
+  return true;
 }
 
 // Overwrites directly instead of blending like buyPosition, this is for fixing a typo'd entry.
