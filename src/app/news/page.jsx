@@ -4,6 +4,7 @@ import { getQuotes } from "@/lib/market/get-quotes";
 import { getAggregatedNews } from "@/lib/market/finnhub";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
+import { Footer } from "@/components/footer";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { Reveal } from "@/components/reveal";
 import { Tooltip } from "@/components/tooltip";
@@ -115,6 +116,7 @@ export default async function NewsPage() {
           )}
         </Reveal>
       </main>
+      <Footer />
     </div>
   );
 }

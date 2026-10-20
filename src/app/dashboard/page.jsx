@@ -7,6 +7,7 @@ import { getTopPerformers, getMarketMovers, getPeriodChanges } from "@/lib/marke
 import { CRYPTOS } from "@/lib/market/crypto-config";
 import { peekActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
+import { Footer } from "@/components/footer";
 import { SearchBar } from "@/components/search-bar";
 import { MarketSnapshot } from "@/components/market-snapshot";
 import { CompactWatchlist } from "@/components/compact-watchlist";
@@ -210,6 +211,7 @@ export default async function DashboardPage() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { getActiveAlerts } from "@/lib/db";
 import { getQuotes } from "@/lib/market/get-quotes";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
+import { Footer } from "@/components/footer";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { TickerAutocomplete } from "@/components/ticker-autocomplete";
 import { addAlertAction, removeAlertAction } from "@/lib/actions/alerts";
@@ -115,6 +116,7 @@ export default async function AlertsPage() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

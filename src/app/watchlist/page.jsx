@@ -5,6 +5,7 @@ import { getHistory } from "@/lib/market/yahoo";
 import { getMarketMovers, getPeriodChanges } from "@/lib/market/discover";
 import { getActiveGuildId } from "@/lib/auth/active-guild";
 import { AppNav } from "@/components/app-nav";
+import { Footer } from "@/components/footer";
 import { GradientBlobs } from "@/components/gradient-blobs";
 import { WatchlistGrid } from "@/components/watchlist-grid";
 import { MarketMovers } from "@/components/market-movers";
@@ -77,6 +78,7 @@ export default async function WatchlistPage() {
 
         <MarketMovers data={marketMovers} />
       </main>
+      <Footer />
     </div>
   );
 }
