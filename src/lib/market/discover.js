@@ -57,6 +57,10 @@ async function getScreenerByMarketCap(scrId, count = 40, limit = 5) {
   }
 }
 
+// Used when the screener returns nothing (closed market, weekend, API hiccup) so the
+// week/month/year tabs still have real historical data to show instead of going blank.
+const FALLBACK_TICKERS = ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "JPM", "V", "BRK-B"];
+
 // Shared cache: 5 years of history for 25 tickers is expensive, an hour stale is fine.
 let cache = null;
 let cacheTime = 0;
@@ -87,7 +91,27 @@ async function getRankedUniverse() {
   if (inFlight) return inFlight;
 
   inFlight = (async () => {
-    const universe = await getMostActive(25);
+    let universe = await getMostActive(25);
+    // Screener returns nothing when markets are closed (weekends, holidays) — fall back to a static
+    // list so week/month/year historical tabs still populate instead of going completely blank.
+    if (universe.length === 0) {
+      universe = await Promise.all(
+        FALLBACK_TICKERS.map(async (ticker) => {
+          try {
+            const result = await yf.quote(ticker);
+            return {
+              ticker,
+              name: result.shortName ?? ticker,
+              price: result.regularMarketPrice ?? 0,
+              change: result.regularMarketChange ?? null,
+              changePct: result.regularMarketChangePercent ?? null,
+            };
+          } catch {
+            return null;
+          }
+        })
+      ).then((rows) => rows.filter(Boolean));
+    }
     const nowTime = Date.now();
 
     const results = await Promise.all(
