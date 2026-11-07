@@ -37,10 +37,10 @@ export async function removeFromWatchlist(guildId, userId, ticker) {
 }
 
 export async function getPortfolio(guildId, userId) {
+  // guildId kept in signature for backward compat; portfolios are now global per-user.
   const { data, error } = await supabaseAdmin
     .from("portfolio")
     .select("ticker, direction, shares, cost_basis")
-    .eq("guild_id", guildId)
     .eq("user_id", userId)
     .order("ticker");
   if (error) throw error;
@@ -86,7 +86,6 @@ export async function buyPosition(guildId, userId, ticker, shares, price) {
   const { data: existing, error: fetchErr } = await supabaseAdmin
     .from("portfolio")
     .select("direction, shares, cost_basis")
-    .eq("guild_id", guildId)
     .eq("user_id", userId)
     .eq("ticker", ticker)
     .maybeSingle();
@@ -102,14 +101,14 @@ export async function buyPosition(guildId, userId, ticker, shares, price) {
     const { error } = await supabaseAdmin
       .from("portfolio")
       .update({ shares: totalShares, cost_basis: totalCost / totalShares })
-      .eq("guild_id", guildId)
       .eq("user_id", userId)
       .eq("ticker", ticker);
     if (error) throw error;
   } else {
+    // guild_id stored as 0; portfolios are now global per-user, column kept for schema compat.
     const { error } = await supabaseAdmin
       .from("portfolio")
-      .insert({ guild_id: guildId, user_id: userId, ticker, shares, cost_basis: price, direction: "long" });
+      .insert({ guild_id: 0, user_id: userId, ticker, shares, cost_basis: price, direction: "long" });
     if (error) throw error;
   }
   return true;
@@ -120,7 +119,6 @@ export async function editPosition(guildId, userId, ticker, shares, costBasis) {
   const { error } = await supabaseAdmin
     .from("portfolio")
     .update({ shares, cost_basis: costBasis })
-    .eq("guild_id", guildId)
     .eq("user_id", userId)
     .eq("ticker", ticker);
   if (error) throw error;
@@ -130,7 +128,6 @@ export async function removePosition(guildId, userId, ticker) {
   const { error, count } = await supabaseAdmin
     .from("portfolio")
     .delete({ count: "exact" })
-    .eq("guild_id", guildId)
     .eq("user_id", userId)
     .eq("ticker", ticker);
   if (error) throw error;
