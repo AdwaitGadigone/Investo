@@ -92,7 +92,7 @@ async function getRankedUniverse() {
 
   inFlight = (async () => {
     let universe = await getMostActive(25);
-    // Screener returns nothing when markets are closed (weekends, holidays) — fall back to a static
+    // Screener returns nothing when markets are closed (weekends, holidays), fall back to a static
     // list so week/month/year historical tabs still populate instead of going completely blank.
     if (universe.length === 0) {
       universe = await Promise.all(

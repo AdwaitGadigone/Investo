@@ -83,16 +83,8 @@ export default async function AboutPage() {
           </p>
           <p className="text-text-muted leading-relaxed mb-10">
             Built by{" "}
-            <span className="text-text font-semibold">Adwait Gadigone</span>, with{" "}
-            <a
-              href="https://claude.com/claude-code"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-discord hover:underline"
-            >
-              Claude Code
-            </a>
-            . Still actively growing, new features go in most weeks.
+            <span className="text-text font-semibold">Adwait Gadigone</span>.
+            Still actively growing, new features go in most weeks.
           </p>
 
           <Reveal delay={0.05}>
