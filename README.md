@@ -11,8 +11,10 @@ just one, sign in and pick which of your servers to view if you're in more than 
 ## What it does
 
 - **Watchlist**: track tickers, live prices, and daily % / $ change
-- **Portfolio**: log buys and sells, weighted-average cost basis, live profit/loss, edit a
-  position directly if you fat-fingered a share count
+- **Portfolio**: log buys and sells, weighted-average cost basis, live profit/loss, a value
+  chart over time, edit a position directly if you fat-fingered a share count. Shows and sums
+  correctly across tickers listed in different currencies, and across long and short positions
+  opened from the bot
 - **Price alerts & daily digest**: set alerts and get a DM'd morning summary from the bot,
   switch what it includes right from a dropdown on the DM, viewable on the site too, not DM-only
 - **Server digest**: admins can turn on a daily digest of the whole server's tracked list,
@@ -42,8 +44,10 @@ Postgres) as the website and supports:
 - `/movers`: today's (or any other time span's) top gainers, losers, and most active, with
   buttons to switch categories and a dropdown to change the time span
 - `/watchlist` / `/track` / `/portfolio` / `/alert` / `/digest` / `/serverdigest`: the same
-  features as the site, usable straight from Discord. DM the bot the word "digest" for an
-  on-demand summary too, since slash commands don't work in DMs
+  features as the site, usable straight from Discord. The bot's `/portfolio` also supports
+  shorting (`short` / `cover`, not available on the site yet) and `/currency` lets you display
+  everything converted into a currency of your choice on top of each ticker's native one. DM
+  the bot the word "digest" for an on-demand summary too, since slash commands don't work in DMs
 - `/rating`, `/sentiment`, `/company_overview`, `/news`: analyst ratings, AI-read news
   sentiment, business/valuation fundamentals, and headlines, for any ticker
 - Every command that takes a ticker autocompletes by name, not just the exact symbol
